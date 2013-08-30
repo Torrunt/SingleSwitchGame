@@ -8,98 +8,98 @@ namespace SingleSwitchGame
     class ArtificialIntelligence
     {
         protected Game game;
-        protected Character obj;
+        protected Character Obj;
 
-        public Entity target;
-        public Vector2f waypoint;
-        protected List<Vector2f> waypointPath;
-        protected Vector2f t;
+        public Entity Target;
+        public Vector2f Waypoint;
+        protected List<Vector2f> WaypointPath;
+        protected Vector2f T;
 
-        public Vector2f range;
+        public Vector2f Range;
 
-        private Timer tickTimer;
+        private Timer TickTimer;
 
         public ArtificialIntelligence() { }
-        public virtual void init(Game game, Character obj)
+        public virtual void Init(Game game, Character obj)
         {
             this.game = game;
-            this.obj = obj;
+            this.Obj = obj;
 
-            target = null;
-            waypoint = new Vector2f(-1, -1);
-            waypointPath = new List<Vector2f>();
+            Target = null;
+            Waypoint = new Vector2f(-1, -1);
+            WaypointPath = new List<Vector2f>();
 
-            range = new Vector2f(100.0f, 100.0f);
+            Range = new Vector2f(100.0f, 100.0f);
 
-            tickTimer = new Timer(500); // Thinks every 500ms
-            tickTimer.Elapsed += new ElapsedEventHandler(tick);
-            tickTimer.Start();
+            TickTimer = new Timer(500); // Thinks every 500ms
+            TickTimer.Elapsed += new ElapsedEventHandler(Tick);
+            TickTimer.Start();
         }
-        public virtual void deint()
+        public virtual void Deinit()
         {
-            tickTimer.Stop();
-            tickTimer.Dispose();
+            TickTimer.Stop();
+            TickTimer.Dispose();
         }
 
-        protected virtual void tick(object source, ElapsedEventArgs e)
+        protected virtual void Tick(Object source, ElapsedEventArgs e)
         {
-            if (target != null)
-                t = target.Position;
-            else if (!waypoint.Equals(new Vector2f(-1, -1)))
-                t = waypoint;
+            if (Target != null)
+                T = Target.Position;
+            else if (!Waypoint.Equals(new Vector2f(-1, -1)))
+                T = Waypoint;
             else
                 return;
 
             // Move Towards Target/Waypoint
-            obj.moveRight = (obj.X + range.X < t.X);
-            obj.moveLeft = (obj.X - range.X > t.X);
-            if (obj.canMoveVertically)
+            Obj.MoveRight = (Obj.X + Range.X < T.X);
+            Obj.MoveLeft = (Obj.X - Range.X > T.X);
+            if (Obj.CanMoveVertically)
             {
-                obj.moveUp = (obj.Y- range.Y > t.Y);
-                obj.moveDown = (obj.Y + range.Y < t.Y);
+                Obj.MoveUp = (Obj.Y - Range.Y > T.Y);
+                Obj.MoveDown = (Obj.Y + Range.Y < T.Y);
             }
 
-            if (target == null && !obj.isMoving())
+            if (Target == null && !Obj.IsMoving())
             {
                 // On Reach Waypoint
-                onWayPointReached();
+                OnWaypointReached();
             }
         }
 
-        public void setTarget(Entity target)
+        public void SetTarget(Entity target)
         {
-            this.target = target;
+            this.Target = target;
         }
 
-        public void setWayPoint(Vector2f point)
+        public void SetWaypoint(Vector2f point)
         {
-            waypoint = point;
-            target = null;
+            Waypoint = point;
+            Target = null;
         }
-        public void addWayPointToPath(Vector2f point)
+        public void AddWaypointToPath(Vector2f point)
         {
-            if (waypointPath.Count == 0)
-                setWayPoint(point);
-            waypointPath.Add(point);
+            if (WaypointPath.Count == 0)
+                SetWaypoint(point);
+            WaypointPath.Add(point);
         }
-        public void addWayPointsToPath(params Vector2f[] points)
+        public void AddWaypointsToPath(params Vector2f[] points)
         {
             for (int i = 0; i < points.Length; i++)
-                addWayPointToPath(points[i]);
+                AddWaypointToPath(points[i]);
         }
-        protected virtual void onWayPointReached()
+        protected virtual void OnWaypointReached()
         {
-            if (waypointPath.Count != 0 && waypointPath[0].Equals(waypoint))
+            if (WaypointPath.Count != 0 && WaypointPath[0].Equals(Waypoint))
             {
                 // Next Waypoint in Path?
-                waypointPath.RemoveAt(0);
-                if (waypointPath.Count != 0)
-                    setWayPoint(waypointPath[0]);
+                WaypointPath.RemoveAt(0);
+                if (WaypointPath.Count != 0)
+                    SetWaypoint(WaypointPath[0]);
                 else
-                    waypoint = new Vector2f(-1, -1);
+                    Waypoint = new Vector2f(-1, -1);
             }
             else
-                waypoint = new Vector2f(-1, -1);
+                Waypoint = new Vector2f(-1, -1);
         }
 
 

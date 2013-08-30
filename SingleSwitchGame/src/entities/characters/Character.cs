@@ -6,99 +6,99 @@ namespace SingleSwitchGame
 {
     class Character : PhysicalEntity
     {
-        public uint team;
-        protected bool player;
-        public ArtificialIntelligence ai;
+        public uint Team;
+        protected bool Player;
+        public ArtificialIntelligence AI;
 
         // Movement
-        public bool canMove = true;
-        public bool canMoveVertically = true;
-        public bool turnAroundOnMove = true;
+        public bool CanMove = true;
+        public bool CanMoveVertically = true;
+        public bool TurnAroundOnMove = true;
 
-        public bool moveLeft = false;
-        public bool moveRight = false;
-        public bool moveUp = false;
-        public bool moveDown = false;
+        public bool MoveLeft = false;
+        public bool MoveRight = false;
+        public bool MoveUp = false;
+        public bool MoveDown = false;
 
 
         public Character(Game game, Sprite model)
             : base(game, model)
         {
-            team = 0;
-            player = false;
+            Team = 0;
+            Player = false;
         }
-        public override void deinit()
+        public override void Deinit()
         {
-            base.deinit();
+            base.Deinit();
 
-            setAI(null);
+            SetAI(null);
         }
 
-        public override void update(float dt)
+        public override void Update(float dt)
         {
-            base.update(dt);
+            base.Update(dt);
 
-            if (isDead())
+            if (IsDead())
                 return;
 
-            if (player)
-                playerControls();
+            if (Player)
+                PlayerControls();
 
-            if (canMove)
+            if (CanMove)
             {
                 // Movement
-                if (moveLeft && velocity.X > -speedMax)
-                    velocity.X = Math.Max(velocity.X - (acc * dt), -speedMax);
-                if (moveRight && velocity.X < speedMax)
-                    velocity.X = Math.Min(velocity.X + (acc * dt), speedMax);
+                if (MoveLeft && Velocity.X > -SpeedMax)
+                    Velocity.X = Math.Max(Velocity.X - (Acc * dt), -SpeedMax);
+                if (MoveRight && Velocity.X < SpeedMax)
+                    Velocity.X = Math.Min(Velocity.X + (Acc * dt), SpeedMax);
                 
-                if (canMoveVertically)
+                if (CanMoveVertically)
                 {
-                    if (moveUp && velocity.Y > -speedMax)
-                        velocity.Y = Math.Max(velocity.Y - (acc * dt), -speedMax);
-                    if (moveDown && velocity.Y < speedMax)
-                        velocity.Y = Math.Min(velocity.Y + (acc * dt), speedMax);
+                    if (MoveUp && Velocity.Y > -SpeedMax)
+                        Velocity.Y = Math.Max(Velocity.Y - (Acc * dt), -SpeedMax);
+                    if (MoveDown && Velocity.Y < SpeedMax)
+                        Velocity.Y = Math.Min(Velocity.Y + (Acc * dt), SpeedMax);
                 }
 
                 // Flip Horizontally based on movement direction
-                if (turnAroundOnMove)
+                if (TurnAroundOnMove)
                 {
-                    if (Scale.X == 1 && moveLeft && !moveRight)
-                        setScale(-1, 1);
-                    else if (Scale.X == -1 && moveRight && !moveLeft)
-                        setScale(1, 1);
+                    if (Scale.X == 1 && MoveLeft && !MoveRight)
+                        SetScale(-1, 1);
+                    else if (Scale.X == -1 && MoveRight && !MoveLeft)
+                        SetScale(1, 1);
                 }
             }
         }
 
 
-        public override bool isMoving() { return moveLeft || moveRight || moveUp || moveDown; }
-        public override bool isMovingHorizontally() { return moveLeft || moveRight; }
-        public override bool isMovingVertically() { return moveUp || moveDown; }
+        public override bool IsMoving() { return MoveLeft || MoveRight || MoveUp || MoveDown; }
+        public override bool IsMovingHorizontally() { return MoveLeft || MoveRight; }
+        public override bool IsMovingVertically() { return MoveUp || MoveDown; }
 
-        public void setAI(ArtificialIntelligence ai)
+        public void SetAI(ArtificialIntelligence AI)
         {
-            if (ai != null)
+            if (AI != null)
             {
-                this.ai = ai;
-                this.ai.init(game, this);
+                this.AI = AI;
+                this.AI.Init(game, this);
             }
-            else if (this.ai != null)
-                this.ai.deint();
+            else if (this.AI != null)
+                this.AI.Deinit();
         }
-        public void setPlayer(bool val)
+        public void SetPlayer(bool val)
         {
-            player = val;
+            this.Player = val;
         }
 
-        protected void playerControls()
+        protected void PlayerControls()
         {
-            moveLeft = Keyboard.IsKeyPressed(Keyboard.Key.Left);
-            moveRight = Keyboard.IsKeyPressed(Keyboard.Key.Right);
-            if (canMoveVertically)
+            MoveLeft = Keyboard.IsKeyPressed(Keyboard.Key.Left);
+            MoveRight = Keyboard.IsKeyPressed(Keyboard.Key.Right);
+            if (CanMoveVertically)
             {
-                moveUp = Keyboard.IsKeyPressed(Keyboard.Key.Up);
-                moveDown = Keyboard.IsKeyPressed(Keyboard.Key.Down);
+                MoveUp = Keyboard.IsKeyPressed(Keyboard.Key.Up);
+                MoveDown = Keyboard.IsKeyPressed(Keyboard.Key.Down);
             }
         }
 

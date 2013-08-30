@@ -8,116 +8,116 @@ namespace SingleSwitchGame
 {
     class Game
     {
-        private bool started;
-        private bool running;
+        private bool Started;
+        private bool Running;
 
-        private List<Entity> updateList = new List<Entity>();
+        private List<Entity> UpdateList = new List<Entity>();
 
-        public static Font arial = new Font("assets/arial.ttf");
+        public static Font Arial = new Font("assets/arial.ttf");
 
         // Layers
-        Layer layer_background;
-        Layer layer_objects;
-        Layer layer_gui;
+        Layer Layer_Background;
+        Layer Layer_Objects;
+        Layer Layer_GUI;
 
 
-        bool displayFPS = true;
-        Text fps;
+        bool DisplayFPS = true;
+        Text FPS;
 
 
         public Game(ref RenderWindow window)
         {
-            started = false;
-            running = false;
+            Started = false;
+            Running = false;
         }
 
-        public void start()
+        public void Start()
         {
-            if (started)
+            if (Started)
                 return;
-            started = true;
-            running = true;
+            Started = true;
+            Running = true;
 
-            layer_background = new Layer();
-            layer_objects = new Layer();
-            layer_gui = new Layer();
+            Layer_Background = new Layer();
+            Layer_Objects = new Layer();
+            Layer_GUI = new Layer();
             
             // Test
                 // Add Bat, make it the player
-            Bat bat = new Bat(this);
-            bat.setPosition(100, 100);
-            layer_objects.addChild(bat);
-            bat.setPlayer(true);
+            Bat Bat = new Bat(this);
+            Bat.SetPosition(100, 100);
+            Layer_Objects.AddChild(Bat);
+            Bat.SetPlayer(true);
                 
-                // Add Bat, give it AI and set the player as it's target
-            Bat bat2 = new Bat(this);
-            bat2.model.Color = new Color(255, 150, 150);
-            bat2.setPosition(300, 300);
-            layer_objects.addChild(bat2);
-            bat2.setAI(new ArtificialIntelligence());
-            bat2.ai.setTarget(bat);
-            //bat2.ai.addWayPointsToPath(new SFML.Window.Vector2f(500, 300), new SFML.Window.Vector2f(500, 100), new SFML.Window.Vector2f(200, 150));
+                // Add Bat, give it AI and set the player as it's Target
+            Bat Bat2 = new Bat(this);
+            Bat2.Model.Color = new Color(255, 150, 150);
+            Bat2.SetPosition(300, 300);
+            Layer_Objects.AddChild(Bat2);
+            Bat2.SetAI(new ArtificialIntelligence());
+            Bat2.AI.SetTarget(Bat);
+            //bat2.ai.AddWaypointsToPath(new SFML.Window.Vector2f(500, 300), new SFML.Window.Vector2f(500, 100), new SFML.Window.Vector2f(200, 150));
 
                 // Draw text on the GUI layer
-            Text text = new Text("Single Switch Game", arial);
-            layer_gui.addChild(text);
+            Text Text = new Text("Single Switch Game", Arial);
+            Layer_GUI.AddChild(Text);
 
-            if (displayFPS)
+            if (DisplayFPS)
             {
-                fps = new Text("fps", arial, 14);
-                fps.Position = new Vector2f(765, 0);
-                layer_gui.addChild(fps);
+                FPS = new Text("fps", Arial, 14);
+                FPS.Position = new Vector2f(765, 0);
+                Layer_GUI.AddChild(FPS);
             }
             
             //Music music = new Music(@"assets/sound/OrchestralTheme1.ogg");
             //music.Play();
         }
-        public void stop()
+        public void Stop()
         {
-            if (!started)
+            if (!Started)
                 return;
-            started = false;
-            running = false;
+            Started = false;
+            Running = false;
 
-            layer_background.clear();
-            layer_objects.clear();
-            layer_gui.clear();
+            Layer_Background.Clear();
+            Layer_Objects.Clear();
+            Layer_GUI.Clear();
         }
-        public void reset() { stop(); start(); }
+        public void Reset() { Stop(); Start(); }
 
-        public void update(float dt)
+        public void Update(float dt)
         {
-            foreach (Entity entity in updateList)
-                entity.update(dt);
+            foreach (Entity entity in UpdateList)
+                entity.Update(dt);
 
-            if (displayFPS)
-                fps.DisplayedString = (1 / dt).ToString("00.0");
-        }
-
-        public void draw(ref RenderWindow window)
-        {
-            window.Draw(layer_background);
-            window.Draw(layer_objects);
-            window.Draw(layer_gui);
+            if (DisplayFPS)
+                FPS.DisplayedString = (1 / dt).ToString("00.0");
         }
 
-        public void pause()
+        public void Draw(ref RenderWindow window)
         {
-            if (!running)
+            window.Draw(Layer_Background);
+            window.Draw(Layer_Objects);
+            window.Draw(Layer_GUI);
+        }
+
+        public void Pause()
+        {
+            if (!Running)
                 return;
-            running = false;
+            Running = false;
         }
-        public void resume()
+        public void Resume()
         {
-            if (running)
+            if (Running)
                 return;
-            running = true;
+            Running = true;
         }
 
-        public void addToUpdateList(Entity entity) { updateList.Add(entity); }
-        public void removeFromUpdateList(Entity entity) { updateList.Remove(entity); }
+        public void AddToUpdateList(Entity entity) { UpdateList.Add(entity); }
+        public void RemoveFromUpdateList(Entity entity) { UpdateList.Remove(entity); }
 
-        public bool hasStarted() { return started; }
-        public bool isRunning() { return running; }
+        public bool HasStarted() { return Started; }
+        public bool IsRunning() { return Running; }
     }
 }

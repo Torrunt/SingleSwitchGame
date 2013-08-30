@@ -11,7 +11,7 @@ namespace SingleSwitchGame
         /// <summary> Desired FPS </summary>
         const float FPS = 60.0f;
         
-        static void OnClose(object sender, EventArgs e)
+        static void OnClose(Object sender, EventArgs e)
         {
             // Close the window when OnClose event is received
             RenderWindow window = (RenderWindow)sender;
@@ -26,7 +26,7 @@ namespace SingleSwitchGame
 
             // Game Loop
             Game game = new Game(ref window);
-            game.start();
+            game.Start();
             Stopwatch clock = new Stopwatch();
             clock.Start();
 
@@ -44,11 +44,11 @@ namespace SingleSwitchGame
                     //Console.Write("fps: " + (1 / (float)clock.Elapsed.TotalSeconds) + "\n");
 
                     // Update Game 
-                    game.update((float)clock.Elapsed.TotalSeconds);
+                    game.Update((float)clock.Elapsed.TotalSeconds);
                     clock.Restart();
 
                     // Draw Game
-                    game.draw(ref window);
+                    game.Draw(ref window);
 
                     // Update the window
                     window.Display();

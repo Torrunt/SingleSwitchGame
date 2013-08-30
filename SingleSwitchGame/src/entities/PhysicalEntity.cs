@@ -6,60 +6,60 @@ namespace SingleSwitchGame
 {
     class PhysicalEntity : CollisionEntity
     {
-        public float speedMax;
-        public float acc;
-        public float friction;
-        protected Vector2f velocity;
+        public float SpeedMax;
+        public float Acc;
+        public float Friction;
+        protected Vector2f Velocity;
 
-        private uint _health;
-        private uint _healthMax;
+        private uint _Health;
+        private uint _HealthMax;
         
-        public PhysicalEntity(Game game, Sprite model)
-            : base(game, model)
+        public PhysicalEntity(Game game, Sprite Model)
+            : base(game, Model)
         {
-            healthMax = 10000;
-            health = healthMax;
+            HealthMax = 10000;
+            Health = HealthMax;
 
-            speedMax = 100.0f; // 100px a second
-            acc = 400.0f; // hits full speed in 0.25 seconds
-            friction = 400.0f; // loses all speed in 0.25 seconds
-            velocity = new Vector2f(0, 0);
+            SpeedMax = 100.0f; // 100px a second
+            Acc = 400.0f; // hits full speed in 0.25 seconds
+            Friction = 400.0f; // loses all speed in 0.25 seconds
+            Velocity = new Vector2f(0, 0);
         }
 
-        public override void update(float dt)
+        public override void Update(float dt)
         {
-            base.update(dt);
+            base.Update(dt);
             
             // Slow Down
-            if (!isMovingHorizontally())
-                velocity.X = Utils.stepTo(velocity.X, 0.0f, friction * dt);
-            if (!isMovingVertically())
-                velocity.Y = Utils.stepTo(velocity.Y, 0.0f, friction * dt);
+            if (!IsMovingHorizontally())
+                Velocity.X = Utils.StepTo(Velocity.X, 0.0f, Friction * dt);
+            if (!IsMovingVertically())
+                Velocity.Y = Utils.StepTo(Velocity.Y, 0.0f, Friction * dt);
             
             // Apply Velocity
-            move(velocity.X * dt, velocity.Y * dt);
+            Move(Velocity.X * dt, Velocity.Y * dt);
         }
 
-        public virtual bool isMoving() { return false; }
-        public virtual bool isMovingHorizontally() { return false; }
-        public virtual bool isMovingVertically() { return false; }
+        public virtual bool IsMoving() { return false; }
+        public virtual bool IsMovingHorizontally() { return false; }
+        public virtual bool IsMovingVertically() { return false; }
 
         // Health
-        public uint health { get { return _health; } set { _health = value > healthMax ? healthMax : value; } }
-        public uint healthMax { get { return _healthMax; } set { _healthMax = value; } }
+        public uint Health { get { return _Health; } set { _Health = value > HealthMax ? HealthMax : value; } }
+        public uint HealthMax { get { return _HealthMax; } set { _HealthMax = value; } }
         /// <param name="sourceObject">Who caused the damage (eg: who get's the credit?).</param>
         /// <param name="hitObject">What caused the damage (eg: a projectile?).</param>
-        public uint damage(uint amount, uint damageType = 0, object sourceObject = null, object hitObject = null)
+        public uint Damage(uint amount, uint damageType = 0, Object sourceObject = null, Object hitObject = null)
         {
-            health -= amount;
-            return health;
+            Health -= amount;
+            return Health;
         }
-        public uint heal(uint amount)
+        public uint Heal(uint amount)
         {
-            health += amount;
-            return health;
+            Health += amount;
+            return Health;
         }
-        public bool isDead() { return health == 0; }
+        public bool IsDead() { return Health == 0; }
 
     }
 }

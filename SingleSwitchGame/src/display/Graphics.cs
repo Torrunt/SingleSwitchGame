@@ -6,33 +6,33 @@ namespace SingleSwitchGame
 {
     public class TDrawable : Transformable, Drawable
     {
-        public void Draw(RenderTarget target, RenderStates states) { }
+        public void Draw(RenderTarget Target, RenderStates states) { }
     }
 
     class Graphics
     {
-        private static List<Texture> textures = new List<Texture>();
-        private static List<string> textureFileNames = new List<string>();
+        private static List<Texture> Textures = new List<Texture>();
+        private static List<string> TextureFileNames = new List<string>();
 
-        public static Sprite getSprite(string filename)
+        public static Sprite GetSprite(string filename)
         {
-            return new Sprite(getTexture(filename));
+            return new Sprite(GetTexture(filename));
         }
-        public static Texture getTexture(string filename)
+        public static Texture GetTexture(string filename)
         {
-            int index = textureFileNames.IndexOf(filename);
+            int index = TextureFileNames.IndexOf(filename);
 
             if (index >= 0)
             {
                 // Texture Already Exists
-                return textures[index];
+                return Textures[index];
             }
             else
             {
                 // New Texture
                 Texture texture = new Texture(filename);
-                textures.Add(texture);
-                textureFileNames.Add(filename);
+                Textures.Add(texture);
+                TextureFileNames.Add(filename);
 
                 return texture;
             }

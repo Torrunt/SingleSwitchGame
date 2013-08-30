@@ -6,30 +6,30 @@ namespace SingleSwitchGame
     class Entity : DisplayObject
     {
         protected Game game;
-        public Sprite model;
+        public Sprite Model;
 
         public Entity(Game game, Sprite model)
         {
             this.game = game;
             
             if (model != null)
-                this.model = model;
+                this.Model = model;
             else
-                this.model = new Sprite();
-            addChild(this.model);
+                this.Model = new Sprite();
+            AddChild(this.Model);
 
-            init();
+            Init();
         }
-        public virtual void init()
+        public virtual void Init()
         {
-            game.addToUpdateList(this);
+            game.AddToUpdateList(this);
         }
-        public virtual void deinit()
+        public virtual void Deinit()
         {
-            game.removeFromUpdateList(this);
+            game.RemoveFromUpdateList(this);
         }
 
-        public virtual void update(float dt) { }
+        public virtual void Update(float dt) { }
         
     }
 }

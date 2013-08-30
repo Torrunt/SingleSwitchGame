@@ -8,20 +8,20 @@ namespace SingleSwitchGame
 
     class DisplayObject : Transformable, Drawable
     {
-        private List<object> children = new List<object>();
+        private List<Object> Children = new List<Object>();
 
-        public int numChildren { get { return children.Count; } }
-        public void addChild(object child) { children.Add(child); }
-        public void removeChild(object child) { children.Remove(child); }
-        public void clear() { children.Clear(); }
+        public int NumChildren { get { return Children.Count; } }
+        public void AddChild(Object child) { Children.Add(child); }
+        public void RemoveChild(Object child) { Children.Remove(child); }
+        public void Clear() { Children.Clear(); }
 
-        public object getChildAt(int i) { return children[i]; }
+        public Object GetChildAt(int i) { return Children[i]; }
 
-        public void Draw(RenderTarget target, RenderStates states)
+        public void Draw(RenderTarget Target, RenderStates states)
         {
             states.Transform *= Transform;
-            foreach (Drawable child in children)
-                child.Draw(target, states);
+            foreach (Drawable child in Children)
+                child.Draw(Target, states);
         }
 
         public float X
@@ -34,26 +34,26 @@ namespace SingleSwitchGame
             get { return Position.Y; }
             set { Position = new Vector2f(Position.X, value); }
         }
-        public void setPosition(float x, float y) { Position = new Vector2f(x, y); }
-        public void setPosition(Vector2f pos) { Position = pos; }
+        public void SetPosition(float x, float y) { Position = new Vector2f(x, y); }
+        public void SetPosition(Vector2f pos) { Position = pos; }
 
-        public void move(float offsetX, float offsetY) { Position = new Vector2f(X + offsetX, Y + offsetY); }
-        public void move(Vector2f offset) { Position = new Vector2f(X + offset.X, Y + offset.Y); }
+        public void Move(float offsetX, float offsetY) { Position = new Vector2f(X + offsetX, Y + offsetY); }
+        public void Move(Vector2f offset) { Position = new Vector2f(X + offset.X, Y + offset.Y); }
 
-        public float scaleX
+        public float ScaleX
         {
             get { return Scale.X; }
             set { Scale = new Vector2f(value, Scale.Y); }
         }
-        public float scaleY
+        public float ScaleY
         {
             get { return Scale.Y; }
             set { Scale = new Vector2f(Scale.X, value); }
         }
-        public void setScale(float scaleX, float scaleY) { Scale = new Vector2f(scaleX, scaleY); }
-        public void setScale(Vector2f scale) { Scale = scale; }
+        public void SetScale(float scaleX, float scaleY) { Scale = new Vector2f(scaleX, scaleY); }
+        public void SetScale(Vector2f scale) { Scale = scale; }
 
-        public void rotate(float amount) { Rotation += amount; }
+        public void Rotate(float amount) { Rotation += amount; }
     }
 
     class Layer : DisplayObject { }
