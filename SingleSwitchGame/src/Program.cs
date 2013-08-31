@@ -21,7 +21,7 @@ namespace SingleSwitchGame
         static void Main(string[] args)
         {
             // Create the main window
-            RenderWindow window = new RenderWindow(new VideoMode(800, 600), "SingleSwitchGame");
+            RenderWindow window = new RenderWindow(new VideoMode(960, 540), "SingleSwitchGame");
             window.Closed += new EventHandler(OnClose);
 
             // Game Loop
@@ -48,7 +48,7 @@ namespace SingleSwitchGame
                     clock.Restart();
 
                     // Draw Game
-                    game.Draw(ref window);
+                    game.Draw();
 
                     // Update the window
                     window.Display();

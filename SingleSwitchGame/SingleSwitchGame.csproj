@@ -69,17 +69,24 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="src\Display\AnimatedSprite.cs" />
     <Compile Include="src\Display\DisplayObject.cs" />
+    <Compile Include="src\Display\SpriteAnimation.cs" />
     <Compile Include="src\Entities\Characters\AI\ArtificialIntelligence.cs" />
     <Compile Include="src\Entities\Characters\Bat.cs" />
+    <Compile Include="src\Entities\Characters\Cannon.cs" />
     <Compile Include="src\Entities\Characters\Character.cs" />
     <Compile Include="src\Entities\CollisionEntity.cs" />
     <Compile Include="src\Entities\Entity.cs" />
     <Compile Include="src\Entities\PhysicalEntity.cs" />
     <Compile Include="src\Game.cs" />
     <Compile Include="src\Display\Graphics.cs" />
+    <Compile Include="src\Misc\DamageType.cs" />
     <Compile Include="src\Program.cs" />
     <Compile Include="src\Utils.cs" />
+    <Compile Include="src\Weapons\Projectile.cs" />
+    <Compile Include="src\Weapons\ProjectileWeapon.cs" />
+    <Compile Include="src\Weapons\Weapon.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -8,25 +8,33 @@ namespace SingleSwitchGame
 {
     class Game
     {
+        public RenderWindow Window;
+
         private bool Started;
         private bool Running;
 
         private List<Entity> UpdateList = new List<Entity>();
 
         public static Font Arial = new Font("assets/arial.ttf");
+        public static Font TidyHand = new Font("assets/TidyHand.ttf");
+
+        bool DisplayFPS = true;
+        Text FPS;
 
         // Layers
         Layer Layer_Background;
         Layer Layer_Objects;
         Layer Layer_GUI;
 
-
-        bool DisplayFPS = true;
-        Text FPS;
+        // Objects
+        Cannon player;
+        CircleShape Island;
+        CircleShape Hill;
 
 
         public Game(ref RenderWindow window)
         {
+            this.Window = window;
             Started = false;
             Running = false;
         }
@@ -42,6 +50,39 @@ namespace SingleSwitchGame
             Layer_Objects = new Layer();
             Layer_GUI = new Layer();
             
+            // Background
+            Sprite BluePrintBackground = Graphics.GetSprite("assets/sprites/background_blueprint_tile.png");
+            BluePrintBackground.Texture.Repeated = true;
+            BluePrintBackground.TextureRect = new IntRect(0, 0, (int)Window.Size.X, (int)Window.Size.Y);
+            Layer_Background.AddChild(BluePrintBackground);
+
+                // Island
+            float IslandRadius = 140;
+            Island = new CircleShape(IslandRadius);
+            Island.Position = new Vector2f(Window.Size.X / 2 - IslandRadius, Window.Size.Y / 2 - IslandRadius);
+            Island.FillColor = new Color(0, 0, 0, 0);
+            Island.OutlineThickness = 2;
+            Island.OutlineColor = new Color(250, 250, 250);
+            Island.SetPointCount(50);
+            Layer_Background.AddChild(Island);
+                
+                // Hill
+            float HillRadius = 30;
+            Hill = new CircleShape(HillRadius);
+            Hill.Position = new Vector2f(Window.Size.X / 2 - HillRadius, Window.Size.Y / 2 - HillRadius);
+            Hill.FillColor = new Color(0, 0, 0, 0);
+            Hill.OutlineThickness = 2;
+            Hill.OutlineColor = new Color(250, 250, 250);
+            Hill.SetPointCount(50);
+            Layer_Background.AddChild(Hill);
+
+            // Player (Cannon)
+            player = new Cannon(this);
+            player.SetPosition(Window.Size.X / 2, Window.Size.Y / 2);
+            Layer_Objects.AddChild(player);
+            player.SetPlayer(true);
+
+
             // Test
                 // Add Bat, make it the player
             Bat Bat = new Bat(this);
@@ -59,13 +100,14 @@ namespace SingleSwitchGame
             //bat2.ai.AddWaypointsToPath(new SFML.Window.Vector2f(500, 300), new SFML.Window.Vector2f(500, 100), new SFML.Window.Vector2f(200, 150));
 
                 // Draw text on the GUI layer
-            Text Text = new Text("Single Switch Game", Arial);
+            Text Text = new Text("Single Switch Game", TidyHand);
+            Text.Position = new Vector2f(4, 2);
             Layer_GUI.AddChild(Text);
 
             if (DisplayFPS)
             {
-                FPS = new Text("fps", Arial, 14);
-                FPS.Position = new Vector2f(765, 0);
+                FPS = new Text("fps", TidyHand, 16);
+                FPS.Position = new Vector2f(Window.Size.X - 35, Window.Size.Y - 20);
                 Layer_GUI.AddChild(FPS);
             }
             
@@ -94,11 +136,11 @@ namespace SingleSwitchGame
                 FPS.DisplayedString = (1 / dt).ToString("00.0");
         }
 
-        public void Draw(ref RenderWindow window)
+        public void Draw()
         {
-            window.Draw(Layer_Background);
-            window.Draw(Layer_Objects);
-            window.Draw(Layer_GUI);
+            Window.Draw(Layer_Background);
+            Window.Draw(Layer_Objects);
+            Window.Draw(Layer_GUI);
         }
 
         public void Pause()

@@ -91,7 +91,7 @@ namespace SingleSwitchGame
             this.Player = val;
         }
 
-        protected void PlayerControls()
+        protected virtual void PlayerControls()
         {
             MoveLeft = Keyboard.IsKeyPressed(Keyboard.Key.Left);
             MoveRight = Keyboard.IsKeyPressed(Keyboard.Key.Right);

@@ -13,9 +13,9 @@ namespace SingleSwitchGame
 
         private uint _Health;
         private uint _HealthMax;
-        
-        public PhysicalEntity(Game game, Sprite Model)
-            : base(game, Model)
+
+        public PhysicalEntity(Game game, Sprite model)
+            : base(game, model)
         {
             HealthMax = 10000;
             Health = HealthMax;

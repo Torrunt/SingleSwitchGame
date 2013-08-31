@@ -16,7 +16,10 @@ namespace SingleSwitchGame
 
         public static Sprite GetSprite(string filename)
         {
-            return new Sprite(GetTexture(filename));
+            Sprite sprite = new Sprite(GetTexture(filename));
+            sprite.Texture.Smooth = true;
+
+            return sprite;
         }
         public static Texture GetTexture(string filename)
         {
