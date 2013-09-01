@@ -13,7 +13,8 @@ namespace SingleSwitchGame
         public Cannon(Game game)
             : base(game, Graphics.GetSprite("assets/sprites/cannon.png"))
         {
-            Origin = new Vector2f(13, 15);
+            SetScale(0.5f, 0.5f);
+            Origin = new Vector2f(26, 30);
             CanMove = false;
         }
 

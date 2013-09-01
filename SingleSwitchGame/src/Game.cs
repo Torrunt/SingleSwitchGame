@@ -50,12 +50,13 @@ namespace SingleSwitchGame
             Layer_Objects = new Layer();
             Layer_GUI = new Layer();
             
+            Console.Write(Window.Settings.AntialiasingLevel);
             // Background
             Sprite BluePrintBackground = Graphics.GetSprite("assets/sprites/background_blueprint_tile.png");
             BluePrintBackground.Texture.Repeated = true;
             BluePrintBackground.TextureRect = new IntRect(0, 0, (int)Window.Size.X, (int)Window.Size.Y);
             Layer_Background.AddChild(BluePrintBackground);
-
+            
                 // Island
             float IslandRadius = 140;
             Island = new CircleShape(IslandRadius);
@@ -63,9 +64,9 @@ namespace SingleSwitchGame
             Island.FillColor = new Color(0, 0, 0, 0);
             Island.OutlineThickness = 2;
             Island.OutlineColor = new Color(250, 250, 250);
-            Island.SetPointCount(50);
+            Island.SetPointCount(80);
             Layer_Background.AddChild(Island);
-                
+            
                 // Hill
             float HillRadius = 30;
             Hill = new CircleShape(HillRadius);

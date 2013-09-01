@@ -20,8 +20,12 @@ namespace SingleSwitchGame
 
         static void Main(string[] args)
         {
+            // Settings
+            ContextSettings Settings = new ContextSettings();
+            Settings.AntialiasingLevel = 6;
+
             // Create the main window
-            RenderWindow window = new RenderWindow(new VideoMode(960, 540), "SingleSwitchGame");
+            RenderWindow window = new RenderWindow(new VideoMode(960, 540), "SingleSwitchGame", Styles.Default, Settings);
             window.Closed += new EventHandler(OnClose);
 
             // Game Loop
@@ -29,7 +33,7 @@ namespace SingleSwitchGame
             game.Start();
             Stopwatch clock = new Stopwatch();
             clock.Start();
-
+            
             while (window.IsOpen())
             {
                 // Process events
