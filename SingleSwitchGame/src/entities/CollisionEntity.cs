@@ -6,8 +6,8 @@ namespace SingleSwitchGame
     {
         protected bool IgnoreEntityCollision;
 
-        public CollisionEntity(Game game, Sprite model)
-            : base(game, model)
+        public CollisionEntity(Game Game, dynamic model = null)
+            : base(Game, (object)model)
         {
             IgnoreEntityCollision = false;
         }

@@ -27,10 +27,10 @@ namespace SingleSwitchGame
             // Create the main window
             RenderWindow window = new RenderWindow(new VideoMode(960, 540), "SingleSwitchGame", Styles.Default, Settings);
             window.Closed += new EventHandler(OnClose);
-
+            
             // Game Loop
-            Game game = new Game(ref window);
-            game.Start();
+            Game Game = new Game(ref window);
+            Game.Start();
             Stopwatch clock = new Stopwatch();
             clock.Start();
             
@@ -48,11 +48,11 @@ namespace SingleSwitchGame
                     //Console.Write("fps: " + (1 / (float)clock.Elapsed.TotalSeconds) + "\n");
 
                     // Update Game 
-                    game.Update((float)clock.Elapsed.TotalSeconds);
+                    Game.Update((float)clock.Elapsed.TotalSeconds);
                     clock.Restart();
 
                     // Draw Game
-                    game.Draw();
+                    Game.Draw();
 
                     // Update the window
                     window.Display();

@@ -4,7 +4,7 @@ namespace SingleSwitchGame
 {
     class Weapon
     {
-        protected Game game;
+        protected Game Game;
         public Entity SourceObject;
 
         public uint Damage = 2000;
@@ -15,9 +15,9 @@ namespace SingleSwitchGame
 
         public string DisplayName = "";
 
-        public Weapon(Game game, Entity sourceObject)
+        public Weapon(Game Game, Entity sourceObject)
         {
-            this.game = game;
+            this.Game = Game;
             this.SourceObject = sourceObject;
 
             Init();

@@ -14,22 +14,21 @@ namespace SingleSwitchGame
         private bool Running;
 
         private List<Entity> UpdateList = new List<Entity>();
+        private int UpdateListIndex = 0;
 
         public static Font Arial = new Font("assets/arial.ttf");
         public static Font TidyHand = new Font("assets/TidyHand.ttf");
 
-        bool DisplayFPS = true;
-        Text FPS;
-
         // Layers
-        Layer Layer_Background;
-        Layer Layer_Objects;
-        Layer Layer_GUI;
+        public Layer Layer_Background;
+        public Layer Layer_Objects;
+        public Layer Layer_GUI;
 
         // Objects
-        Cannon player;
-        CircleShape Island;
-        CircleShape Hill;
+        public HeadsUpDisplay HUD;
+        public Cannon Player;
+        public CircleShape Island;
+        public CircleShape Hill;
 
 
         public Game(ref RenderWindow window)
@@ -50,7 +49,6 @@ namespace SingleSwitchGame
             Layer_Objects = new Layer();
             Layer_GUI = new Layer();
             
-            Console.Write(Window.Settings.AntialiasingLevel);
             // Background
             Sprite BluePrintBackground = Graphics.GetSprite("assets/sprites/background_blueprint_tile.png");
             BluePrintBackground.Texture.Repeated = true;
@@ -60,7 +58,8 @@ namespace SingleSwitchGame
                 // Island
             float IslandRadius = 140;
             Island = new CircleShape(IslandRadius);
-            Island.Position = new Vector2f(Window.Size.X / 2 - IslandRadius, Window.Size.Y / 2 - IslandRadius);
+            Island.Origin = new Vector2f(IslandRadius, IslandRadius);
+            Island.Position = new Vector2f(Window.Size.X / 2, Window.Size.Y / 2);
             Island.FillColor = new Color(0, 0, 0, 0);
             Island.OutlineThickness = 2;
             Island.OutlineColor = new Color(250, 250, 250);
@@ -70,19 +69,23 @@ namespace SingleSwitchGame
                 // Hill
             float HillRadius = 30;
             Hill = new CircleShape(HillRadius);
-            Hill.Position = new Vector2f(Window.Size.X / 2 - HillRadius, Window.Size.Y / 2 - HillRadius);
+            Hill.Origin = new Vector2f(HillRadius, HillRadius);
+            Hill.Position = new Vector2f(Window.Size.X / 2, Window.Size.Y / 2);
             Hill.FillColor = new Color(0, 0, 0, 0);
             Hill.OutlineThickness = 2;
             Hill.OutlineColor = new Color(250, 250, 250);
             Hill.SetPointCount(50);
             Layer_Background.AddChild(Hill);
-
+            
             // Player (Cannon)
-            player = new Cannon(this);
-            player.SetPosition(Window.Size.X / 2, Window.Size.Y / 2);
-            Layer_Objects.AddChild(player);
-            player.SetPlayer(true);
+            Player = new Cannon(this);
+            Player.SetPosition(Window.Size.X / 2, Window.Size.Y / 2);
+            Layer_Objects.AddChild(Player);
+            Player.SetPlayer(true);
 
+            // HUD
+            HUD = new HeadsUpDisplay(this);
+            Layer_GUI.AddChild(HUD);
 
             // Test
                 // Add Bat, make it the player
@@ -104,13 +107,6 @@ namespace SingleSwitchGame
             Text Text = new Text("Single Switch Game", TidyHand);
             Text.Position = new Vector2f(4, 2);
             Layer_GUI.AddChild(Text);
-
-            if (DisplayFPS)
-            {
-                FPS = new Text("fps", TidyHand, 16);
-                FPS.Position = new Vector2f(Window.Size.X - 35, Window.Size.Y - 20);
-                Layer_GUI.AddChild(FPS);
-            }
             
             //Music music = new Music(@"assets/sound/OrchestralTheme1.ogg");
             //music.Play();
@@ -127,15 +123,6 @@ namespace SingleSwitchGame
             Layer_GUI.Clear();
         }
         public void Reset() { Stop(); Start(); }
-
-        public void Update(float dt)
-        {
-            foreach (Entity entity in UpdateList)
-                entity.Update(dt);
-
-            if (DisplayFPS)
-                FPS.DisplayedString = (1 / dt).ToString("00.0");
-        }
 
         public void Draw()
         {
@@ -157,8 +144,28 @@ namespace SingleSwitchGame
             Running = true;
         }
 
+        public void Update(float dt)
+        {
+            for (UpdateListIndex = 0; UpdateListIndex < UpdateList.Count; UpdateListIndex++)
+                UpdateList[UpdateListIndex].Update(dt);
+        }
+
         public void AddToUpdateList(Entity entity) { UpdateList.Add(entity); }
-        public void RemoveFromUpdateList(Entity entity) { UpdateList.Remove(entity); }
+        /// <summary>Returns true if it was removed.</summary>
+        public bool RemoveFromUpdateList(Entity entity)
+        {
+            for (int i = 0; i < UpdateList.Count; i++)
+			{
+                if (UpdateList[i].Equals(entity))
+                {
+                    UpdateList.RemoveAt(i);
+                    if (i <= UpdateListIndex)
+                        UpdateListIndex--;
+                    return true;
+                }
+            }
+            return false;
+        }
 
         public bool HasStarted() { return Started; }
         public bool IsRunning() { return Running; }

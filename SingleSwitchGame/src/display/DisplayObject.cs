@@ -8,20 +8,56 @@ namespace SingleSwitchGame
 
     class DisplayObject : Transformable, Drawable
     {
-        private List<Object> Children = new List<Object>();
+        private List<dynamic> Children = new List<dynamic>();
+        private int DrawListIndex = 0;
+        public DisplayObject Parent = null;
 
         public int NumChildren { get { return Children.Count; } }
-        public void AddChild(Object child) { Children.Add(child); }
-        public void RemoveChild(Object child) { Children.Remove(child); }
-        public void Clear() { Children.Clear(); }
+        public void AddChild(dynamic child)
+        {
+            Children.Add(child);
+            if (child is DisplayObject)
+            {
+                child.Parent = this;
+                child.OnAdded();
+            }
+        }
+        public void RemoveChild(dynamic child)
+        {
+            for (int i = 0; i < Children.Count; i++)
+            {
+                if (Children[i].Equals(child))
+                {
+                    if (child is DisplayObject)
+                    {
+                        child.OnRemoved();
+                        child.Parent = null;
+                    }
+
+                    Children.RemoveAt(i);
+                    if (i <= DrawListIndex)
+                        DrawListIndex--;
+                    break;
+                }
+            }
+        }
+        public void Clear()
+        {
+            foreach (dynamic child in Children)
+                RemoveChild(child);
+            Children.Clear();
+        }
 
         public Object GetChildAt(int i) { return Children[i]; }
+
+        public virtual void OnAdded() { }
+        public virtual void OnRemoved() { }
 
         public void Draw(RenderTarget Target, RenderStates states)
         {
             states.Transform *= Transform;
-            foreach (Drawable child in Children)
-                child.Draw(Target, states);
+            for (DrawListIndex = 0; DrawListIndex < Children.Count; DrawListIndex++)
+                Children[DrawListIndex].Draw(Target, states);
         }
 
         public float X
@@ -53,7 +89,15 @@ namespace SingleSwitchGame
         public void SetScale(float scaleX, float scaleY) { Scale = new Vector2f(scaleX, scaleY); }
         public void SetScale(Vector2f scale) { Scale = scale; }
 
-        public void Rotate(float amount) { Rotation += amount; }
+        public void Rotate(float amount)
+        {
+            if (Rotation + amount > 180)
+                Rotation = Rotation + amount - 360;
+            else if (Rotation + amount < -180)
+                Rotation = Rotation + amount + 360;
+            else
+                Rotation += amount;
+        }
     }
 
     class Layer : DisplayObject { }

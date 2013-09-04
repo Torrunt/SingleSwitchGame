@@ -7,7 +7,7 @@ namespace SingleSwitchGame
 {
     class ArtificialIntelligence
     {
-        protected Game game;
+        protected Game Game;
         protected Character Obj;
 
         public Entity Target;
@@ -20,9 +20,9 @@ namespace SingleSwitchGame
         private Timer TickTimer;
 
         public ArtificialIntelligence() { }
-        public virtual void Init(Game game, Character obj)
+        public virtual void Init(Game Game, Character obj)
         {
-            this.game = game;
+            this.Game = Game;
             this.Obj = obj;
 
             Target = null;
@@ -58,7 +58,7 @@ namespace SingleSwitchGame
                 Obj.MoveUp = (Obj.Y - Range.Y > T.Y);
                 Obj.MoveDown = (Obj.Y + Range.Y < T.Y);
             }
-
+            
             if (Target == null && !Obj.IsMoving())
             {
                 // On Reach Waypoint

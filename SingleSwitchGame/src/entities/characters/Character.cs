@@ -21,8 +21,8 @@ namespace SingleSwitchGame
         public bool MoveDown = false;
 
 
-        public Character(Game game, Sprite model)
-            : base(game, model)
+        public Character(Game Game, dynamic model)
+            : base(Game, (object)model)
         {
             Team = 0;
             Player = false;
@@ -81,7 +81,7 @@ namespace SingleSwitchGame
             if (AI != null)
             {
                 this.AI = AI;
-                this.AI.Init(game, this);
+                this.AI.Init(Game, this);
             }
             else if (this.AI != null)
                 this.AI.Deinit();

@@ -81,9 +81,12 @@
     <Compile Include="src\Entities\PhysicalEntity.cs" />
     <Compile Include="src\Game.cs" />
     <Compile Include="src\Display\Graphics.cs" />
+    <Compile Include="src\GUI\AimAssistance.cs" />
+    <Compile Include="src\GUI\HeadsUpDisplay.cs" />
     <Compile Include="src\Misc\DamageType.cs" />
     <Compile Include="src\Program.cs" />
     <Compile Include="src\Utils.cs" />
+    <Compile Include="src\Weapons\CannonWeapon.cs" />
     <Compile Include="src\Weapons\Projectile.cs" />
     <Compile Include="src\Weapons\ProjectileWeapon.cs" />
     <Compile Include="src\Weapons\Weapon.cs" />

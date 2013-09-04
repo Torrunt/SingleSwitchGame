@@ -1,7 +1,6 @@
 C:\Users\Corey\Documents\ECU\CSG3303 Applied IT Project\SingleSwitchGame\SingleSwitchGame\bin\Debug\SingleSwitchGame.exe.config
 C:\Users\Corey\Documents\ECU\CSG3303 Applied IT Project\SingleSwitchGame\SingleSwitchGame\bin\Debug\SingleSwitchGame.exe
 C:\Users\Corey\Documents\ECU\CSG3303 Applied IT Project\SingleSwitchGame\SingleSwitchGame\bin\Debug\SingleSwitchGame.pdb
-C:\Users\Corey\Documents\ECU\CSG3303 Applied IT Project\SingleSwitchGame\SingleSwitchGame\obj\Debug\SingleSwitchGame.csprojResolveAssemblyReference.cache
 C:\Users\Corey\Documents\ECU\CSG3303 Applied IT Project\SingleSwitchGame\SingleSwitchGame\obj\Debug\SingleSwitchGame.exe
 C:\Users\Corey\Documents\ECU\CSG3303 Applied IT Project\SingleSwitchGame\SingleSwitchGame\obj\Debug\SingleSwitchGame.pdb
 C:\Users\Corey\Documents\ECU\CSG3303 Applied IT Project\SingleSwitchGame\SingleSwitchGame\bin\Debug\sfmlnet-audio-2.dll
@@ -12,3 +11,4 @@ C:\Users\Corey\Documents\ECU\CSG3303 Applied IT Project\SingleSwitchGame\SingleS
 C:\Users\Corey\Documents\ECU\CSG3303 Applied IT Project\SingleSwitchGame\SingleSwitchGame\bin\Debug\csfml-window-2.dll
 C:\Users\Corey\Documents\ECU\CSG3303 Applied IT Project\SingleSwitchGame\SingleSwitchGame\bin\Debug\libsndfile-1.dll
 C:\Users\Corey\Documents\ECU\CSG3303 Applied IT Project\SingleSwitchGame\SingleSwitchGame\bin\Debug\openal32.dll
+C:\Users\Corey\Documents\ECU\CSG3303 Applied IT Project\SingleSwitchGame\SingleSwitchGame\obj\Debug\SingleSwitchGame.csprojResolveAssemblyReference.cache

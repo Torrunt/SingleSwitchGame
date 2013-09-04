@@ -1,32 +1,38 @@
-﻿using SFML.Graphics;
+﻿using System;
+using SFML.Graphics;
 using SFML.Window;
 
 namespace SingleSwitchGame
 {
     class Entity : DisplayObject
     {
-        protected Game game;
-        public Sprite Model;
+        protected Game Game;
+        public dynamic Model;
 
-        public Entity(Game game, Sprite model)
+        public Entity(Game Game, dynamic model = null)
         {
-            this.game = game;
-            
-            if (model != null)
-                this.Model = model;
-            else
-                this.Model = new Sprite();
-            AddChild(this.Model);
+            this.Game = Game;
 
+            if (model != null)
+            {
+                this.Model = model;
+                AddChild(this.Model);
+            }
+            
             Init();
         }
         public virtual void Init()
         {
-            game.AddToUpdateList(this);
+            Game.AddToUpdateList(this);
         }
         public virtual void Deinit()
         {
-            game.RemoveFromUpdateList(this);
+            Game.RemoveFromUpdateList(this);
+        }
+
+        public override void OnRemoved()
+        {
+            Deinit();
         }
 
         public virtual void Update(float dt) { }

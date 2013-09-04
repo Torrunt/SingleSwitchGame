@@ -30,5 +30,23 @@ namespace SingleSwitchGame
 		}
         public static double ToDegrees(double angle) { return angle * (180 / Math.PI); }
         public static double ToRadians(double angle) { return angle * (Math.PI / 180); }
+
+        /// <param name="angle">In Degrees</param>
+        public static Vector2f GetPointInDirection(dynamic point, float angle, float distance)
+		{
+            angle = (float)Utils.ToRadians(angle);
+			return new Vector2f(point.X + ((float)Math.Cos(angle) * distance), point.Y + ((float)Math.Sin(angle) * distance));
+		}
+
+        /// <summary> The distance between two objects (that have X and Y variables).</summary>
+        public static float Distance(dynamic obj1, dynamic obj2)
+		{
+			float l = Math.Abs(obj1.X - obj2.X);
+			float h = Math.Abs(obj1.Y - obj2.Y);
+
+            float answer = (float)Math.Sqrt(Math.Pow(l, 2) + Math.Pow(h, 2));
+			
+			return answer;
+		}
     }
 }
