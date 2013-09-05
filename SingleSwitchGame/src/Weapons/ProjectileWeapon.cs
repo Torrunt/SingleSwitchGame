@@ -54,7 +54,12 @@ namespace SingleSwitchGame
             return proj;
         }
 
-        public virtual void OnProjectileCollision(dynamic HitTarget = null)
+        public virtual void OnProjectileCollision(Projectile proj, dynamic hitTarget = null)
+        {
+            Explode(proj.Position);
+        }
+        /// <summary>The Explosion caused by the projectiles if there is one.</summary>
+        public virtual void Explode(Vector2f pos)
         {
         }
 
@@ -74,5 +79,6 @@ namespace SingleSwitchGame
 
             return proj;
         }
+
     }
 }

@@ -66,9 +66,9 @@ namespace SingleSwitchGame
             }
         }
 
-        private void OnProjectileCollision(dynamic HitTarget = null)
+        private void OnProjectileCollision(dynamic hitTarget = null)
         {
-            Weapon.OnProjectileCollision(HitTarget);
+            Weapon.OnProjectileCollision(this, hitTarget);
 
             Parent.RemoveChild(this);
         }

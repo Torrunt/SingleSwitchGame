@@ -72,6 +72,7 @@
     <Compile Include="src\Display\AnimatedSprite.cs" />
     <Compile Include="src\Display\DisplayObject.cs" />
     <Compile Include="src\Display\SpriteAnimation.cs" />
+    <Compile Include="src\Effects\Explosion.cs" />
     <Compile Include="src\Entities\Characters\AI\ArtificialIntelligence.cs" />
     <Compile Include="src\Entities\Characters\Bat.cs" />
     <Compile Include="src\Entities\Characters\Cannon.cs" />

@@ -1,5 +1,6 @@
 ﻿using System;
 using SFML.Window;
+using SFML.Graphics;
 
 namespace SingleSwitchGame
 {
@@ -48,5 +49,65 @@ namespace SingleSwitchGame
 			
 			return answer;
 		}
+
+        /// <summary>Returns interection Vector2f, otherwise null.</summary>
+        public static dynamic LineIntersectLine(Vector2f A, Vector2f B, Vector2f E, Vector2f F, bool AsSegments = true)
+		{
+			Vector2f ip;
+            float a1, a2, b1, b2, c1, c2;
+		 
+			a1 = B.Y-A.Y;
+			b1 = A.X-B.X;
+			c1 = B.X*A.Y - A.X*B.Y;
+			a2 = F.Y-E.Y;
+			b2 = E.X-F.X;
+			c2 = F.X*E.Y - E.X*F.Y;
+		 
+			float denom = a1*b2 - a2*b1;
+			if (denom == 0)
+				return null;
+			
+			ip = new Vector2f();
+			ip.X = (b1*c2 - b2*c1)/denom;
+			ip.Y = (a2*c1 - a1*c2)/denom;
+		 
+			//---------------------------------------------------
+			// Do checks to see if intersection to endpoints
+			// distance is longer than actual Segments.
+			// Return null if it is with any.
+			//---------------------------------------------------
+            if (AsSegments)
+			{
+				if (   (int)(( ip.X - A.X ) * ( ip.X - B.X )) > 0
+					|| (int)(( ip.Y - A.Y ) * ( ip.Y - B.Y )) > 0
+					|| (int)(( ip.X - E.X ) * ( ip.X - F.X )) > 0
+                    || (int)((ip.Y - E.Y) * (ip.Y - F.Y)) > 0)
+					return null;
+			}
+			
+			return ip;
+		}
+
+        public static bool InBounds(FloatRect bounds, Vector2f point) { return point.X >= bounds.Left && point.Y >= bounds.Top && point.X <= bounds.Width && point.Y <= bounds.Height; }
+        /// <summary>Returns interection Vector2f, otherwise null.</summary>
+        public static dynamic RaycastAgainstBounds(FloatRect bounds, Vector2f point1, Vector2f point2)
+        {
+            dynamic intersect_top = LineIntersectLine(point1, point2, new Vector2f(bounds.Left, bounds.Top), new Vector2f(bounds.Width, bounds.Top));
+            dynamic intersect_bottom = LineIntersectLine(point1, point2, new Vector2f(bounds.Left, bounds.Height), new Vector2f(bounds.Width, bounds.Height));
+            dynamic intersect_left = LineIntersectLine(point1, point2, new Vector2f(bounds.Left, bounds.Top), new Vector2f(bounds.Left, bounds.Height));
+            dynamic intersect_right = LineIntersectLine(point1, point2, new Vector2f(bounds.Width, bounds.Top), new Vector2f(bounds.Width, bounds.Height));
+
+            if (intersect_left is Vector2f)
+                return intersect_left;
+            else if (intersect_right is Vector2f)
+                return intersect_right;
+            else if (intersect_top is Vector2f)
+                return intersect_top;
+            else if (intersect_bottom is Vector2f)
+                return intersect_bottom;
+
+            return null;
+        }
+
     }
 }

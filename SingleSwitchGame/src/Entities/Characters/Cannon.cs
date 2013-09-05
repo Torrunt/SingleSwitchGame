@@ -7,7 +7,8 @@ namespace SingleSwitchGame
 {
     class Cannon : Character
     {
-        public float RotateSpeed = 60;
+        public float AimSpeed = 5;
+        public float RotateSpeed = 45;
         private bool CanRotate = true;
         private Timer RotationDelayTimer;
 
@@ -73,11 +74,15 @@ namespace SingleSwitchGame
         {
             CanRotate = false;
             RotationDelayTimer.Stop();
+
+            AimAssistance.AimStart();
         }
         private void OnButtonReleased()
         {
-            Weapon.Fire(Utils.GetPointInDirection(Position, Rotation, 40), Rotation);
+            Weapon.Fire(Utils.GetPointInDirection(Position, Rotation, 40), Rotation, Utils.GetPointInDirection(Position, Rotation, AimAssistance.Reticle.Y));
             StartRotationDelay();
+
+            AimAssistance.AimEnd();
         }
 
 
@@ -87,7 +92,7 @@ namespace SingleSwitchGame
             KeyDown = false;
             for (Keyboard.Key i = Keyboard.Key.A; i <= Keyboard.Key.KeyCount; i++)
             {
-                if (i != Keyboard.Key.Escape && Keyboard.IsKeyPressed(i))
+                if (i != Keyboard.Key.Escape && i != Keyboard.Key.F11 && Keyboard.IsKeyPressed(i))
                 {
                     KeyDown = true;
                     break;

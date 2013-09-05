@@ -12,6 +12,8 @@ namespace SingleSwitchGame
         private int DrawListIndex = 0;
         public DisplayObject Parent = null;
 
+        public bool Visible = true;
+
         public int NumChildren { get { return Children.Count; } }
         public void AddChild(dynamic child)
         {
@@ -57,7 +59,10 @@ namespace SingleSwitchGame
         {
             states.Transform *= Transform;
             for (DrawListIndex = 0; DrawListIndex < Children.Count; DrawListIndex++)
-                Children[DrawListIndex].Draw(Target, states);
+            {
+                if (!(Children[DrawListIndex] is DisplayObject) || Children[DrawListIndex].Visible)
+                    Children[DrawListIndex].Draw(Target, states);
+            }
         }
 
         public float X
@@ -98,6 +103,7 @@ namespace SingleSwitchGame
             else
                 Rotation += amount;
         }
+
     }
 
     class Layer : DisplayObject { }
