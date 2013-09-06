@@ -7,8 +7,8 @@ namespace SingleSwitchGame
 {
     class Cannon : Character
     {
-        public float AimSpeed = 5;
-        public float RotateSpeed = 45;
+        public float AimSpeed = 300;
+        public float RotateSpeed = 35;
         private bool CanRotate = true;
         private Timer RotationDelayTimer;
 

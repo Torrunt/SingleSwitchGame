@@ -40,6 +40,7 @@ namespace SingleSwitchGame
         public HeadsUpDisplay HUD;
         public Cannon Player;
         public CircleShape Island;
+        public CircleWaves IslandWaves;
         public CircleShape Hill;
 
 
@@ -117,18 +118,22 @@ namespace SingleSwitchGame
             Island = new CircleShape(IslandRadius);
             Island.Origin = new Vector2f(IslandRadius, IslandRadius);
             Island.Position = new Vector2f(Window.Size.X / 2, Window.Size.Y / 2);
-            Island.FillColor = new Color(0, 0, 0, 0);
+            Island.FillColor = new Color(0, 0, 10, 30);
             Island.OutlineThickness = 2;
             Island.OutlineColor = new Color(250, 250, 250);
             Island.SetPointCount(80);
             Layer_Background.AddChild(Island);
+
+            IslandWaves = new CircleWaves(this, IslandRadius, 0.10f, 1.5f, 4, 80);
+            IslandWaves.Position = Island.Position;
+            Layer_Background.AddChild(IslandWaves);
             
                 // Hill
             float HillRadius = 30;
             Hill = new CircleShape(HillRadius);
             Hill.Origin = new Vector2f(HillRadius, HillRadius);
             Hill.Position = new Vector2f(Window.Size.X / 2, Window.Size.Y / 2);
-            Hill.FillColor = new Color(0, 0, 0, 0);
+            Hill.FillColor = new Color(0, 0, 10, 50);
             Hill.OutlineThickness = 2;
             Hill.OutlineColor = new Color(250, 250, 250);
             Hill.SetPointCount(50);
@@ -234,7 +239,7 @@ namespace SingleSwitchGame
         // Window Management
         public void CreateWindow()
         {
-            Window = new RenderWindow(new VideoMode(ResolutionDefault.X, ResolutionDefault.Y), "SingleSwitchGame", WindowStyle, WindowSettings);
+            Window = new RenderWindow(new VideoMode(ResolutionDefault.X, ResolutionDefault.Y), "Single Switch Game", WindowStyle, WindowSettings);
             Window.Closed += new EventHandler(OnClose);
             Window.KeyReleased += new EventHandler<KeyEventArgs>(OnKeyReleased);
             Window.MouseButtonPressed += new EventHandler<MouseButtonEventArgs>(OnMouseButtonPressed);
@@ -243,8 +248,8 @@ namespace SingleSwitchGame
             {
                 Window.Size = new Vector2u(VideoMode.DesktopMode.Width, VideoMode.DesktopMode.Height);
                 Window.Position = new Vector2i(0, 0);
-                float difference = (float)VideoMode.DesktopMode.Height / (float)ResolutionDefault.Y;
-                View view = new View(new FloatRect(-(VideoMode.DesktopMode.Width - (VideoMode.DesktopMode.Width * difference))/2, 0, ResolutionDefault.X * (2 - difference), ResolutionDefault.Y));
+                float difference = (float)ResolutionDefault.Y / (float)VideoMode.DesktopMode.Height;
+                View view = new View(new FloatRect((VideoMode.DesktopMode.Width - (ResolutionDefault.X * difference))/2, 0, ResolutionDefault.X * difference, ResolutionDefault.Y));
                 Window.SetView(view);
             }
             else

@@ -73,17 +73,17 @@ namespace SingleSwitchGame.GUI
             if (Aiming)
             {
                 // Aim Forward/Backward
-                if (AimDirection < 0 && Reticle.Y - SourceObject.AimSpeed <= RETICLE_START_Y)
+                if (AimDirection < 0 && Reticle.Y - (SourceObject.AimSpeed * dt) <= RETICLE_START_Y)
                 {
                     SetReticlePosition(RETICLE_START_Y);
                     AimDirection = 1;
                 }
-                else if (AimDirection > 0 && !Utils.InBounds(Game.Bounds, Utils.GetPointInDirection(Position, SourceObject.Rotation, Reticle.Y + SourceObject.AimSpeed)))
+                else if (AimDirection > 0 && !Utils.InBounds(Game.Bounds, Utils.GetPointInDirection(Position, SourceObject.Rotation, Reticle.Y + (SourceObject.AimSpeed * dt))))
                 {
                     AimDirection = -1;
                 }
                 else
-                    SetReticlePosition(Reticle.Y + (SourceObject.AimSpeed * AimDirection));
+                    SetReticlePosition(Reticle.Y + ((SourceObject.AimSpeed * AimDirection) * dt));
             }
             /*
             else

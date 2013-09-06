@@ -10,7 +10,6 @@ namespace SingleSwitchGame
     {
         private List<CircleShape> ExplosionWaves;
         private const int WAVE_AMOUNT = 4;
-        private const float START_RADIUS = 20;
         private const float GROW_SPEED = 0.04f;
         private float ExplosionRadius;
 
