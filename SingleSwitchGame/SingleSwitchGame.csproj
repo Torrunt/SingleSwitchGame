@@ -75,9 +75,11 @@
     <Compile Include="src\Effects\CircleWaves.cs" />
     <Compile Include="src\Effects\Explosion.cs" />
     <Compile Include="src\Entities\Characters\AI\ArtificialIntelligence.cs" />
+    <Compile Include="src\Entities\Characters\AI\InfantrymanAI.cs" />
     <Compile Include="src\Entities\Characters\Bat.cs" />
     <Compile Include="src\Entities\Characters\Cannon.cs" />
     <Compile Include="src\Entities\Characters\Character.cs" />
+    <Compile Include="src\Entities\Characters\Infantryman.cs" />
     <Compile Include="src\Entities\CollisionEntity.cs" />
     <Compile Include="src\Entities\Entity.cs" />
     <Compile Include="src\Entities\PhysicalEntity.cs" />

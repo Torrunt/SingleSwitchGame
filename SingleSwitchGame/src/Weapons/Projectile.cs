@@ -57,7 +57,6 @@ namespace SingleSwitchGame
             Move(Velocity.X * dt, Velocity.Y * dt);
 
             // Check Collisions
-
             if (HasTargetPosition && Utils.Distance(this, TargetPosition) < 10)
             {
                 // Hit Target Position

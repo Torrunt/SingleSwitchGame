@@ -50,6 +50,11 @@ namespace SingleSwitchGame
 			return answer;
 		}
 
+
+        ////----------------------
+        //// Collision Functions
+        ////----------------------
+
         /// <summary>Returns interection Vector2f, otherwise null.</summary>
         public static dynamic LineIntersectLine(Vector2f A, Vector2f B, Vector2f E, Vector2f F, bool AsSegments = true)
 		{
@@ -108,6 +113,40 @@ namespace SingleSwitchGame
 
             return null;
         }
+
+        /// <summary>Returns true if point is inside the circle.</summary>
+        public static bool InCircle(Vector2f circleCenter, float radius, Vector2f point)
+        {
+            double square_dist = Math.Pow(point.X - circleCenter.X, 2) + Math.Pow(point.Y - circleCenter.Y, 2);
+            return square_dist <= Math.Pow(radius, 2);
+        }
+        public static bool InCircle(CircleShape circle, Vector2f point) { return InCircle(circle.Position, circle.Radius, point); }
+
+        public static bool CircleCircleCollision(Vector2f circle1Center, float circle1Radius, Vector2f circle2Center, float circle2Radius)
+        {
+            float radius = circle1Radius + circle2Radius;
+            float deltaX = circle1Center.X - circle2Center.X;
+            float deltaY = circle1Center.Y - circle2Center.Y;
+            return (deltaX * deltaX) + (deltaY * deltaY) <= (radius * radius);
+        }
+        public static bool CircleCircleCollision(CircleShape circle1, CircleShape circle2) { return CircleCircleCollision(circle1.Position, circle1.Radius, circle2.Position, circle2.Radius); }
+
+        public static bool CircleRectangleCollision(Vector2f circleCenter, float circleRadius, RectangleShape rect, Vector2f rectOffset = default(Vector2f))
+        {
+            Vector2f distance = new Vector2f((float)Math.Abs(circleCenter.X - (rect.Position.X + rectOffset.X)), (float)Math.Abs(circleCenter.Y - (rect.Position.Y + rectOffset.Y)));
+            
+            if (distance.X > (rect.Size.X / 2 + circleRadius)) return false;
+            if (distance.Y > (rect.Size.Y / 2 + circleRadius)) return false;
+
+            if (distance.X <= (rect.Size.X / 2)) return true;
+            if (distance.Y <= (rect.Size.Y / 2)) return true;
+
+            double distance_sq = Math.Pow(distance.X - rect.Size.X / 2, 2) +
+                                 Math.Pow(distance.Y - rect.Size.Y / 2, 2);
+
+            return (distance_sq <= Math.Pow(circleRadius, 2));
+        }
+        public static bool CircleRectangleCollision(CircleShape circle, RectangleShape rect, Vector2f rectOffset = default(Vector2f)) { return CircleRectangleCollision(circle.Position, circle.Radius, rect, rectOffset); }
 
     }
 }

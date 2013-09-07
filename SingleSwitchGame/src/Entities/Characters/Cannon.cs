@@ -8,7 +8,9 @@ namespace SingleSwitchGame
     class Cannon : Character
     {
         public float AimSpeed = 300;
-        public float RotateSpeed = 35;
+        public float RotateSpeedMax = 35;
+        public float RotateAcc = 10;
+        private float RotateVelocity = 0;
         private bool CanRotate = true;
         private Timer RotationDelayTimer;
 
@@ -24,6 +26,7 @@ namespace SingleSwitchGame
             SetScale(0.5f, 0.5f);
             Origin = new Vector2f(26, 30);
             CanMove = false;
+            CanTakeDamage = false;
         }
         public override void Init()
         {
@@ -67,7 +70,11 @@ namespace SingleSwitchGame
             base.Update(dt);
 
             if (CanRotate)
-                Rotate(RotateSpeed * dt);
+            {
+                if (RotateVelocity < RotateSpeedMax)
+                    RotateVelocity = Math.Min(RotateVelocity + (RotateAcc * dt), RotateSpeedMax);
+                Rotate(RotateVelocity * dt);
+            }
         }
 
         private void OnButtonDown()
@@ -108,9 +115,10 @@ namespace SingleSwitchGame
         public void StartRotationDelay()
         {
             CanRotate = false;
+            RotateVelocity = 0;
             RotationDelayTimer.Start();
         }
-        protected virtual void OnRotationDelayEnd(Object source, ElapsedEventArgs e)
+        private void OnRotationDelayEnd(Object source, ElapsedEventArgs e)
         {
             RotationDelayTimer.Stop();
             CanRotate = true;

@@ -43,7 +43,12 @@ namespace SingleSwitchGame
                 {
                     RemoveChild(ExplosionWaves[i]);
                     ExplosionWaves.RemoveAt(i);
-                    if (i == ExplosionWaves.Count)
+                    if (ExplosionWaves.Count == 0)
+                    {
+                        Parent.RemoveChild(this);
+                        return;
+                    }
+                    else if (i == ExplosionWaves.Count)
                         continue;
                 }
                 

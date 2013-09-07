@@ -50,7 +50,7 @@ namespace SingleSwitchGame
             Children.Clear();
         }
 
-        public Object GetChildAt(int i) { return Children[i]; }
+        public dynamic GetChildAt(int i) { return Children[i]; }
 
         public virtual void OnAdded() { }
         public virtual void OnRemoved() { }

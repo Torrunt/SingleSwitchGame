@@ -11,13 +11,15 @@ namespace SingleSwitchGame
     {
         private List<CircleShape> Waves;
         private Timer WaveTimer;
-        private const int WAVE_FREQUENCY_MIN = 200;
-        private const int WAVE_FREQUENCY_MAX = 4000;
+        private const int WAVE_FREQUENCY_MIN = 250;
+        private const int WAVE_FREQUENCY_MAX = 5000;
         private const float SPEED = 0.0025f;
-        private const float FADE_MIN = 150;
+        private const float FADE_MIN = 130;
         private float Radius;
         private float ScaleMax = 2;
         private float ScaleOverlap;
+        private float ScaleOverlapReverse;
+        private List<bool> Reverse;
 
         private uint PointCount;
         private float Thickness;
@@ -40,7 +42,10 @@ namespace SingleSwitchGame
             this.PointCount = PointCount;
             this.Thickness = Thickness;
 
+            this.ScaleOverlapReverse = ScaleOverlap / 2;
+
             Waves = new List<CircleShape>();
+            Reverse = new List<bool>();
             WaveTimer = new Timer(Utils.RandomInt(WAVE_FREQUENCY_MIN, WAVE_FREQUENCY_MAX));
             WaveTimer.Elapsed += new ElapsedEventHandler(WaveTimerHandler);
             WaveTimer.Start();
@@ -55,21 +60,32 @@ namespace SingleSwitchGame
             // Update Waves (Scale and Fade)
             for (int i = 0; i < Waves.Count; i++)
             {
-                if (Waves[i].Scale.X <= 1 - ScaleOverlap)
+                if (!Reverse[i])
+                {
+                    if (Waves[i].Scale.X <= 1 - ScaleOverlap)
+                        Reverse[i] = true;
+                }
+                else if (Waves[i].Scale.X >= 1)
                 {
                     RemoveChild(Waves[i]);
                     Waves.RemoveAt(i);
+                    Reverse.RemoveAt(i);
                     if (i == Waves.Count)
                         continue;
                 }
 
-                float scale = Waves[i].Scale.X - SPEED;
-                Waves[i].Scale = new Vector2f(scale, scale);
+                float scale;
                 if (Waves[i].Scale.X <= 1)
-                    Waves[i].OutlineColor = new Color(255, 255, 255, (byte)(FADE_MIN - Math.Min(Math.Ceiling(FADE_MIN * Math.Abs(((scale-1) / ScaleOverlap) )), FADE_MIN))); // Fade out on beach
+                    scale = Waves[i].Scale.X - (SPEED * (Reverse[i] ? -0.4f : 0.6f));
+                else
+                    scale = Waves[i].Scale.X - SPEED;
+                Waves[i].Scale = new Vector2f(scale, scale);
+                if (Reverse[i])
+                    Waves[i].OutlineColor = new Color(255, 255, 255, (byte)((FADE_MIN / 2) - Math.Min((FADE_MIN / 2) * Math.Abs((scale - (1f - ScaleOverlap)) / ScaleOverlap), (FADE_MIN / 2)))); // Fade out going back out
+                else if (Waves[i].Scale.X <= 1)
+                    Waves[i].OutlineColor = new Color(255, 255, 255, (byte)(FADE_MIN - Math.Min(Math.Ceiling((FADE_MIN/2) * Math.Abs((scale-1) / ScaleOverlap)), FADE_MIN))); // Fade out a bit going in
                 else
                     Waves[i].OutlineColor = new Color(255, 255, 255, (byte)(FADE_MIN - Math.Min(Math.Ceiling(FADE_MIN * ((scale - 1) / (ScaleMax - 1))), FADE_MIN))); // Fade in approaching beach
-                //Console.WriteLine(Waves[i].OutlineColor);
             }
         }
 
@@ -77,6 +93,7 @@ namespace SingleSwitchGame
         {
             CircleShape wave = new CircleShape(Radius, PointCount);
             Waves.Add(wave);
+            Reverse.Add(false);
             wave.Origin = new Vector2f(Radius, Radius);
             wave.FillColor = new Color(0, 0, 0, 0);
             wave.OutlineThickness = Thickness;

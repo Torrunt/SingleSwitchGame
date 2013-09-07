@@ -12,7 +12,7 @@ namespace SingleSwitchGame
         public uint ProjectileAmount = 1;
         /// <summary>If ProjectileAmount > 1, additional projetiles will be offset by this value (angle). </summary>
         public float ProjectileOffset = 10;
-        public uint ProjectileLifeSpan = 2000;
+        public uint ProjectileLifeSpan = 3000;
 
         public bool CanShoot = true;
 

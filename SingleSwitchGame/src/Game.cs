@@ -110,21 +110,21 @@ namespace SingleSwitchGame
             // Background
             Sprite BluePrintBackground = Graphics.GetSprite("assets/sprites/background_blueprint_tile.png");
             BluePrintBackground.Texture.Repeated = true;
-            BluePrintBackground.TextureRect = new IntRect(0, 0, (int)Window.Size.X, (int)Window.Size.Y);
+            BluePrintBackground.TextureRect = new IntRect(0, 0, (int)Size.X, (int)Size.Y);
             Layer_Background.AddChild(BluePrintBackground);
             
                 // Island
             float IslandRadius = 240;
             Island = new CircleShape(IslandRadius);
             Island.Origin = new Vector2f(IslandRadius, IslandRadius);
-            Island.Position = new Vector2f(Window.Size.X / 2, Window.Size.Y / 2);
+            Island.Position = new Vector2f(Size.X / 2, Size.Y / 2);
             Island.FillColor = new Color(0, 0, 10, 30);
             Island.OutlineThickness = 2;
             Island.OutlineColor = new Color(250, 250, 250);
             Island.SetPointCount(80);
             Layer_Background.AddChild(Island);
 
-            IslandWaves = new CircleWaves(this, IslandRadius, 0.10f, 1.5f, 4, 80);
+            IslandWaves = new CircleWaves(this, IslandRadius, 0.07f, 1.5f, 4, 80);
             IslandWaves.Position = Island.Position;
             Layer_Background.AddChild(IslandWaves);
             
@@ -132,7 +132,7 @@ namespace SingleSwitchGame
             float HillRadius = 30;
             Hill = new CircleShape(HillRadius);
             Hill.Origin = new Vector2f(HillRadius, HillRadius);
-            Hill.Position = new Vector2f(Window.Size.X / 2, Window.Size.Y / 2);
+            Hill.Position = new Vector2f(Size.X / 2, Size.Y / 2);
             Hill.FillColor = new Color(0, 0, 10, 50);
             Hill.OutlineThickness = 2;
             Hill.OutlineColor = new Color(250, 250, 250);
@@ -141,7 +141,7 @@ namespace SingleSwitchGame
             
             // Player (Cannon)
             Player = new Cannon(this);
-            Player.SetPosition(Window.Size.X / 2, Window.Size.Y / 2);
+            Player.SetPosition(Size.X / 2, Size.Y / 2);
             Layer_Objects.AddChild(Player);
             Player.SetPlayer(true);
 
@@ -150,6 +150,10 @@ namespace SingleSwitchGame
             Layer_GUI.AddChild(HUD);
 
             // Test
+            Infantryman Test = new Infantryman(this);
+            Test.SetPosition((Size.X / 2) + Island.Radius - 8, (Size.Y / 2));
+            Layer_Objects.AddChild(Test);
+
                 // Add Bat, make it the player
             Bat Bat = new Bat(this);
             Bat.SetPosition(100, 100);
@@ -172,6 +176,8 @@ namespace SingleSwitchGame
             
             //Music music = new Music(@"assets/sound/OrchestralTheme1.ogg");
             //music.Play();
+
+            //Debug_ShowCollision();
         }
         public void Stop()
         {
@@ -209,6 +215,9 @@ namespace SingleSwitchGame
 
         public void Update(float dt)
         {
+            if (!Running)
+                return;
+
             for (UpdateListIndex = 0; UpdateListIndex < UpdateList.Count; UpdateListIndex++)
                 UpdateList[UpdateListIndex].Update(dt);
         }
@@ -234,6 +243,16 @@ namespace SingleSwitchGame
         public bool IsRunning() { return Running; }
 
         public Vector2u Size { get { return ResolutionDefault; } set {} }
+
+        // Debugging / Testing
+        public void Debug_ShowCollision(bool value = true)
+        {
+            for (int i = 0; i < Layer_Objects.NumChildren; i++)
+            {
+                if (Layer_Objects.GetChildAt(i) is CollisionEntity)
+                    Layer_Objects.GetChildAt(i).Debug_ShowCollision(value);
+            }
+        }
 
 
         // Window Management
@@ -277,6 +296,12 @@ namespace SingleSwitchGame
         {
             switch (e.Code)
             {
+                case Keyboard.Key.Escape:
+                    if (Running)
+                        Pause();
+                    else
+                        Resume();
+                    break;
                 case Keyboard.Key.F11: ToggleFullscreen(); break;
             }
         }

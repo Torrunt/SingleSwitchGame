@@ -1,4 +1,5 @@
 ﻿using SFML.Window;
+using SFML.Graphics;
 
 namespace SingleSwitchGame
 {
@@ -8,6 +9,9 @@ namespace SingleSwitchGame
             : base(Game, Graphics.GetSprite("assets/sprites/testing/bat.png"))
         {
             Origin = new Vector2f(75, 90);
+            Collision = new RectangleShape(new Vector2f(Model.TextureRect.Width, Model.TextureRect.Height));
+
+            TurnAroundOnMove = true;
         }
 
         public override void Update(float dt)

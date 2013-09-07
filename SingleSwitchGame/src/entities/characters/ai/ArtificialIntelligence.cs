@@ -11,11 +11,16 @@ namespace SingleSwitchGame
         protected Character Obj;
 
         public Entity Target;
+        public bool HasWayPoint = false;
         public Vector2f Waypoint;
         protected List<Vector2f> WaypointPath;
         protected Vector2f T;
 
+        public bool UpdateMoveAngle = true;
+
         public Vector2f Range;
+        /// <summary>Set to true by Character if next move was going to go past the Target.</summary>
+        public bool ForcedStop = false;
 
         private Timer TickTimer;
 
@@ -24,6 +29,8 @@ namespace SingleSwitchGame
         {
             this.Game = Game;
             this.Obj = obj;
+
+            this.Obj.DefaultVelocityApplication = false;
 
             Target = null;
             Waypoint = new Vector2f(-1, -1);
@@ -51,6 +58,9 @@ namespace SingleSwitchGame
                 return;
 
             // Move Towards Target/Waypoint
+            if (!Obj.DefaultVelocityApplication && UpdateMoveAngle)
+                Obj.MoveAngle = (float)Utils.GetAngle(Obj.Position, T, false);
+
             Obj.MoveRight = (Obj.X + Range.X < T.X);
             Obj.MoveLeft = (Obj.X - Range.X > T.X);
             if (Obj.CanMoveVertically)
@@ -59,11 +69,21 @@ namespace SingleSwitchGame
                 Obj.MoveDown = (Obj.Y + Range.Y < T.Y);
             }
             
-            if (Target == null && !Obj.IsMoving())
+            if (Target == null && (ForcedStop || !Obj.IsMoving()))
             {
                 // On Reach Waypoint
                 OnWaypointReached();
             }
+        }
+
+        public dynamic GetTarget()
+        {
+            if (Target != null)
+                return Target.Position;
+            else if (!Waypoint.Equals(new Vector2f(-1, -1)))
+                return Waypoint;
+
+            return null;
         }
 
         public void SetTarget(Entity target)
@@ -75,6 +95,7 @@ namespace SingleSwitchGame
         {
             Waypoint = point;
             Target = null;
+            HasWayPoint = true;
         }
         public void AddWaypointToPath(Vector2f point)
         {
@@ -96,10 +117,16 @@ namespace SingleSwitchGame
                 if (WaypointPath.Count != 0)
                     SetWaypoint(WaypointPath[0]);
                 else
+                {
                     Waypoint = new Vector2f(-1, -1);
+                    HasWayPoint = false;
+                }
             }
             else
+            {
                 Waypoint = new Vector2f(-1, -1);
+                HasWayPoint = false;
+            }
         }
 
 

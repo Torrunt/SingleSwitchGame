@@ -13,7 +13,7 @@ namespace SingleSwitchGame
         // Movement
         public bool CanMove = true;
         public bool CanMoveVertically = true;
-        public bool TurnAroundOnMove = true;
+        public bool TurnAroundOnMove = false;
 
         public bool MoveLeft = false;
         public bool MoveRight = false;
@@ -46,18 +46,44 @@ namespace SingleSwitchGame
 
             if (CanMove)
             {
-                // Movement
-                if (MoveLeft && Velocity.X > -SpeedMax)
-                    Velocity.X = Math.Max(Velocity.X - (Acc * dt), -SpeedMax);
-                if (MoveRight && Velocity.X < SpeedMax)
-                    Velocity.X = Math.Min(Velocity.X + (Acc * dt), SpeedMax);
-                
-                if (CanMoveVertically)
+                if (DefaultVelocityApplication)
                 {
-                    if (MoveUp && Velocity.Y > -SpeedMax)
-                        Velocity.Y = Math.Max(Velocity.Y - (Acc * dt), -SpeedMax);
-                    if (MoveDown && Velocity.Y < SpeedMax)
-                        Velocity.Y = Math.Min(Velocity.Y + (Acc * dt), SpeedMax);
+                    // Movement
+                    if (MoveLeft && Velocity.X > -SpeedMax)
+                        Velocity.X = Math.Max(Velocity.X - (Acc * dt), -SpeedMax);
+                    if (MoveRight && Velocity.X < SpeedMax)
+                        Velocity.X = Math.Min(Velocity.X + (Acc * dt), SpeedMax);
+
+                    if (CanMoveVertically)
+                    {
+                        if (MoveUp && Velocity.Y > -SpeedMax)
+                            Velocity.Y = Math.Max(Velocity.Y - (Acc * dt), -SpeedMax);
+                        if (MoveDown && Velocity.Y < SpeedMax)
+                            Velocity.Y = Math.Min(Velocity.Y + (Acc * dt), SpeedMax);
+                    }
+                }
+                else if (IsMoving())
+                {
+                    // AI Movement - Stop if next move is going to go past Target
+                    if (AI != null && (AI.Target != null || AI.HasWayPoint))
+                    {
+                        AI.ForcedStop = true;
+                        Vector2f nextPos = new Vector2f(X + ((float)Math.Cos(MoveAngle) * (MoveAngleVelocity * dt)), Y + ((float)Math.Sin(MoveAngle) * (MoveAngleVelocity * dt)));
+                        if (MoveLeft && nextPos.X < AI.GetTarget().X - AI.Range.X)
+                            MoveLeft = false;
+                        else if (MoveRight && nextPos.X > AI.GetTarget().X + AI.Range.X)
+                            MoveRight = false;
+                        else if (MoveUp && nextPos.Y < AI.GetTarget().Y - AI.Range.Y)
+                            MoveUp = false;
+                        else if (MoveDown && nextPos.Y > AI.GetTarget().Y + AI.Range.Y)
+                            MoveDown = false;
+                        else
+                            AI.ForcedStop = false;
+                    }
+
+                    // Movement
+                    if (MoveAngleVelocity < SpeedMax && IsMoving())
+                        MoveAngleVelocity = Math.Min(MoveAngleVelocity + (Acc *dt), SpeedMax);
                 }
 
                 // Flip Horizontally based on movement direction
