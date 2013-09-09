@@ -8,7 +8,7 @@ namespace SingleSwitchGame
     {
 
         private static readonly Random rnd = new Random();
-        public static int RandomInt(int min = 0, int max = 1) { return rnd.Next(min, max); }
+        public static int RandomInt(int min = 0, int max = 1) { return rnd.Next(min, max+1); }
 
         public static float StepTo(float no, float to, float by)
         {

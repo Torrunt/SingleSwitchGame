@@ -96,6 +96,7 @@ namespace SingleSwitchGame
             Reverse.Add(false);
             wave.Origin = new Vector2f(Radius, Radius);
             wave.FillColor = new Color(0, 0, 0, 0);
+            wave.OutlineColor = new Color(0, 0, 0, 0);
             wave.OutlineThickness = Thickness;
             wave.Scale = new Vector2f(ScaleMax, ScaleMax);
 

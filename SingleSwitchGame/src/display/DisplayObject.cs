@@ -43,10 +43,11 @@ namespace SingleSwitchGame
                 }
             }
         }
+        public void RemoveChildAt(int index) { RemoveChild(GetChildAt(index)); }
         public void Clear()
         {
-            foreach (dynamic child in Children)
-                RemoveChild(child);
+            for (int i = 0; i < Children.Count; i++)
+                RemoveChildAt(i);
             Children.Clear();
         }
 

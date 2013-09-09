@@ -85,6 +85,15 @@ namespace SingleSwitchGame.GUI
                 else
                     SetReticlePosition(Reticle.Y + ((SourceObject.AimSpeed * AimDirection) * dt));
             }
+            else if (Reticle.Y != RETICLE_START_Y)
+            {
+                // Move back into position after firing
+                if (Reticle.Y - ((SourceObject.AimSpeed * 4) * dt) <= RETICLE_START_Y)
+                    SetReticlePosition(RETICLE_START_Y);
+                else
+                    SetReticlePosition(Reticle.Y - ((SourceObject.AimSpeed * 4) * dt));
+            }
+
             /*
             else
             {
@@ -99,13 +108,13 @@ namespace SingleSwitchGame.GUI
         {
             Aiming = true;
             SetReticlePosition(RETICLE_START_Y);
+            AimDirection = 1;
             Reticle.Visible = true; 
         }
         public void AimEnd()
         {
             Aiming = false;
             Reticle.Visible = false;
-            SetReticlePosition(RETICLE_START_Y);
         }
 
         public void SetReticlePosition(float y)

@@ -20,13 +20,13 @@ namespace SingleSwitchGame
             HealthMax = 4000;
             Health = HealthMax;
 
-            SpeedMax = 100.0f;
-            Acc = 400.0f;
-            //SpeedMax = 20.0f;
-            //Acc = 80.0f;
+            //SpeedMax = 100.0f;
+            //Acc = 400.0f;
+            SpeedMax = 20.0f;
+            Acc = 80.0f;
             Friction = 1000.0f;
 
-            SetAI(new InfantrymanAI());
+            SetAI(new InfantrymanAI(Game));
         }
 
         public override void Update(float dt)

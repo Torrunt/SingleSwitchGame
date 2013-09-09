@@ -29,9 +29,9 @@ namespace SingleSwitchGame
         }
         public override void Deinit()
         {
-            base.Deinit();
-
             SetAI(null);
+
+            base.Deinit();
         }
 
         public override void Update(float dt)
@@ -65,7 +65,7 @@ namespace SingleSwitchGame
                 else if (IsMoving())
                 {
                     // AI Movement - Stop if next move is going to go past Target
-                    if (AI != null && (AI.Target != null || AI.HasWayPoint))
+                    if (AI != null && (AI.Target != null || AI.HasWaypoint))
                     {
                         AI.ForcedStop = true;
                         Vector2f nextPos = new Vector2f(X + ((float)Math.Cos(MoveAngle) * (MoveAngleVelocity * dt)), Y + ((float)Math.Sin(MoveAngle) * (MoveAngleVelocity * dt)));
@@ -107,7 +107,7 @@ namespace SingleSwitchGame
             if (AI != null)
             {
                 this.AI = AI;
-                this.AI.Init(Game, this);
+                AI.Init(this);
             }
             else if (this.AI != null)
                 this.AI.Deinit();

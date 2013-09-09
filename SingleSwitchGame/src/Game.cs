@@ -165,7 +165,7 @@ namespace SingleSwitchGame
             Bat2.Model.Color = new Color(255, 150, 150);
             Bat2.SetPosition(300, 300);
             Layer_Objects.AddChild(Bat2);
-            Bat2.SetAI(new ArtificialIntelligence());
+            Bat2.SetAI(new ArtificialIntelligence(this));
             Bat2.AI.SetTarget(Bat);
             //bat2.ai.AddWaypointsToPath(new SFML.Window.Vector2f(500, 300), new SFML.Window.Vector2f(500, 100), new SFML.Window.Vector2f(200, 150));
 
