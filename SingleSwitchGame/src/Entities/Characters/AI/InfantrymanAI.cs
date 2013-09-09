@@ -22,7 +22,8 @@ namespace SingleSwitchGame
             {
                 // Calculate random path to Hill
                 int pointCount = Utils.RandomInt(10, 20);
-                Vector2f destination = Utils.GetPointInDirection(Game.Hill.Position, (float)Utils.GetAngle(Game.Hill.Position, Obj.Position), Game.Hill.Radius - 2);
+                float originalAngle = (float)Utils.GetAngle(Game.Hill.Position, Obj.Position);
+                Vector2f destination = Utils.GetPointInDirection(Game.Hill.Position, originalAngle, Game.Hill.Radius - 2);
                 float originalDistance = Utils.Distance(Obj.Position, destination);
 
                 Vector2f pos;
@@ -30,7 +31,7 @@ namespace SingleSwitchGame
                 {
                     pos = Utils.GetPointInDirection(Obj.Position, (float)(Utils.GetAngle(Obj.Position, destination)), (originalDistance / pointCount) * (i + 1));
                     if (i != pointCount - 1 && (i + 1) % 2 == 0)
-                        pos += Utils.GetPointInDirection(new Vector2f(), Utils.RandomInt() == 1 ? 90 : -90, Utils.RandomInt(10, 60));
+                        pos += Utils.GetPointInDirection(new Vector2f(), originalAngle + (Utils.RandomInt() == 1 ? 90 : -90), Utils.RandomInt(10, 60));
                     AddWaypointToPath(pos);
                 }
 

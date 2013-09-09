@@ -79,6 +79,7 @@ namespace SingleSwitchGame
                 // On Reach Waypoint
                 OnWaypointReached();
                 ForcedStop = false;
+                Obj.StopMoving();
             }
         }
         protected virtual void Tick(Object source, ElapsedEventArgs e)

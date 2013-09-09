@@ -101,6 +101,13 @@ namespace SingleSwitchGame
         public override bool IsMoving() { return MoveLeft || MoveRight || MoveUp || MoveDown; }
         public override bool IsMovingHorizontally() { return MoveLeft || MoveRight; }
         public override bool IsMovingVertically() { return MoveUp || MoveDown; }
+        public void StopMoving()
+        {
+            MoveLeft = false;
+            MoveRight = false;
+            MoveUp = false;
+            MoveDown = false;
+        }
 
         public void SetAI(ArtificialIntelligence AI)
         {

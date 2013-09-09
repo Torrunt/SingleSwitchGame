@@ -154,6 +154,10 @@ namespace SingleSwitchGame
             Test.SetPosition((Size.X / 2) + Island.Radius - 8, (Size.Y / 2));
             Layer_Objects.AddChild(Test);
 
+            Test = new Infantryman(this);
+            Test.SetPosition((Size.X / 2), (Size.Y / 2) + IslandRadius - 8);
+            Layer_Objects.AddChild(Test);
+
                 // Add Bat, make it the player
             Bat Bat = new Bat(this);
             Bat.SetPosition(100, 100);
