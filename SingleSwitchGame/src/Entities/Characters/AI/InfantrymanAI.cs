@@ -35,7 +35,7 @@ namespace SingleSwitchGame
                     AddWaypointToPath(pos);
                 }
 
-                Debug_ShowWaypoints();
+                //Debug_ShowWaypoints();
             }
 
             base.Tick(source, e);

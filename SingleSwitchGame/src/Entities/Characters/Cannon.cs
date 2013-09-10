@@ -14,6 +14,8 @@ namespace SingleSwitchGame
         private bool CanRotate = true;
         private Timer RotationDelayTimer;
 
+        private int Score;
+
         private bool KeyDown = false;
         private bool KeyWasDown = false;
         
@@ -122,6 +124,13 @@ namespace SingleSwitchGame
         {
             RotationDelayTimer.Stop();
             CanRotate = true;
+        }
+
+
+        public void IncreaseScore(int points)
+        {
+            Score += points;
+            Game.HUD.SetScore(Score);
         }
 
     }

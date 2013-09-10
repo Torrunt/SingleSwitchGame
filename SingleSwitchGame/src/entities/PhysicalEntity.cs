@@ -105,9 +105,9 @@ namespace SingleSwitchGame
         public uint HealthMax { get { return _HealthMax; } set { _HealthMax = value; } }
         /// <param name="sourceObject">Who caused the damage (eg: who get's the credit?).</param>
         /// <param name="hitObject">What caused the damage (eg: a projectile?).</param>
-        public virtual uint Damage(uint amount, uint damageType = 0, Object sourceObject = null, Object hitObject = null)
+        public virtual uint Damage(uint amount, uint damageType = 0, dynamic sourceObject = null, Object hitObject = null)
         {
-            if (!CanTakeDamage)
+            if (!CanTakeDamage || IsDead())
                 return Health;
 
             if (amount >= Health)
@@ -118,6 +118,7 @@ namespace SingleSwitchGame
             if (Health == 0)
             {
                 // Dead
+                OnDeath(sourceObject);
                 if (RemoveOnDeath)
                     Parent.RemoveChild(this);
             }
@@ -132,6 +133,7 @@ namespace SingleSwitchGame
             return Health;
         }
         public bool IsDead() { return Health == 0; }
+        protected virtual void OnDeath(dynamic sourceObject = null) { }
 
         public bool FlashOnDamage
         {

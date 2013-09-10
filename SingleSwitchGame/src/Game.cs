@@ -37,6 +37,7 @@ namespace SingleSwitchGame
         public Layer Layer_BlackBars;
 
         // Objects
+        public AIManager AIManager;
         public HeadsUpDisplay HUD;
         public Cannon Player;
         public CircleShape Island;
@@ -97,6 +98,10 @@ namespace SingleSwitchGame
             Layer_GUI = new Layer();
             Layer_BlackBars = new Layer();
 
+            // Managers
+            AIManager = new AIManager(this);
+            AIManager.StartTestInfantryTimer();
+
             // Black Bars (for fullscreen)
             RectangleShape BlackBarLeft = new RectangleShape(new Vector2f(2000, 5000));
             BlackBarLeft.Position = new Vector2f(-BlackBarLeft.Size.X, 0);
@@ -150,6 +155,7 @@ namespace SingleSwitchGame
             Layer_GUI.AddChild(HUD);
 
             // Test
+            /*
             Infantryman Test = new Infantryman(this);
             Test.SetPosition((Size.X / 2) + Island.Radius - 8, (Size.Y / 2));
             Layer_Objects.AddChild(Test);
@@ -158,6 +164,12 @@ namespace SingleSwitchGame
             Test.SetPosition((Size.X / 2), (Size.Y / 2) + IslandRadius - 8);
             Layer_Objects.AddChild(Test);
 
+            Test = new Infantryman(this);
+            Test.SetPosition(Utils.GetPointInDirection(Island.Position, 135, Island.Radius));
+            Layer_Objects.AddChild(Test);
+            */
+
+            /*
                 // Add Bat, make it the player
             Bat Bat = new Bat(this);
             Bat.SetPosition(100, 100);
@@ -177,6 +189,7 @@ namespace SingleSwitchGame
             Text Text = new Text("Single Switch Game", TidyHand, 60);
             Text.Position = new Vector2f(4, 2);
             Layer_GUI.AddChild(Text);
+            */
             
             //Music music = new Music(@"assets/sound/OrchestralTheme1.ogg");
             //music.Play();
