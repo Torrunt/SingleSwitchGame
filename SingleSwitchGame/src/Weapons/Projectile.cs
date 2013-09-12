@@ -25,8 +25,8 @@ namespace SingleSwitchGame
         public Projectile(Game Game, dynamic model, ProjectileWeapon weapon)
             : base(Game, (object)model)
         {
-            this.Weapon = weapon;
-            this.SourceObject = weapon.SourceObject;
+            Weapon = weapon;
+            SourceObject = weapon.SourceObject;
 
             Velocity = new Vector2f();
             LastPos = new Vector2f();
@@ -61,7 +61,6 @@ namespace SingleSwitchGame
             {
                 // Hit Target Position
                 OnProjectileCollision();
-                return;
             }
         }
 
@@ -82,10 +81,12 @@ namespace SingleSwitchGame
         {
             LifeSpanTimer = new Timer(LifeSpan);
             LifeSpanTimer.Start();
-            LifeSpanTimer.Elapsed += new ElapsedEventHandler(OnLifeSpanEnd);
+            LifeSpanTimer.Elapsed += OnLifeSpanEnd;
         }
         private void OnLifeSpanEnd(Object source, ElapsedEventArgs e)
         {
+            Weapon.OnProjectileLifeEnd();
+
             LifeSpanTimer.Stop();
             LifeSpanTimer.Dispose();
             LifeSpanTimer = null;

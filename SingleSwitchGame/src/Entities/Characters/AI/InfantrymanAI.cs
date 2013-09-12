@@ -46,6 +46,8 @@ namespace SingleSwitchGame
             if (Utils.CircleCircleCollision(Obj.Position, Obj.Model.Radius, Game.Hill.Position, Game.Hill.Radius))
             {
                 // Reached Hill
+                if (Game.Player != null)
+                    Game.Player.Damage(1);
                 Obj.Parent.RemoveChild(Obj);
                 return;
             }

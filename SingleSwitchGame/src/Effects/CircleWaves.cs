@@ -47,7 +47,7 @@ namespace SingleSwitchGame
             Waves = new List<CircleShape>();
             Reverse = new List<bool>();
             WaveTimer = new Timer(Utils.RandomInt(WAVE_FREQUENCY_MIN, WAVE_FREQUENCY_MAX));
-            WaveTimer.Elapsed += new ElapsedEventHandler(WaveTimerHandler);
+            WaveTimer.Elapsed += WaveTimerHandler;
             WaveTimer.Start();
 
             AddWave();

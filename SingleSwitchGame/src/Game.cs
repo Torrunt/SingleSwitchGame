@@ -11,6 +11,7 @@ namespace SingleSwitchGame
     {
         // Window
         public RenderWindow Window;
+        public event EventHandler NewWindow;
         private ContextSettings WindowSettings;
         private Styles WindowStyle;
         private readonly Vector2u ResolutionDefault = new Vector2u(1920, 1440/*1080*/);
@@ -32,6 +33,7 @@ namespace SingleSwitchGame
 
         // Layers
         public Layer Layer_Background;
+        public Layer Layer_Other;
         public Layer Layer_Objects;
         public Layer Layer_GUI;
         public Layer Layer_BlackBars;
@@ -56,6 +58,17 @@ namespace SingleSwitchGame
             WindowSettings.AntialiasingLevel = 6;
             WindowStyle = Styles.Close;
             CreateWindow();
+
+            // Black Bars (for fullscreen)
+            Layer_BlackBars = new Layer();
+            RectangleShape BlackBarLeft = new RectangleShape(new Vector2f(2000, 5000));
+            BlackBarLeft.Position = new Vector2f(-BlackBarLeft.Size.X, 0);
+            BlackBarLeft.FillColor = new Color(0, 0, 0);
+            Layer_BlackBars.AddChild(BlackBarLeft);
+            RectangleShape BlackBarRight = new RectangleShape(new Vector2f(2000, 5000));
+            BlackBarRight.Position = new Vector2f(Size.X, 0);
+            BlackBarRight.FillColor = new Color(0, 0, 0);
+            Layer_BlackBars.AddChild(BlackBarRight);
 
             // Start Game
             Start();
@@ -94,23 +107,13 @@ namespace SingleSwitchGame
             Running = true;
 
             Layer_Background = new Layer();
+            Layer_Other = new Layer();
             Layer_Objects = new Layer();
             Layer_GUI = new Layer();
-            Layer_BlackBars = new Layer();
 
             // Managers
             AIManager = new AIManager(this);
             AIManager.StartTestInfantryTimer();
-
-            // Black Bars (for fullscreen)
-            RectangleShape BlackBarLeft = new RectangleShape(new Vector2f(2000, 5000));
-            BlackBarLeft.Position = new Vector2f(-BlackBarLeft.Size.X, 0);
-            BlackBarLeft.FillColor = new Color(0, 0, 0);
-            Layer_BlackBars.AddChild(BlackBarLeft);
-            RectangleShape BlackBarRight = new RectangleShape(new Vector2f(2000, 5000));
-            BlackBarRight.Position = new Vector2f(Size.X, 0);
-            BlackBarRight.FillColor = new Color(0, 0, 0);
-            Layer_BlackBars.AddChild(BlackBarRight);
 
             // Background
             Sprite BluePrintBackground = Graphics.GetSprite("assets/sprites/background_blueprint_tile.png");
@@ -149,11 +152,12 @@ namespace SingleSwitchGame
             Player.SetPosition(Size.X / 2, Size.Y / 2);
             Layer_Objects.AddChild(Player);
             Player.SetPlayer(true);
-
+            
             // HUD
             HUD = new HeadsUpDisplay(this);
+            HUD.SetHealth(Player.Health);
             Layer_GUI.AddChild(HUD);
-
+            
             // Test
             /*
             Infantryman Test = new Infantryman(this);
@@ -190,7 +194,7 @@ namespace SingleSwitchGame
             Text.Position = new Vector2f(4, 2);
             Layer_GUI.AddChild(Text);
             */
-            
+
             //Music music = new Music(@"assets/sound/OrchestralTheme1.ogg");
             //music.Play();
 
@@ -203,15 +207,27 @@ namespace SingleSwitchGame
             Started = false;
             Running = false;
 
+            // Managers
+            AIManager.StopTestInfantryTimer();
+            AIManager = null;
+
+            // Layers
             Layer_Background.Clear();
+            Layer_Other.Clear();
             Layer_Objects.Clear();
             Layer_GUI.Clear();
+
+            Player = null;
+            HUD = null;
+
+            UpdateListIndex = 0;
         }
         public void Reset() { Stop(); Start(); }
 
         public void Draw()
         {
             Window.Draw(Layer_Background);
+            Window.Draw(Layer_Other);
             Window.Draw(Layer_Objects);
             Window.Draw(Layer_GUI);
             Window.Draw(Layer_BlackBars);
@@ -276,10 +292,10 @@ namespace SingleSwitchGame
         public void CreateWindow()
         {
             Window = new RenderWindow(new VideoMode(ResolutionDefault.X, ResolutionDefault.Y), "Single Switch Game", WindowStyle, WindowSettings);
-            Window.Closed += new EventHandler(OnClose);
-            Window.KeyReleased += new EventHandler<KeyEventArgs>(OnKeyReleased);
-            Window.MouseButtonPressed += new EventHandler<MouseButtonEventArgs>(OnMouseButtonPressed);
-
+            Window.Closed += OnClose;
+            Window.KeyReleased += OnKeyReleased;
+            Window.MouseButtonPressed += OnMouseButtonPressed;
+            
             if (WindowStyle == Styles.None)
             {
                 Window.Size = new Vector2u(VideoMode.DesktopMode.Width, VideoMode.DesktopMode.Height);
@@ -294,6 +310,9 @@ namespace SingleSwitchGame
                 Window.Position = new Vector2i((int)((VideoMode.DesktopMode.Width - WindowSizeDefault.X) / 2), (int)((VideoMode.DesktopMode.Height - WindowSizeDefault.Y) / 2));
                 Window.SetView(Window.DefaultView);
             }
+
+            if (NewWindow != null)
+                NewWindow(this, EventArgs.Empty);
         }
         void OnClose(Object sender, EventArgs e)
         {

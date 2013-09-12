@@ -6,8 +6,9 @@ using SFML.Graphics;
 
 namespace SingleSwitchGame
 {
-    class ArtificialIntelligence : Entity
+    class ArtificialIntelligence
     {
+        protected Game Game;
         protected Character Obj;
 
         public Entity Target;
@@ -24,12 +25,15 @@ namespace SingleSwitchGame
 
         private Timer TickTimer;
 
-        public ArtificialIntelligence(Game Game) : base(Game) { }
+        public ArtificialIntelligence(Game game)
+        {
+            Game = game;
+        }
 
         public virtual void Init(Character obj)
         {
-            this.Obj = obj;
-               Obj.DefaultVelocityApplication = false;
+            Obj = obj;
+            Obj.DefaultVelocityApplication = false;
 
             Target = null;
             Waypoint = new Vector2f(-1, -1);
@@ -39,20 +43,22 @@ namespace SingleSwitchGame
 
             TickTimer = new Timer(500); // Thinks every 500ms
             TickTimer.AutoReset = false;
-            TickTimer.Elapsed += new ElapsedEventHandler(Tick);
+            TickTimer.Elapsed += Tick;
             TickTimer.Start();
         }
-        public override void Deinit()
+        public void Deinit()
         {
-            base.Deinit();
-
-            TickTimer.Stop();
-            TickTimer.Dispose();
+            if (TickTimer != null)
+            {
+                TickTimer.Stop();
+                TickTimer.Dispose();
+                TickTimer = null;
+            }
 
             Debug_ShowWaypoints(false);
         }
 
-        public override void Update(float dt)
+        public virtual void Update(float dt)
         {
             // Get T (Waypoint or Target)
             if (Target != null)
@@ -84,8 +90,8 @@ namespace SingleSwitchGame
         }
         protected virtual void Tick(Object source, ElapsedEventArgs e)
         {
-            /// Put stuff that doesn't need to happen very often in here
-            /// Such as looking for targets, checking if the current target went behind a wall, etc.
+            // Put stuff that doesn't need to happen very often in here
+            // Such as looking for targets, checking if the current target went behind a wall, etc.
 
             TickTimer.Start();
         }
@@ -102,7 +108,7 @@ namespace SingleSwitchGame
 
         public void SetTarget(Entity target)
         {
-            this.Target = target;
+            Target = target;
         }
 
         public void SetWaypoint(Vector2f point)
@@ -157,7 +163,7 @@ namespace SingleSwitchGame
             if (Debug_ShowingWaypoints)
             {
                 Debug_Waypoints = new DisplayObject();
-                Game.Layer_Objects.AddChild(Debug_Waypoints);
+                Game.Layer_Other.AddChild(Debug_Waypoints);
 
                 Debug_ShowWaypointsUpdate();
             }

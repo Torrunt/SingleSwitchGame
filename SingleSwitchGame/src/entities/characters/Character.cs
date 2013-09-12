@@ -30,6 +30,7 @@ namespace SingleSwitchGame
         public override void Deinit()
         {
             SetAI(null);
+            SetPlayer(false);
 
             base.Deinit();
         }
@@ -41,8 +42,8 @@ namespace SingleSwitchGame
             if (IsDead())
                 return;
 
-            if (Player)
-                PlayerControls();
+            if (AI != null)
+                AI.Update(dt);
 
             if (CanMove)
             {
@@ -109,30 +110,63 @@ namespace SingleSwitchGame
             MoveDown = false;
         }
 
-        public void SetAI(ArtificialIntelligence AI)
+        public void SetAI(ArtificialIntelligence ai)
         {
-            if (AI != null)
+            if (ai != null)
             {
-                this.AI = AI;
+                AI = ai;
                 AI.Init(this);
             }
-            else if (this.AI != null)
-                this.AI.Deinit();
-        }
-        public void SetPlayer(bool val)
-        {
-            this.Player = val;
+            else if (AI != null)
+            {
+                AI.Deinit();
+                AI = null;
+            }
         }
 
-        protected virtual void PlayerControls()
+        public void SetPlayer(bool val)
         {
-            MoveLeft = Keyboard.IsKeyPressed(Keyboard.Key.Left);
-            MoveRight = Keyboard.IsKeyPressed(Keyboard.Key.Right);
+            if (Player == val)
+                return;
+            
+            Player = val;
+
+            if (Player)
+            {
+                Game.Window.KeyReleased += OnKeyReleased;
+                Game.Window.KeyPressed += OnKeyPressed;
+                Game.NewWindow += OnNewWindow;
+            }
+            else
+            {
+                Game.Window.KeyReleased -= OnKeyReleased;
+                Game.Window.KeyPressed -= OnKeyPressed;
+                Game.NewWindow -= OnNewWindow;
+            }
+        }
+        protected virtual void OnNewWindow(Object sender, EventArgs e)
+        {
+            if (!Player)
+                return;
+
+            Game.Window.KeyReleased += OnKeyReleased;
+            Game.Window.KeyPressed += OnKeyPressed;
+        }
+
+        protected virtual void OnKeyPressed(Object sender, KeyEventArgs e)
+        {
+            MoveLeft = e.Code == Keyboard.Key.Left;
+            MoveRight = e.Code == Keyboard.Key.Right;
             if (CanMoveVertically)
             {
-                MoveUp = Keyboard.IsKeyPressed(Keyboard.Key.Up);
-                MoveDown = Keyboard.IsKeyPressed(Keyboard.Key.Down);
+                MoveUp = e.Code == Keyboard.Key.Up;
+                MoveDown = e.Code == Keyboard.Key.Down;
             }
+        }
+
+        protected virtual void OnKeyReleased(Object sender, KeyEventArgs e)
+        {
+            
         }
 
     }

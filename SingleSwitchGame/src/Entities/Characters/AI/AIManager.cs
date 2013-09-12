@@ -21,7 +21,7 @@ namespace SingleSwitchGame
         public void StartTestInfantryTimer()
         {
             TestInfantrySpawnTimer = new Timer(2000);
-            TestInfantrySpawnTimer.Elapsed += new ElapsedEventHandler(TestInfantrySpawnTimerHandler);
+            TestInfantrySpawnTimer.Elapsed += TestInfantrySpawnTimerHandler;
             TestInfantrySpawnTimer.Start();
         }
         public void StopTestInfantryTimer()
@@ -30,10 +30,17 @@ namespace SingleSwitchGame
                 return;
 
             TestInfantrySpawnTimer.Stop();
+            TestInfantrySpawnTimer.Elapsed -= TestInfantrySpawnTimerHandler;
             TestInfantrySpawnTimer = null;
         }
         private void TestInfantrySpawnTimerHandler(Object source, ElapsedEventArgs e)
         {
+            if (Game.Player == null)
+            {
+                StopTestInfantryTimer();
+                return;
+            }
+
             Infantryman infantryman = new Infantryman(Game);
             infantryman.SetPosition(Utils.GetPointInDirection(Game.Island.Position, Utils.RandomInt(0, 359), Game.Island.Radius-5));
             Game.Layer_Objects.AddChild(infantryman);

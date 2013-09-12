@@ -10,6 +10,8 @@ namespace SingleSwitchGame
     {
 
         private Text Score;
+        private Text ScoreMultiplier;
+        private Text Health;
 
         public bool DisplayFPS = true;
         private Text FPS;
@@ -20,8 +22,19 @@ namespace SingleSwitchGame
             : base(Game, null)
         {
             Score = new Text("00000000", Game.TidyHand, 50);
+            Score.Color = new Color(255, 255, 255, 180);
             Score.Position = new Vector2f(Game.Size.X - 270, 2);
             AddChild(Score);
+
+            ScoreMultiplier = new Text("x001", Game.TidyHand, 35);
+            ScoreMultiplier.Color = new Color(200, 200, 200, 180);
+            ScoreMultiplier.Position = new Vector2f(Game.Size.X - 100, 50);
+            AddChild(ScoreMultiplier);
+            
+            Health = new Text("0", Game.TidyHand, 50);
+            Health.Color = new Color(255, 20, 20, 180);
+            Health.Position = new Vector2f(2, 2);
+            AddChild(Health);
 
             if (DisplayFPS)
             {
@@ -30,7 +43,7 @@ namespace SingleSwitchGame
                 AddChild(FPS);
 
                 FPSUpdateTimer = new Timer(500); // Update every 0.5 seconds
-                FPSUpdateTimer.Elapsed += new ElapsedEventHandler(FPSUpdate);
+                FPSUpdateTimer.Elapsed += FPSUpdate;
                 FPSUpdateTimer.Start();
             }
         }
@@ -48,6 +61,15 @@ namespace SingleSwitchGame
         public void SetScore(int score)
         {
             Score.DisplayedString = score.ToString("00000000");
+        }
+        public void SetScoreMultiplier(int multiplier)
+        {
+            ScoreMultiplier.DisplayedString = "x" + multiplier.ToString("000");
+        }
+
+        public void SetHealth(uint health)
+        {
+            Health.DisplayedString = health.ToString();
         }
     }
 }

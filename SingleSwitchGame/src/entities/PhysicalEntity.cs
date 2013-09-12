@@ -105,7 +105,7 @@ namespace SingleSwitchGame
         public uint HealthMax { get { return _HealthMax; } set { _HealthMax = value; } }
         /// <param name="sourceObject">Who caused the damage (eg: who get's the credit?).</param>
         /// <param name="hitObject">What caused the damage (eg: a projectile?).</param>
-        public virtual uint Damage(uint amount, uint damageType = 0, dynamic sourceObject = null, Object hitObject = null)
+        public virtual uint Damage(uint amount, uint damageType = 0, object sourceObject = null, Object hitObject = null)
         {
             if (!CanTakeDamage || IsDead())
                 return Health;
@@ -144,7 +144,7 @@ namespace SingleSwitchGame
                 if (FlashOnDamage && FlashOnDamageTimer == null)
                 {
                     FlashOnDamageTimer = new Timer(100);
-                    FlashOnDamageTimer.Elapsed += new ElapsedEventHandler(FlashOnDamageHandler);
+                    FlashOnDamageTimer.Elapsed += FlashOnDamageHandler;
                 }
                 else if (!FlashOnDamage && FlashOnDamageTimer != null)
                 {

@@ -20,9 +20,10 @@ namespace SingleSwitchGame
         {
             Explosion explosion = new Explosion(Game, ExplosionRadius);
             explosion.Position = pos;
-            Game.Layer_Objects.AddChild(explosion);
+            Game.Layer_Other.AddChild(explosion);
             
             // Collision
+            bool hitSomething = false;
             for (int i = 0; i < Game.Layer_Objects.NumChildren; i++)
             {
                 dynamic obj = Game.Layer_Objects.GetChildAt(i);
@@ -39,8 +40,22 @@ namespace SingleSwitchGame
                 obj.Damage(Damage, 0, SourceObject);
                 if (obj.Parent != Game.Layer_Objects)
                     i--;
+
+                hitSomething = true;
             }
+
+            if (Game.Player == null)
+                return;
+            if (hitSomething)
+                Game.Player.IncreaseScoreMultiplier(1);
+            else
+                Game.Player.ResetScoreMultiplier();
         }
 
+        public override void OnProjectileLifeEnd()
+        {
+            if (Game.Player != null)
+                Game.Player.ResetScoreMultiplier();
+        }
     }
 }

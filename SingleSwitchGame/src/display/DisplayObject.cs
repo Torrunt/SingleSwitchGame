@@ -46,9 +46,11 @@ namespace SingleSwitchGame
         public void RemoveChildAt(int index) { RemoveChild(GetChildAt(index)); }
         public void Clear()
         {
-            for (int i = 0; i < Children.Count; i++)
-                RemoveChildAt(i);
+            while (NumChildren > 0)
+                RemoveChildAt(0);
+
             Children.Clear();
+            DrawListIndex = 0;
         }
 
         public dynamic GetChildAt(int i) { return Children[i]; }

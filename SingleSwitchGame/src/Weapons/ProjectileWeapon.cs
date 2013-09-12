@@ -49,7 +49,7 @@ namespace SingleSwitchGame
             if (targetPos.HasValue)
                 proj.SetTargetPosition(targetPos.Value);
 
-            Game.Layer_Objects.AddChild(proj);
+            Game.Layer_Other.AddChild(proj);
 
             return proj;
         }
@@ -61,6 +61,11 @@ namespace SingleSwitchGame
         /// <summary>The Explosion caused by the projectiles if there is one.</summary>
         public virtual void Explode(Vector2f pos)
         {
+        }
+
+        public virtual void OnProjectileLifeEnd()
+        {
+
         }
 
         /// <summary>

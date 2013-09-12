@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{1F79037D-1820-4E01-8EEE-ECE217F7E061}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SingleSwitchGame</RootNamespace>
     <AssemblyName>SingleSwitchGame</AssemblyName>
@@ -87,6 +87,7 @@
     <Compile Include="src\Game.cs" />
     <Compile Include="src\Display\Graphics.cs" />
     <Compile Include="src\GUI\AimAssistance.cs" />
+    <Compile Include="src\GUI\GameOverGUI.cs" />
     <Compile Include="src\GUI\HeadsUpDisplay.cs" />
     <Compile Include="src\Misc\DamageType.cs" />
     <Compile Include="src\Program.cs" />
