@@ -6,10 +6,10 @@ using SFML.Window;
 
 namespace SingleSwitchGame
 {
-    class GameOverGUI : Entity
+    class GameOverGUI : GraphicalUserInterface
     {
         public GameOverGUI(Game game)
-            : base(game, null)
+            : base(game)
         {
             RectangleShape dim = new RectangleShape(new Vector2f(Game.Size.X, Game.Size.Y));
             dim.FillColor = new Color(0, 0, 0, 100);
@@ -45,15 +45,15 @@ namespace SingleSwitchGame
             score.Origin = new Vector2f(textRect.Left + textRect.Width / 2.0f, textRect.Top + textRect.Height / 2.0f);
             score.Position = new Vector2f(Game.Size.X / 2, Game.Size.Y / 2 + 180);
             AddChild(score);
-
-            Game.Window.KeyReleased += OnKeyReleased;
-            Game.NewWindow += OnNewWindow;
         }
-        private void OnNewWindow(Object sender, EventArgs e)
+
+        public override void Init()
         {
             Game.Window.KeyReleased += OnKeyReleased;
-        }
+            Game.NewWindow += OnNewWindow;
 
+            base.Init();
+        }
         public override void Deinit()
         {
             Game.NewWindow -= OnNewWindow;
@@ -61,10 +61,14 @@ namespace SingleSwitchGame
 
             base.Deinit();
         }
+        private void OnNewWindow(Object sender, EventArgs e)
+        {
+            Game.Window.KeyReleased += OnKeyReleased;
+        }
 
         private void OnKeyReleased(Object sender, KeyEventArgs e)
         {
-            if (e.Code == Keyboard.Key.F11)
+            if (Game.KeyIsNotAllowed(e.Code))
                 return;
 
             Parent.RemoveChild(this);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using SFML.Window;
 using SingleSwitchGame.GUI;
 using System.Timers;
@@ -8,7 +9,7 @@ namespace SingleSwitchGame
     class Cannon : Character
     {
         public float AimSpeed = 300;
-        public float RotateSpeedMax = 35;
+        public float RotateSpeedMax = 40;
         public float RotateAcc = 10;
         private float RotateVelocity;
         private bool CanRotate = true;
@@ -23,6 +24,9 @@ namespace SingleSwitchGame
         public CannonWeapon Weapon;
         public AimAssistance AimAssistance;
 
+        public List<uint> UpgradeLevels = new List<uint>() { 2, 0, 0, 0 };
+        public uint LandmineExplosionChance = 0;
+
         public Cannon(Game Game)
             : base(Game, Graphics.GetSprite("assets/sprites/cannon.png"))
         {
@@ -31,15 +35,15 @@ namespace SingleSwitchGame
             CanMove = false;
             RemoveOnDeath = false;
 
-            HealthMax = 2;
-            Health = HealthMax;
+            HealthMax = 1000;
+            Health = UpgradeLevels[0];
         }
 
         public override void Init()
         {
             base.Init();
 
-            RotationDelayTimer = new Timer(300); // Delay in ms before the Cannon starts rotating after firing
+            RotationDelayTimer = new Timer(180); // Delay in ms before the Cannon starts rotating after firing
             RotationDelayTimer.Elapsed += OnRotationDelayEnd;
 
             Weapon = new CannonWeapon(Game, this);
@@ -89,7 +93,7 @@ namespace SingleSwitchGame
 
         protected override void OnKeyPressed(object sender, KeyEventArgs e)
         {
-            if (KeyDown || IsDead() || e.Code == Keyboard.Key.Escape || e.Code == Keyboard.Key.F11)
+            if (KeyDown || !Game.IsRunning() || IsDead() || Game.KeyIsNotAllowed(e.Code))
                 return;
 
             KeyDown = true;
@@ -102,7 +106,7 @@ namespace SingleSwitchGame
 
         protected override void OnKeyReleased(object sender, KeyEventArgs e)
         {
-            if (IsDead() || e.Code == Keyboard.Key.Escape || e.Code == Keyboard.Key.F11)
+            if (!Game.IsRunning() || IsDead() || Game.KeyIsNotAllowed(e.Code))
                 return;
 
             KeyDown = false;
@@ -135,6 +139,20 @@ namespace SingleSwitchGame
 
             base.Damage(amount, damageType, sourceObject, hitObject);
 
+            // Health UpgradeLevel needs to reflect current health
+            UpgradeLevels[0] = Health;
+
+            // Update HUD
+            if (Player)
+                Game.HUD.SetHealth(Health);
+
+            return Health;
+        }
+
+        public override uint Heal(uint amount)
+        {
+            base.Heal(amount);
+
             // Update HUD
             if (Player)
                 Game.HUD.SetHealth(Health);
@@ -150,6 +168,63 @@ namespace SingleSwitchGame
                 Game.Player = null;
         }
 
+        // Upgrades
+        public void LevelUpUpgrade(int upgrade)
+        {
+            UpgradeLevels[upgrade]++;
+            UpdateUpgrade(upgrade);
+        }
+
+        public void UpdateUpgrade(int upgrade)
+        {
+            uint level = UpgradeLevels[upgrade];
+
+            switch (upgrade)
+            {
+                case 0:
+                {
+                    // Health
+                    Heal(1);
+                    break;
+                }
+                case 1:
+                {
+                    // Explosion Blast Radius (40 - 80)
+                    Weapon.ExplosionRadius = 40 + (2 * level);
+                    AimAssistance.UpdateReticle();
+                    break;
+                }
+                case 2:
+                {
+                    // Landmines
+                    LandmineExplosionChance = level;
+                    break;
+                }
+                case 3:
+                {
+                    // Base Score Multiplier
+                    ScoreMultiplierBase = 1 + (2 * (int)level);
+                    if (ScoreMultiplier < ScoreMultiplierBase)
+                        ScoreMultiplier = ScoreMultiplierBase;
+                        // Update HUD
+                    Game.HUD.SetScoreMultiplier(ScoreMultiplier);
+                    break;
+                }
+            }
+        }
+
+        public string GetUpgradeValue(int upgrade, uint level)
+        {
+            switch (upgrade)
+            {
+                case 0: return level.ToString("D");
+                case 1: return (40 + (2 * level)).ToString("D");
+                case 2: return level.ToString("D") + "%";
+                case 3: return "x" + (1 + (2 * level)).ToString("D");
+            }
+
+            return "";
+        }
 
         // Score
 

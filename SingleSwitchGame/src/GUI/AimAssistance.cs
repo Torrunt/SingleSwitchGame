@@ -31,16 +31,7 @@ namespace SingleSwitchGame.GUI
             Reticle.Visible = false;
             AddChild(Reticle);
 
-            Circle = new CircleShape(SourceObject.Weapon.ExplosionRadius, 40);
-            Circle.FillColor = new Color(0, 0, 0, 0);
-            Circle.OutlineThickness = 1;
-            Circle.Origin = new Vector2f(Circle.Radius, Circle.Radius);
-            Reticle.AddChild(Circle);
-
-            CircleLine = new VertexArray(PrimitiveType.Lines, 2);
-            CircleLine[0] = new Vertex(new Vector2f(Circle.Radius, 0));
-            CircleLine[1] = new Vertex(new Vector2f(-Circle.Radius, 0));
-            Reticle.AddChild(CircleLine);
+            UpdateReticle();
 
             // Aiming Lines
             LineCenter = new VertexArray(PrimitiveType.Lines, 2);
@@ -127,6 +118,26 @@ namespace SingleSwitchGame.GUI
             // (Version for going past the Reticle)
             LineLeft[1] = new Vertex(Utils.GetPointInDirection(LineLeft[0].Position, (float)Utils.GetAngle(LineLeft[0].Position, new Vector2f(Circle.Radius, Reticle.Y)), Game.Size.X - 43));
             LineRight[1] = new Vertex(Utils.GetPointInDirection(LineRight[0].Position, (float)Utils.GetAngle(LineRight[0].Position, new Vector2f(-Circle.Radius, Reticle.Y)), Game.Size.X - 43));
+        }
+
+        public void UpdateReticle()
+        {
+            if (Circle != null)
+            {
+                Reticle.RemoveChild(Circle);
+                Reticle.RemoveChild(CircleLine);
+            }
+
+            Circle = new CircleShape(SourceObject.Weapon.ExplosionRadius, 40);
+            Circle.FillColor = new Color(0, 0, 0, 0);
+            Circle.OutlineThickness = 1;
+            Circle.Origin = new Vector2f(Circle.Radius, Circle.Radius);
+            Reticle.AddChild(Circle);
+
+            CircleLine = new VertexArray(PrimitiveType.Lines, 2);
+            CircleLine[0] = new Vertex(new Vector2f(Circle.Radius, 0));
+            CircleLine[1] = new Vertex(new Vector2f(-Circle.Radius, 0));
+            Reticle.AddChild(CircleLine);
         }
     }
 }

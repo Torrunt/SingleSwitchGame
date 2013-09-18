@@ -41,6 +41,8 @@ namespace SingleSwitchGame
         // Objects
         public AIManager AIManager;
         public HeadsUpDisplay HUD;
+        public UpgradeMenuGUI UpgradeMenu;
+
         public Cannon Player;
         public CircleShape Island;
         public CircleWaves IslandWaves;
@@ -333,14 +335,40 @@ namespace SingleSwitchGame
             switch (e.Code)
             {
                 case Keyboard.Key.Escape:
+                {
                     if (Running)
                         Pause();
                     else
                         Resume();
                     break;
+                }
                 case Keyboard.Key.F11: ToggleFullscreen(); break;
+
+                // Testing
+                case Keyboard.Key.F3:
+                {
+                    // Upgrade Menu
+                    if (UpgradeMenu == null)
+                    {
+                        UpgradeMenu = new UpgradeMenuGUI(this);
+                        Layer_GUI.AddChild(UpgradeMenu);
+                    }
+                    else
+                    {
+                        if (UpgradeMenu.Parent != null)
+                            UpgradeMenu.Parent.RemoveChild(UpgradeMenu);
+                        UpgradeMenu = null;
+                    }
+                }
+                break;
             }
         }
+
+        public bool KeyIsNotAllowed(Keyboard.Key key)
+        {
+            return key == Keyboard.Key.Escape || (key >= Keyboard.Key.F1 && key <= Keyboard.Key.F15);
+        }
+
         private void OnMouseButtonPressed(Object sender, MouseButtonEventArgs e)
         {
             

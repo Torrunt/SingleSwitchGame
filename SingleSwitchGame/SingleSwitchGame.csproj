@@ -88,7 +88,9 @@
     <Compile Include="src\Display\Graphics.cs" />
     <Compile Include="src\GUI\AimAssistance.cs" />
     <Compile Include="src\GUI\GameOverGUI.cs" />
+    <Compile Include="src\GUI\GraphicalUserInterface.cs" />
     <Compile Include="src\GUI\HeadsUpDisplay.cs" />
+    <Compile Include="src\GUI\UpgradeMenuGUI.cs" />
     <Compile Include="src\Misc\DamageType.cs" />
     <Compile Include="src\Program.cs" />
     <Compile Include="src\Utils.cs" />
