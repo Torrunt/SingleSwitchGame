@@ -10,8 +10,18 @@ namespace SingleSwitchGame
             : base(Game, null)
         {
             Model = new CircleShape(4, 12);
-            Model.FillColor = new Color(0, 0, 0, 0);
-            Model.OutlineThickness = 2;
+            if (Game.GraphicsMode == Game.GRAPHICSMODE_NORMAL)
+            {
+                Model.FillColor = new Color(200, 0, 0);
+                Model.OutlineColor = new Color(0, 0, 0);
+                Model.OutlineThickness = 3;
+            }
+            else if (Game.GraphicsMode == Game.GRAPHICSMODE_BLUEPRINT)
+            {
+                Model.FillColor = new Color(0, 0, 0, 0);
+                Model.OutlineColor = new Color(255, 255, 255);
+                Model.OutlineThickness = 2;
+            }
             AddChild(Model);
             Origin = new Vector2f(Model.Radius, Model.Radius);
 

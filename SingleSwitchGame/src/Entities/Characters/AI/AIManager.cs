@@ -20,7 +20,7 @@ namespace SingleSwitchGame
 
         public void StartTestInfantryTimer()
         {
-            TestInfantrySpawnTimer = new Timer(2000);
+            TestInfantrySpawnTimer = new Timer(2500);
             TestInfantrySpawnTimer.Elapsed += TestInfantrySpawnTimerHandler;
             TestInfantrySpawnTimer.Start();
         }

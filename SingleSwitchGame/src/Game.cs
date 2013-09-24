@@ -31,10 +31,15 @@ namespace SingleSwitchGame
         public static Font Arial = new Font("assets/arial.ttf");
         public static Font TidyHand = new Font("assets/TidyHand.ttf");
 
+        public const uint GRAPHICSMODE_NORMAL = 0;
+        public const uint GRAPHICSMODE_BLUEPRINT = 1;
+        public uint GraphicsMode = GRAPHICSMODE_NORMAL;
+
         // Layers
         public Layer Layer_Background;
         public Layer Layer_Other;
         public Layer Layer_Objects;
+        public Layer Layer_OtherAbove;
         public Layer Layer_GUI;
         public Layer Layer_BlackBars;
 
@@ -48,6 +53,7 @@ namespace SingleSwitchGame
         public CircleWaves IslandWaves;
         public CircleShape Hill;
 
+        public Music Music;
 
         public Game()
         {
@@ -111,6 +117,7 @@ namespace SingleSwitchGame
             Layer_Background = new Layer();
             Layer_Other = new Layer();
             Layer_Objects = new Layer();
+            Layer_OtherAbove = new Layer();
             Layer_GUI = new Layer();
 
             // Managers
@@ -118,23 +125,59 @@ namespace SingleSwitchGame
             AIManager.StartTestInfantryTimer();
 
             // Background
-            Sprite BluePrintBackground = Graphics.GetSprite("assets/sprites/background_blueprint_tile.png");
-            BluePrintBackground.Texture.Repeated = true;
-            BluePrintBackground.TextureRect = new IntRect(0, 0, (int)Size.X, (int)Size.Y);
-            Layer_Background.AddChild(BluePrintBackground);
-            
+            if (GraphicsMode == GRAPHICSMODE_NORMAL)
+            {
+                RectangleShape Water = new RectangleShape(new Vector2f(Size.X, Size.Y));
+                Water.FillColor = new Color(40, 118, 188);
+                Layer_Background.AddChild(Water);
+
+                WaterRipples WaterRipplesBelow = new WaterRipples(this, new Vector2f(Size.X + 40, Size.Y + 40), 120, 10, new Color(68, 131, 186));
+                WaterRipplesBelow.Position = new Vector2f(-40, -40);
+                Layer_Background.AddChild(WaterRipplesBelow);
+
+                WaterRipples WaterRipples = new WaterRipples(this, new Vector2f(Size.X, Size.Y), 120, 10, new Color(80, 158, 228));
+                Layer_Background.AddChild(WaterRipples);
+            }
+            else if (GraphicsMode == GRAPHICSMODE_BLUEPRINT)
+            {
+                Sprite BluePrintBackground = Graphics.GetSprite("assets/sprites/background_blueprint_tile.png");
+                BluePrintBackground.Texture.Repeated = true;
+                BluePrintBackground.TextureRect = new IntRect(0, 0, (int)Size.X, (int)Size.Y);
+                Layer_Background.AddChild(BluePrintBackground);
+            }
+
                 // Island
             float IslandRadius = 240;
+
+            if (GraphicsMode == GRAPHICSMODE_NORMAL)
+            {
+                Sprite IslandTexture = Graphics.GetSprite("assets/sprites/island.png");
+                IslandTexture.Origin = new Vector2f(IslandRadius, IslandRadius);
+                IslandTexture.Position = new Vector2f((Size.X/2) + 1, (Size.Y/2));
+                Layer_Background.AddChild(IslandTexture);
+            }
+
             Island = new CircleShape(IslandRadius);
             Island.Origin = new Vector2f(IslandRadius, IslandRadius);
             Island.Position = new Vector2f(Size.X / 2, Size.Y / 2);
-            Island.FillColor = new Color(0, 0, 10, 30);
-            Island.OutlineThickness = 2;
-            Island.OutlineColor = new Color(250, 250, 250);
+            if (GraphicsMode == GRAPHICSMODE_NORMAL)
+            {
+                Island.FillColor = new Color(0, 0, 10, 0);
+                Island.OutlineThickness = 15;
+                Island.OutlineColor = new Color(138, 104, 0, 100);
+            }
+            else if (GraphicsMode == GRAPHICSMODE_BLUEPRINT)
+            {
+                Island.FillColor = new Color(0, 0, 10, 30);
+                Island.OutlineThickness = 2;
+                Island.OutlineColor = new Color(250, 250, 250);
+            }
             Island.SetPointCount(80);
             Layer_Background.AddChild(Island);
 
-            IslandWaves = new CircleWaves(this, IslandRadius, 0.07f, 1.5f, 4, 80);
+            IslandWaves = new CircleWaves(this, IslandRadius, 0.1f, 1.5f, 6, 80);
+            if (GraphicsMode == GRAPHICSMODE_NORMAL)
+                IslandWaves.Colour = new Color(80, 158, 228);
             IslandWaves.Position = Island.Position;
             Layer_Background.AddChild(IslandWaves);
             
@@ -143,64 +186,34 @@ namespace SingleSwitchGame
             Hill = new CircleShape(HillRadius);
             Hill.Origin = new Vector2f(HillRadius, HillRadius);
             Hill.Position = new Vector2f(Size.X / 2, Size.Y / 2);
-            Hill.FillColor = new Color(0, 0, 10, 50);
-            Hill.OutlineThickness = 2;
-            Hill.OutlineColor = new Color(250, 250, 250);
+            if (GraphicsMode == GRAPHICSMODE_NORMAL)
+            {
+                Hill.FillColor = new Color(50, 50, 50, 150);
+                Hill.OutlineThickness = 4;
+                Hill.OutlineColor = new Color(0, 0, 0, 215);
+            }
+            else if (GraphicsMode == GRAPHICSMODE_BLUEPRINT)
+            {
+                Hill.FillColor = new Color(0, 0, 10, 50);
+                Hill.OutlineThickness = 2;
+                Hill.OutlineColor = new Color(250, 250, 250);
+            }
             Hill.SetPointCount(50);
             Layer_Background.AddChild(Hill);
             
             // Player (Cannon)
             Player = new Cannon(this);
             Player.SetPosition(Size.X / 2, Size.Y / 2);
-            Layer_Objects.AddChild(Player);
+            Layer_OtherAbove.AddChild(Player);
             Player.SetPlayer(true);
             
             // HUD
             HUD = new HeadsUpDisplay(this);
             HUD.SetHealth(Player.Health);
             Layer_GUI.AddChild(HUD);
-            
-            // Test
-            /*
-            Infantryman Test = new Infantryman(this);
-            Test.SetPosition((Size.X / 2) + Island.Radius - 8, (Size.Y / 2));
-            Layer_Objects.AddChild(Test);
 
-            Test = new Infantryman(this);
-            Test.SetPosition((Size.X / 2), (Size.Y / 2) + IslandRadius - 8);
-            Layer_Objects.AddChild(Test);
-
-            Test = new Infantryman(this);
-            Test.SetPosition(Utils.GetPointInDirection(Island.Position, 135, Island.Radius));
-            Layer_Objects.AddChild(Test);
-            */
-
-            /*
-                // Add Bat, make it the player
-            Bat Bat = new Bat(this);
-            Bat.SetPosition(100, 100);
-            Layer_Objects.AddChild(Bat);
-            Bat.SetPlayer(true);
-                
-                // Add Bat, give it AI and set the player as it's Target
-            Bat Bat2 = new Bat(this);
-            Bat2.Model.Color = new Color(255, 150, 150);
-            Bat2.SetPosition(300, 300);
-            Layer_Objects.AddChild(Bat2);
-            Bat2.SetAI(new ArtificialIntelligence(this));
-            Bat2.AI.SetTarget(Bat);
-            //bat2.ai.AddWaypointsToPath(new SFML.Window.Vector2f(500, 300), new SFML.Window.Vector2f(500, 100), new SFML.Window.Vector2f(200, 150));
-
-                // Draw text on the GUI layer
-            Text Text = new Text("Single Switch Game", TidyHand, 60);
-            Text.Position = new Vector2f(4, 2);
-            Layer_GUI.AddChild(Text);
-            */
-
-            //Music music = new Music(@"assets/sound/OrchestralTheme1.ogg");
-            //music.Play();
-
-            //Debug_ShowCollision();
+            //Music = new Music("assets/sound/OrchestralTheme1.ogg");
+            //Music.Play();
         }
         public void Stop()
         {
@@ -208,6 +221,12 @@ namespace SingleSwitchGame
                 return;
             Started = false;
             Running = false;
+
+            if (Music != null)
+            {
+                Music.Stop();
+                Music = null;
+            }
 
             // Managers
             AIManager.StopTestInfantryTimer();
@@ -217,10 +236,13 @@ namespace SingleSwitchGame
             Layer_Background.Clear();
             Layer_Other.Clear();
             Layer_Objects.Clear();
+            Layer_OtherAbove.Clear();
             Layer_GUI.Clear();
 
             Player = null;
             HUD = null;
+
+            UpgradeMenu = null;
 
             UpdateListIndex = 0;
         }
@@ -231,6 +253,7 @@ namespace SingleSwitchGame
             Window.Draw(Layer_Background);
             Window.Draw(Layer_Other);
             Window.Draw(Layer_Objects);
+            Window.Draw(Layer_OtherAbove);
             Window.Draw(Layer_GUI);
             Window.Draw(Layer_BlackBars);
         }
@@ -350,8 +373,11 @@ namespace SingleSwitchGame
                     // Upgrade Menu
                     if (UpgradeMenu == null)
                     {
-                        UpgradeMenu = new UpgradeMenuGUI(this);
-                        Layer_GUI.AddChild(UpgradeMenu);
+                        if (Player != null)
+                        {
+                            UpgradeMenu = new UpgradeMenuGUI(this);
+                            Layer_GUI.AddChild(UpgradeMenu);
+                        }
                     }
                     else
                     {
@@ -359,6 +385,12 @@ namespace SingleSwitchGame
                             UpgradeMenu.Parent.RemoveChild(UpgradeMenu);
                         UpgradeMenu = null;
                     }
+                }
+                break;
+                case Keyboard.Key.F2:
+                {
+                    GraphicsMode = GraphicsMode == GRAPHICSMODE_NORMAL ? GRAPHICSMODE_BLUEPRINT : GRAPHICSMODE_NORMAL;
+                    Reset();
                 }
                 break;
             }

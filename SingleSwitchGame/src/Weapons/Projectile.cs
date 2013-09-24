@@ -17,6 +17,7 @@ namespace SingleSwitchGame
         private Timer LifeSpanTimer;
         private bool HasTargetPosition = false;
         private Vector2f TargetPosition;
+        public float RotateSpeed;
 
         /// <summary>Sets to true when LifeSpanTimer ends. This exists because System.Timers run in different threads.</summary>
         private bool RemoveNextTick = false;
@@ -55,6 +56,10 @@ namespace SingleSwitchGame
 
             // Apply Velocity
             Move(Velocity.X * dt, Velocity.Y * dt);
+
+            // Rotate
+            if (RotateSpeed != 0)
+                Rotate(RotateSpeed);
 
             // Check Collisions
             if (HasTargetPosition && Utils.Distance(this, TargetPosition) < 10)

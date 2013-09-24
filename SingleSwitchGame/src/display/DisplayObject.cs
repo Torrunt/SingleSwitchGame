@@ -24,6 +24,15 @@ namespace SingleSwitchGame
                 child.OnAdded();
             }
         }
+        public void AddChildAt(dynamic child, int index)
+        {
+            Children.Insert(index, child);
+            if (child is DisplayObject)
+            {
+                child.Parent = this;
+                child.OnAdded();
+            }
+        }
         public void RemoveChild(dynamic child)
         {
             for (int i = 0; i < Children.Count; i++)

@@ -23,7 +23,7 @@ namespace SingleSwitchGame
             "Increases your base score multiplier by 2."
         };
         /// <summary>The max level an upgrade can be leveled.</summary>
-        public readonly List<uint> UpgradeLevelCaps = new List<uint>() { 1000, 20, 30, 1000 }; 
+        public readonly List<uint> UpgradeLevelCaps = new List<uint>() { 45, 20, 30, 1000 }; 
 
         private int CurrentSelection = 0;
         private List<DisplayObject> UpgradeButtons = new List<DisplayObject>();

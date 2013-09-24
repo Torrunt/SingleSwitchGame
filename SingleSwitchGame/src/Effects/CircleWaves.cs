@@ -13,16 +13,17 @@ namespace SingleSwitchGame
         private Timer WaveTimer;
         private const int WAVE_FREQUENCY_MIN = 250;
         private const int WAVE_FREQUENCY_MAX = 5000;
-        private const float SPEED = 0.0025f;
-        private const float FADE_MIN = 130;
+        private const float SPEED = 0.002f;
+        private const float FADE_MIN = 190;
+        private const float THICKNESS_CHANGE_SPEED = 0.275f;
         private float Radius;
         private float ScaleMax = 2;
         private float ScaleOverlap;
-        private float ScaleOverlapReverse;
         private List<bool> Reverse;
 
         private uint PointCount;
         private float Thickness;
+        public Color Colour;
 
         /// <summary>
         /// Dynamic animation of fading circle waves. Used for having waves approach a circle island and fade out on the shore.
@@ -42,7 +43,7 @@ namespace SingleSwitchGame
             this.PointCount = PointCount;
             this.Thickness = Thickness;
 
-            this.ScaleOverlapReverse = ScaleOverlap / 2;
+            Colour = new Color(255, 255, 255);
 
             Waves = new List<CircleShape>();
             Reverse = new List<bool>();
@@ -81,11 +82,24 @@ namespace SingleSwitchGame
                     scale = Waves[i].Scale.X - SPEED;
                 Waves[i].Scale = new Vector2f(scale, scale);
                 if (Reverse[i])
-                    Waves[i].OutlineColor = new Color(255, 255, 255, (byte)((FADE_MIN / 2) - Math.Min((FADE_MIN / 2) * Math.Abs((scale - (1f - ScaleOverlap)) / ScaleOverlap), (FADE_MIN / 2)))); // Fade out going back out
+                {
+                    // Fade out going back out
+                    Waves[i].OutlineColor = new Color(Colour.R, Colour.G, Colour.B, (byte)((FADE_MIN / 2) - Math.Min((FADE_MIN / 2) * Math.Abs((scale - (1f - ScaleOverlap)) / ScaleOverlap), (FADE_MIN / 2))));
+
+                    Waves[i].OutlineThickness -= THICKNESS_CHANGE_SPEED;
+                }
                 else if (Waves[i].Scale.X <= 1)
-                    Waves[i].OutlineColor = new Color(255, 255, 255, (byte)(FADE_MIN - Math.Min(Math.Ceiling((FADE_MIN/2) * Math.Abs((scale-1) / ScaleOverlap)), FADE_MIN))); // Fade out a bit going in
+                {
+                    // Fade out a bit going in
+                    Waves[i].OutlineColor = new Color(Colour.R, Colour.G, Colour.B, (byte)(FADE_MIN - Math.Min(Math.Ceiling((FADE_MIN / 2) * Math.Abs((scale - 1) / ScaleOverlap)), FADE_MIN)));
+
+                    Waves[i].OutlineThickness += THICKNESS_CHANGE_SPEED;
+                }
                 else
-                    Waves[i].OutlineColor = new Color(255, 255, 255, (byte)(FADE_MIN - Math.Min(Math.Ceiling(FADE_MIN * ((scale - 1) / (ScaleMax - 1))), FADE_MIN))); // Fade in approaching beach
+                {
+                    // Fade in approaching beach
+                    Waves[i].OutlineColor = new Color(Colour.R, Colour.G, Colour.B, (byte)(FADE_MIN - Math.Min(Math.Ceiling(FADE_MIN * ((scale - 1) / (ScaleMax - 1))), FADE_MIN)));
+                }
             }
         }
 

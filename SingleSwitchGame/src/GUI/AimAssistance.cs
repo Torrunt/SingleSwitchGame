@@ -12,11 +12,17 @@ namespace SingleSwitchGame.GUI
 
         public DisplayObject Reticle;
         public CircleShape Circle;
-        public VertexArray CircleLine;
+        public RectangleShape CircleLine;
 
-        public VertexArray LineCenter;
-        public VertexArray LineLeft;
-        public VertexArray LineRight;
+        public RectangleShape LineCenter;
+        public RectangleShape LineLeft;
+        public RectangleShape LineRight;
+
+        public ConvexShape Fill;
+
+        public Color Colour;
+        public Color FillColour;
+        public int Thickness;
 
         private bool Aiming = false;
         private int AimDirection = 1;
@@ -26,6 +32,20 @@ namespace SingleSwitchGame.GUI
         {
             this.SourceObject = SourceObject;
 
+            if (Game.GraphicsMode == Game.GRAPHICSMODE_NORMAL)
+            {
+                Colour = new Color(0, 0, 0, 192);
+                Thickness = 3;
+                FillColour = new Color(255, 255, 255, 25);
+            }
+            else if (Game.GraphicsMode == Game.GRAPHICSMODE_BLUEPRINT)
+            {
+                Colour = new Color(255, 255, 255, 255);
+                Thickness = 1;
+                FillColour = new Color(255, 255, 255, 15);
+            }
+            
+
             // Reticle
             Reticle = new DisplayObject();
             Reticle.Visible = false;
@@ -34,18 +54,28 @@ namespace SingleSwitchGame.GUI
             UpdateReticle();
 
             // Aiming Lines
-            LineCenter = new VertexArray(PrimitiveType.Lines, 2);
-            LineCenter[0] = new Vertex(new Vector2f(0, 48));
-            LineCenter[1] = new Vertex(new Vector2f(0, Game.Size.X - 48));
+            LineCenter = new RectangleShape(new Vector2f(Utils.Distance(new Vector2f(0, 48), new Vector2f(0, Game.Size.X - 48)), Thickness));
+            LineCenter.FillColor = Colour;
+            LineCenter.Origin = new Vector2f(0, Thickness / 2);
+            LineCenter.Position = new Vector2f(0, 48);
+            LineCenter.Rotation = 90;
             AddChild(LineCenter);
 
-            LineLeft = new VertexArray(PrimitiveType.Lines, 2);
-            LineLeft[0] = new Vertex(new Vector2f(11, 43));
+            LineLeft = new RectangleShape(new Vector2f(10, Thickness));
+            LineLeft.FillColor = Colour;
+            LineLeft.Origin = new Vector2f(0, Thickness / 2);
+            LineLeft.Position = new Vector2f(11, 43);
             AddChild(LineLeft);
 
-            LineRight = new VertexArray(PrimitiveType.Lines, 2);
-            LineRight[0] = new Vertex(new Vector2f(-11, 43));
+            LineRight = new RectangleShape(new Vector2f(10, Thickness));
+            LineRight.FillColor = Colour;
+            LineRight.Origin = new Vector2f(0, Thickness / 2);
+            LineRight.Position = new Vector2f(-11, 43);
             AddChild(LineRight);
+
+            Fill = new ConvexShape(4);
+            Fill.FillColor = FillColour;
+            AddChild(Fill);
 
             SetReticlePosition(RETICLE_START_Y);
         }
@@ -112,12 +142,19 @@ namespace SingleSwitchGame.GUI
         {
             Reticle.Y = y;
 
-            //LineLeft[1] = new Vertex(new Vector2f(Circle.Radius, Reticle.Y));
-            //LineRight[1] = new Vertex(new Vector2f(-Circle.Radius, Reticle.Y));
+            Vector2f LineLeftP = Utils.GetPointInDirection(LineLeft.Position, (float)Utils.GetAngle(LineLeft.Position, new Vector2f(Circle.Radius, Reticle.Y)), Game.Size.X - 43);
+            Vector2f LineRightP = Utils.GetPointInDirection(LineRight.Position, (float)Utils.GetAngle(LineRight.Position, new Vector2f(-Circle.Radius, Reticle.Y)), Game.Size.X - 43);
 
-            // (Version for going past the Reticle)
-            LineLeft[1] = new Vertex(Utils.GetPointInDirection(LineLeft[0].Position, (float)Utils.GetAngle(LineLeft[0].Position, new Vector2f(Circle.Radius, Reticle.Y)), Game.Size.X - 43));
-            LineRight[1] = new Vertex(Utils.GetPointInDirection(LineRight[0].Position, (float)Utils.GetAngle(LineRight[0].Position, new Vector2f(-Circle.Radius, Reticle.Y)), Game.Size.X - 43));
+            LineLeft.Size = new Vector2f(Utils.Distance(LineLeft.Position, LineLeftP), LineLeft.Size.Y);
+            LineLeft.Rotation = (float)Utils.GetAngle(LineLeft.Position, LineLeftP);
+
+            LineRight.Size = new Vector2f(Utils.Distance(LineRight.Position, LineRightP), LineRight.Size.Y);
+            LineRight.Rotation = (float)Utils.GetAngle(LineRight.Position, LineRightP);
+
+            Fill.SetPoint(0, LineLeft.Position);
+            Fill.SetPoint(1, LineLeftP);
+            Fill.SetPoint(2, LineRightP);
+            Fill.SetPoint(3, LineRight.Position);
         }
 
         public void UpdateReticle()
@@ -130,13 +167,15 @@ namespace SingleSwitchGame.GUI
 
             Circle = new CircleShape(SourceObject.Weapon.ExplosionRadius, 40);
             Circle.FillColor = new Color(0, 0, 0, 0);
-            Circle.OutlineThickness = 1;
+            Circle.OutlineColor = Colour;
+            Circle.OutlineThickness = Thickness;
             Circle.Origin = new Vector2f(Circle.Radius, Circle.Radius);
             Reticle.AddChild(Circle);
 
-            CircleLine = new VertexArray(PrimitiveType.Lines, 2);
-            CircleLine[0] = new Vertex(new Vector2f(Circle.Radius, 0));
-            CircleLine[1] = new Vertex(new Vector2f(-Circle.Radius, 0));
+            CircleLine = new RectangleShape(new Vector2f(Circle.Radius*2, Thickness));
+            CircleLine.FillColor = Colour;
+            CircleLine.Origin = new Vector2f(0, Thickness / 2);
+            CircleLine.Position = new Vector2f(-Circle.Radius, 0);
             Reticle.AddChild(CircleLine);
         }
     }

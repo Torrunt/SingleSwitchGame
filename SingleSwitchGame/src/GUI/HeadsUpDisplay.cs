@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using SFML.Graphics;
 using SFML.Window;
@@ -11,7 +12,8 @@ namespace SingleSwitchGame
 
         private Text Score;
         private Text ScoreMultiplier;
-        private Text Health;
+        private List<DisplayObject> HealthPoints = new List<DisplayObject>(); 
+        private readonly Vector2f HEALTH_START = new Vector2f(2, 2);
 
         public bool DisplayFPS = true;
         private Text FPS;
@@ -30,11 +32,6 @@ namespace SingleSwitchGame
             ScoreMultiplier.Color = new Color(200, 200, 200, 180);
             ScoreMultiplier.Position = new Vector2f(Game.Size.X - 100, 50);
             AddChild(ScoreMultiplier);
-            
-            Health = new Text("0", Game.TidyHand, 50);
-            Health.Color = new Color(255, 20, 20, 180);
-            Health.Position = new Vector2f(2, 2);
-            AddChild(Health);
 
             if (DisplayFPS)
             {
@@ -69,7 +66,42 @@ namespace SingleSwitchGame
 
         public void SetHealth(uint health)
         {
-            Health.DisplayedString = health.ToString();
+            if (health > HealthPoints.Count)
+            {
+                for (int i = HealthPoints.Count; i < health; i++)
+                {
+                    DisplayObject bar = new DisplayObject();
+                    int barWidth = 1;
+                    if (Game.GraphicsMode == Game.GRAPHICSMODE_NORMAL)
+                    {
+                        Sprite bar_sprite = Graphics.GetSprite("assets/sprites/gui/hp.png");
+                        bar_sprite.Color = new Color(255, 255, 255, 200);
+                        barWidth = bar_sprite.TextureRect.Width;
+                        bar.AddChild(bar_sprite);
+                    }
+                    else
+                    {
+                        RectangleShape bar_rectangle = new RectangleShape(new Vector2f(28, 60));
+                        bar_rectangle.FillColor = new Color(255, 255, 255, 50);
+                        bar_rectangle.OutlineColor = new Color(255, 255, 255, 180);
+                        bar_rectangle.OutlineThickness = 1;
+                        barWidth = (int)bar_rectangle.Size.X + 4;
+                        bar.AddChild(bar_rectangle);
+                    }
+
+                    bar.Position = new Vector2f(HEALTH_START.X + ((barWidth + 2) * i), HEALTH_START.Y);
+                    AddChild(bar);
+                    HealthPoints.Add(bar);
+                }
+            }
+            else if (health < HealthPoints.Count)
+            {
+                for (int i = HealthPoints.Count-1; i >= health; i--)
+                {
+                    HealthPoints[i].Parent.RemoveChild(HealthPoints[i]);
+                    HealthPoints.RemoveAt(i);
+                }
+            }
         }
     }
 }

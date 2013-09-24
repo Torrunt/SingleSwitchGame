@@ -12,8 +12,10 @@ namespace SingleSwitchGame
         public CannonWeapon(Game Game, Entity sourceObject)
             : base(Game, sourceObject)
         {
-            ProjectileSpeed = 500.0f;
+            ProjectileSpeed = 600.0f;
             Damage = 4000;
+
+            ProjectileRotateSpeed = 10;
         }
 
         public override void Explode(Vector2f pos)
@@ -56,6 +58,20 @@ namespace SingleSwitchGame
         {
             if (Game.Player != null)
                 Game.Player.ResetScoreMultiplier();
+        }
+
+        public override dynamic GetProjectileModel()
+        {
+            if (Game.GraphicsMode == Game.GRAPHICSMODE_NORMAL)
+            {
+                Sprite proj = Graphics.GetSprite("assets/sprites/cannon_ball.png");
+                proj.Origin = new Vector2f(20, 20);
+                proj.Scale = new Vector2f(0.5f, 0.5f);
+
+                return proj;
+            }
+
+            return base.GetProjectileModel();
         }
     }
 }

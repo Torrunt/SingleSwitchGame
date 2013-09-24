@@ -13,6 +13,8 @@ namespace SingleSwitchGame
         /// <summary>If ProjectileAmount > 1, additional projetiles will be offset by this value (angle). </summary>
         public float ProjectileOffset = 10;
         public uint ProjectileLifeSpan = 3000;
+        /// <summary>If not 0, projectiles will rotate at this speed while moving (in either direction)</summary>
+        public float ProjectileRotateSpeed = 0;
 
         public bool CanShoot = true;
 
@@ -48,6 +50,11 @@ namespace SingleSwitchGame
             proj.SetLifeSpan(ProjectileLifeSpan);
             if (targetPos.HasValue)
                 proj.SetTargetPosition(targetPos.Value);
+            if (ProjectileRotateSpeed != 0)
+            {
+                proj.RotateSpeed = ProjectileRotateSpeed*(Utils.RandomInt() == 1 ? 1 : -1);
+                proj.Rotate(Utils.RandomInt(0, 359));
+            }
 
             Game.Layer_Other.AddChild(proj);
 

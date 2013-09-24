@@ -24,11 +24,11 @@ namespace SingleSwitchGame
         public CannonWeapon Weapon;
         public AimAssistance AimAssistance;
 
-        public List<uint> UpgradeLevels = new List<uint>() { 2, 0, 0, 0 };
+        public List<uint> UpgradeLevels = new List<uint>() { 3, 0, 0, 0 };
         public uint LandmineExplosionChance = 0;
 
         public Cannon(Game Game)
-            : base(Game, Graphics.GetSprite("assets/sprites/cannon.png"))
+            : base(Game, Game.GraphicsMode == Game.GRAPHICSMODE_NORMAL ? Graphics.GetSprite("assets/sprites/cannon.png") : Graphics.GetSprite("assets/sprites/blueprint/cannon.png"))
         {
             SetScale(0.5f, 0.5f);
             Origin = new Vector2f(26, 30);
@@ -43,7 +43,7 @@ namespace SingleSwitchGame
         {
             base.Init();
 
-            RotationDelayTimer = new Timer(180); // Delay in ms before the Cannon starts rotating after firing
+            RotationDelayTimer = new Timer(140); // Delay in ms before the Cannon starts rotating after firing
             RotationDelayTimer.Elapsed += OnRotationDelayEnd;
 
             Weapon = new CannonWeapon(Game, this);
@@ -67,13 +67,14 @@ namespace SingleSwitchGame
             base.OnAdded();
 
             AimAssistance = new AimAssistance(Game, this);
-            Game.Layer_GUI.AddChild(AimAssistance);
+            Game.Layer_OtherAbove.AddChildAt(AimAssistance, 0);
         }
         public override void OnRemoved()
         {
             base.OnRemoved();
 
-            Game.Layer_GUI.RemoveChild(AimAssistance);
+            if (AimAssistance.Parent != null)
+                AimAssistance.Parent.RemoveChild(AimAssistance);
         }
 
         public override void Update(float dt)
