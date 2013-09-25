@@ -15,10 +15,10 @@ namespace SingleSwitchGame
 
         public string DisplayName = "";
 
-        public Weapon(Game Game, Entity sourceObject)
+        public Weapon(Game game, Entity sourceObject)
         {
-            this.Game = Game;
-            this.SourceObject = sourceObject;
+            Game = game;
+            SourceObject = sourceObject;
 
             Init();
         }

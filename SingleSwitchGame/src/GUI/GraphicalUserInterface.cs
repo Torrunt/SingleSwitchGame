@@ -1,8 +1,12 @@
-﻿namespace SingleSwitchGame
+﻿using System;
+
+namespace SingleSwitchGame
 {
     class GraphicalUserInterface : DisplayObject
     {
         protected Game Game;
+
+        public event EventHandler Removed;
 
         public GraphicalUserInterface(Game Game)
         {
@@ -17,6 +21,8 @@
         }
         public override void OnRemoved()
         {
+            if (Removed != null)
+                Removed(this, EventArgs.Empty);
             Deinit();
         }
     }

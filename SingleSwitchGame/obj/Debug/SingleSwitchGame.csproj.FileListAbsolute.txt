@@ -11,3 +11,4 @@ C:\Users\Corey\Documents\ECU\CSG3303 Applied IT Project\SingleSwitchGame\SingleS
 C:\Users\Corey\Documents\ECU\CSG3303 Applied IT Project\SingleSwitchGame\SingleSwitchGame\bin\Debug\sfmlnet-window-2.dll
 C:\Users\Corey\Documents\ECU\CSG3303 Applied IT Project\SingleSwitchGame\SingleSwitchGame\obj\Debug\SingleSwitchGame.exe
 C:\Users\Corey\Documents\ECU\CSG3303 Applied IT Project\SingleSwitchGame\SingleSwitchGame\obj\Debug\SingleSwitchGame.pdb
+C:\Users\Corey\Documents\ECU\CSG3303 Applied IT Project\SingleSwitchGame\SingleSwitchGame\obj\Debug\SingleSwitchGame.csprojResolveAssemblyReference.cache

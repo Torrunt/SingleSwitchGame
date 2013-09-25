@@ -19,8 +19,8 @@ namespace SingleSwitchGame
         public bool CanShoot = true;
 
 
-        public ProjectileWeapon(Game Game, Entity sourceObject)
-            : base(Game, sourceObject) { }
+        public ProjectileWeapon(Game game, Entity sourceObject)
+            : base(game, sourceObject) { }
 
         public virtual void Fire(Vector2f pos, float direction, Vector2f? targetPos = null)
         {

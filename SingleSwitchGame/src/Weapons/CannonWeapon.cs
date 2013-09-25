@@ -9,8 +9,8 @@ namespace SingleSwitchGame
 
         public float ExplosionRadius = 40;
 
-        public CannonWeapon(Game Game, Entity sourceObject)
-            : base(Game, sourceObject)
+        public CannonWeapon(Game game, Entity sourceObject)
+            : base(game, sourceObject)
         {
             ProjectileSpeed = 600.0f;
             Damage = 4000;

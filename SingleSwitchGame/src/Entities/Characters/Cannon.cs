@@ -24,7 +24,7 @@ namespace SingleSwitchGame
         public CannonWeapon Weapon;
         public AimAssistance AimAssistance;
 
-        public List<uint> UpgradeLevels = new List<uint>() { 3, 0, 0, 0 };
+        public List<uint> UpgradeLevels = new List<uint>() { 1, 0, 0, 0 };
         public uint LandmineExplosionChance = 0;
 
         public Cannon(Game Game)
@@ -94,10 +94,13 @@ namespace SingleSwitchGame
 
         protected override void OnKeyPressed(object sender, KeyEventArgs e)
         {
-            if (KeyDown || !Game.IsRunning() || IsDead() || Game.KeyIsNotAllowed(e.Code))
+            if (KeyDown || IsDead() || Game.KeyIsNotAllowed(e.Code))
                 return;
 
             KeyDown = true;
+
+            if (!Game.IsRunning())
+                return;
 
             CanRotate = false;
             RotationDelayTimer.Stop();
@@ -107,10 +110,21 @@ namespace SingleSwitchGame
 
         protected override void OnKeyReleased(object sender, KeyEventArgs e)
         {
-            if (!Game.IsRunning() || IsDead() || Game.KeyIsNotAllowed(e.Code))
+            if (IsDead() || Game.KeyIsNotAllowed(e.Code))
                 return;
 
             KeyDown = false;
+
+            if (!Game.IsRunning())
+            {
+                // Interrupt aiming if the player releases the key while paused
+                if (!CanRotate)
+                    AimAssistance.AimEnd();
+                return;
+            }
+
+            if (CanRotate)
+                return;
 
             Weapon.Fire(Utils.GetPointInDirection(Position, Rotation, 40), Rotation, Utils.GetPointInDirection(Position, Rotation, AimAssistance.Reticle.Y));
             StartRotationDelay();

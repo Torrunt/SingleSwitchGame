@@ -73,7 +73,7 @@ namespace SingleSwitchGame
                 // Reached Hill
                 if (Game.Player != null)
                     Game.Player.Damage(1);
-                Obj.Parent.RemoveChild(Obj);
+                Obj.Damage(Obj.Health);
                 return;
             }
 

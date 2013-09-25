@@ -20,6 +20,7 @@ namespace SingleSwitchGame
         private uint _HealthMax;
         public bool CanTakeDamage = true;
         protected bool RemoveOnDeath = true;
+        public event EventHandler Death;
 
         private bool _FlashOnDamage = false;
         private Timer FlashOnDamageTimer;
@@ -118,7 +119,11 @@ namespace SingleSwitchGame
             if (Health == 0)
             {
                 // Dead
+                if (Death != null)
+                    Death(this, EventArgs.Empty);
+
                 OnDeath(sourceObject);
+
                 if (RemoveOnDeath)
                     Parent.RemoveChild(this);
             }

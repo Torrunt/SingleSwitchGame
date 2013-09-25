@@ -6,8 +6,8 @@ namespace SingleSwitchGame
 {
     class Infantryman : Character
     {
-        public Infantryman(Game Game)
-            : base(Game, null)
+        public Infantryman(Game game)
+            : base(game, null)
         {
             Model = new CircleShape(4, 12);
             if (Game.GraphicsMode == Game.GRAPHICSMODE_NORMAL)

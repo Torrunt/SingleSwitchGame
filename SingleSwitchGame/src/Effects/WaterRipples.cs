@@ -129,6 +129,7 @@ namespace SingleSwitchGame
                     xCount++;
                 }
             }
+
             Displace();
 
             // Draw

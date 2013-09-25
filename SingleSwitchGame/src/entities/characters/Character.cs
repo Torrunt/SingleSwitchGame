@@ -21,7 +21,7 @@ namespace SingleSwitchGame
         public bool MoveDown = false;
 
 
-        public Character(Game Game, dynamic model)
+        public Character(Game Game, dynamic model = null)
             : base(Game, (object)model)
         {
             Team = 0;

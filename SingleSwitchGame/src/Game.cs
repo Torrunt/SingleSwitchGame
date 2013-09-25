@@ -33,7 +33,7 @@ namespace SingleSwitchGame
 
         public const uint GRAPHICSMODE_NORMAL = 0;
         public const uint GRAPHICSMODE_BLUEPRINT = 1;
-        public uint GraphicsMode = GRAPHICSMODE_NORMAL;
+        public uint GraphicsMode = GRAPHICSMODE_BLUEPRINT;
 
         // Layers
         public Layer Layer_Background;
@@ -122,7 +122,7 @@ namespace SingleSwitchGame
 
             // Managers
             AIManager = new AIManager(this);
-            AIManager.StartTestInfantryTimer();
+            AIManager.StartWave();
 
             // Background
             if (GraphicsMode == GRAPHICSMODE_NORMAL)
@@ -137,6 +137,9 @@ namespace SingleSwitchGame
 
                 WaterRipples WaterRipples = new WaterRipples(this, new Vector2f(Size.X, Size.Y), 120, 10, new Color(80, 158, 228));
                 Layer_Background.AddChild(WaterRipples);
+
+                //VoronoiDiagram WaterEffect = new VoronoiDiagram(this, new Vector2f(Size.X, Size.Y));
+                //Layer_Background.AddChild(WaterEffect);
             }
             else if (GraphicsMode == GRAPHICSMODE_BLUEPRINT)
             {
@@ -229,7 +232,7 @@ namespace SingleSwitchGame
             }
 
             // Managers
-            AIManager.StopTestInfantryTimer();
+            AIManager.StopAll();
             AIManager = null;
 
             // Layers
@@ -263,12 +266,16 @@ namespace SingleSwitchGame
             if (!Running)
                 return;
             Running = false;
+
+            AIManager.Pause();
         }
         public void Resume()
         {
             if (Running)
                 return;
             Running = true;
+
+            AIManager.Resume();
         }
 
         public void Update(float dt)
@@ -368,25 +375,6 @@ namespace SingleSwitchGame
                 case Keyboard.Key.F11: ToggleFullscreen(); break;
 
                 // Testing
-                case Keyboard.Key.F3:
-                {
-                    // Upgrade Menu
-                    if (UpgradeMenu == null)
-                    {
-                        if (Player != null)
-                        {
-                            UpgradeMenu = new UpgradeMenuGUI(this);
-                            Layer_GUI.AddChild(UpgradeMenu);
-                        }
-                    }
-                    else
-                    {
-                        if (UpgradeMenu.Parent != null)
-                            UpgradeMenu.Parent.RemoveChild(UpgradeMenu);
-                        UpgradeMenu = null;
-                    }
-                }
-                break;
                 case Keyboard.Key.F2:
                 {
                     GraphicsMode = GraphicsMode == GRAPHICSMODE_NORMAL ? GRAPHICSMODE_BLUEPRINT : GRAPHICSMODE_NORMAL;

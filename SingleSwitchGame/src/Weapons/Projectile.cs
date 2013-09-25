@@ -23,8 +23,8 @@ namespace SingleSwitchGame
         private bool RemoveNextTick = false;
         private Vector2f LastPos;
 
-        public Projectile(Game Game, dynamic model, ProjectileWeapon weapon)
-            : base(Game, (object)model)
+        public Projectile(Game game, dynamic model, ProjectileWeapon weapon)
+            : base(game, (object)model)
         {
             Weapon = weapon;
             SourceObject = weapon.SourceObject;

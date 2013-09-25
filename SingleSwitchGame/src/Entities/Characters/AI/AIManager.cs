@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Timers;
+using SFML.Window;
 
 namespace SingleSwitchGame
 {
@@ -9,41 +10,153 @@ namespace SingleSwitchGame
     {
         protected Game Game;
 
-        public const int POINTS_INFANTRY = 1;
+        public uint Wave = 1;
+        public uint EnemyCount;
 
-        private Timer TestInfantrySpawnTimer;
+        public bool SpawningOverTime;
+        private Timer SpawnOverTimeTimer;
+        private uint SpawnOverTimeCount;
+        private uint SpawnOverTimeAmount;
+        private uint SpawnOverTimeType;
+
+        // Consts
+        public const uint TYPE_INFANTRYMAN = 0;
+        public const uint TYPE_SHIP = 1;
+        public const uint TYPE_ROWBOAT = 2;
+
+        public const int POINTS_INFANTRY = 1;
+        public const int POINTS_SHIP = 10;
+        public const int POINTS_ROWBOAT = 4;
 
         public AIManager(Game Game)
         {
             this.Game = Game;
         }
 
-        public void StartTestInfantryTimer()
+        public void StopAll()
         {
-            TestInfantrySpawnTimer = new Timer(2500);
-            TestInfantrySpawnTimer.Elapsed += TestInfantrySpawnTimerHandler;
-            TestInfantrySpawnTimer.Start();
+            StopSpawnEnemiesOverTime();
         }
-        public void StopTestInfantryTimer()
-        {
-            if (TestInfantrySpawnTimer == null)
-                return;
 
-            TestInfantrySpawnTimer.Stop();
-            TestInfantrySpawnTimer.Elapsed -= TestInfantrySpawnTimerHandler;
-            TestInfantrySpawnTimer = null;
+        public void Pause()
+        {
+            if (SpawnOverTimeTimer != null)
+                SpawnOverTimeTimer.Enabled = false;
         }
-        private void TestInfantrySpawnTimerHandler(Object source, ElapsedEventArgs e)
+
+        public void Resume()
+        {
+            if (SpawnOverTimeTimer != null)
+                SpawnOverTimeTimer.Enabled = true;
+        }
+
+        // Wave Spawning
+
+        public void StartWave(uint no = 1)
+        {
+            uint amount = 2 + (4 * (no-1));
+            double interval = 2500;
+
+            // TODO: Insert dynamically adjusting difficulty here
+
+            SpawnEnemiesOverTime(TYPE_INFANTRYMAN, amount, interval);
+
+            // Message
+            MessageFade msg = new MessageFade(Game, "Wave " + no, 200, new Vector2f(Game.Size.X/2, Game.Size.Y/2));
+            Game.Layer_GUI.AddChild(msg);
+        }
+        public void NextWave()
+        {
+            StartWave(++Wave);
+        }
+
+
+        public void OnEnemyDeath(object sender, EventArgs e)
+        {
+            if (EnemyCount > 0)
+                EnemyCount--;
+
+            if (EnemyCount == 0 && !SpawningOverTime && Game.Player != null)
+            {
+                // Wave Finished
+                Game.UpgradeMenu = new UpgradeMenuGUI(Game);
+                Game.Layer_GUI.AddChild(Game.UpgradeMenu);
+                Game.UpgradeMenu.Removed += OnUpgradeMenuClosed;
+            }
+        }
+        private void OnUpgradeMenuClosed(object source, EventArgs e)
+        {
+            Game.UpgradeMenu.Removed -= OnUpgradeMenuClosed;
+            Game.UpgradeMenu = null;
+
+            NextWave();
+        }
+
+        // Spawning over time
+
+        public void SpawnEnemiesOverTime(uint type, uint amount, double interval)
+        {
+            if (SpawnOverTimeTimer != null)
+                StopSpawnEnemiesOverTime();
+
+            SpawningOverTime = true;
+
+            SpawnOverTimeType = type;
+            SpawnOverTimeAmount = amount;
+            SpawnOverTimeCount = 0;
+
+            SpawnOverTimeTimer = new Timer(interval);
+            SpawnOverTimeTimer.Elapsed += SpawnOverTimeTimerHandler;
+            SpawnOverTimeTimer.Start();
+        }
+        public void StopSpawnEnemiesOverTime()
+        {
+            if (SpawnOverTimeTimer == null)
+                return;
+            SpawningOverTime = false;
+            SpawnOverTimeTimer.Stop();
+            SpawnOverTimeTimer.Elapsed -= SpawnOverTimeTimerHandler;
+            SpawnOverTimeTimer = null;
+        }
+
+        private void SpawnOverTimeTimerHandler(Object source, ElapsedEventArgs e)
         {
             if (Game.Player == null)
             {
-                StopTestInfantryTimer();
+                StopSpawnEnemiesOverTime();
                 return;
             }
 
-            Infantryman infantryman = new Infantryman(Game);
-            infantryman.SetPosition(Utils.GetPointInDirection(Game.Island.Position, Utils.RandomInt(0, 359), Game.Island.Radius-5));
-            Game.Layer_Objects.AddChild(infantryman);
+            // Spawn enemy
+            Character enemy;
+            switch (SpawnOverTimeType)
+            {
+                case TYPE_SHIP:
+                {
+                    enemy = new Character(Game);
+                    //enemy.SetPosition(Utils.GetPointInDirection(Game.Island.Position, Utils.RandomInt(0, 359), Game.Size.X + 100));
+                    break;
+                }
+                default:
+                {
+                    enemy = new Infantryman(Game);
+                    enemy.SetPosition(Utils.GetPointInDirection(Game.Island.Position, Utils.RandomInt(0, 359), Game.Island.Radius - 5));
+                    break;
+                }
+            }
+
+            enemy.Death += OnEnemyDeath;
+            EnemyCount++;
+            Game.Layer_Objects.AddChild(enemy);
+
+            SpawnOverTimeCount++;
+
+            if (SpawnOverTimeCount >= SpawnOverTimeAmount)
+            {
+                // Finish spawning enemies over time
+                StopSpawnEnemiesOverTime();
+            }
         }
+
     }
 }

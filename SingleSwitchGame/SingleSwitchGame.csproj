@@ -74,6 +74,7 @@
     <Compile Include="src\Display\SpriteAnimation.cs" />
     <Compile Include="src\Effects\CircleWaves.cs" />
     <Compile Include="src\Effects\Explosion.cs" />
+    <Compile Include="src\Effects\VoronoiDiagram.cs" />
     <Compile Include="src\Effects\WaterRipples.cs" />
     <Compile Include="src\Entities\Characters\AI\AIManager.cs" />
     <Compile Include="src\Entities\Characters\AI\ArtificialIntelligence.cs" />
@@ -88,6 +89,7 @@
     <Compile Include="src\Game.cs" />
     <Compile Include="src\Display\Graphics.cs" />
     <Compile Include="src\GUI\AimAssistance.cs" />
+    <Compile Include="src\GUI\MessageFade.cs" />
     <Compile Include="src\GUI\GameOverGUI.cs" />
     <Compile Include="src\GUI\GraphicalUserInterface.cs" />
     <Compile Include="src\GUI\HeadsUpDisplay.cs" />
