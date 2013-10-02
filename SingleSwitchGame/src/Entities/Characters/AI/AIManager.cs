@@ -54,7 +54,7 @@ namespace SingleSwitchGame
 
         public void StartWave(uint no = 1)
         {
-            uint amount = 2 + (4 * (no-1));
+            uint amount = 2 + (2 * (no-1));
             double interval = 2500;
 
             // TODO: Insert dynamically adjusting difficulty here
@@ -76,9 +76,19 @@ namespace SingleSwitchGame
             if (EnemyCount > 0)
                 EnemyCount--;
 
+            // Powerup drops
+            if (Utils.RandomInt(0, 3) == 0)
+            {
+                PowerupPickup powerup = new PowerupPickup(Game, Utils.RandomInt(1, Cannon.POWERUP_MAX));
+                powerup.Position = ((DisplayObject)sender).Position;
+                Game.Layer_Objects.AddChild(powerup);
+            }
+
+            // Wave Finished
             if (EnemyCount == 0 && !SpawningOverTime && Game.Player != null)
             {
-                // Wave Finished
+                Game.Player.StopPowerup();
+
                 Game.UpgradeMenu = new UpgradeMenuGUI(Game);
                 Game.Layer_GUI.AddChild(Game.UpgradeMenu);
                 Game.UpgradeMenu.Removed += OnUpgradeMenuClosed;
@@ -126,6 +136,8 @@ namespace SingleSwitchGame
                 StopSpawnEnemiesOverTime();
                 return;
             }
+            if (Game.Player.CurrentPowerup == Cannon.POWERUP_FREEZE_TIME)
+                return;
 
             // Spawn enemy
             Character enemy;

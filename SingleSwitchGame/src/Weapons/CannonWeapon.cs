@@ -26,22 +26,37 @@ namespace SingleSwitchGame
             
             // Collision
             bool hitSomething = false;
-            for (int i = 0; i < Game.Layer_Objects.NumChildren; i++)
+            int numChildren = Game.Layer_Objects.NumChildren;
+            for (int i = 0; i < numChildren; i++)
             {
                 dynamic obj = Game.Layer_Objects.GetChildAt(i);
 
-                if (!(obj is PhysicalEntity) || !obj.CanTakeDamage)
+                if (obj is PhysicalEntity && !obj.CanTakeDamage)
                     continue;
                 if ((!(obj is CollisionEntity) || obj.Collision == null) && !Utils.InCircle(pos, ExplosionRadius, obj.Position)) // Collide with Position if obj is not a CollisionEntity or has no Collision
                     continue;
-                if (obj.Collision is CircleShape && !Utils.CircleCircleCollision(pos, ExplosionRadius, obj.Position, obj.Model.Radius))
+                if (obj.Collision is CircleShape && !Utils.CircleCircleCollision(pos, ExplosionRadius, obj.Position, obj.Collision.Radius))
                     continue;
                 if (obj.Collision is RectangleShape && !Utils.CircleRectangleCollision(pos, ExplosionRadius, obj.Collision, obj.Position))
                     continue;
 
-                obj.Damage(Damage, 0, SourceObject);
-                if (obj.Parent != Game.Layer_Objects)
+                if (obj is PhysicalEntity)
+                {
+                    // Damage
+                    obj.Damage(Damage, 0, SourceObject);
+                }
+                else if (obj is Pickup)
+                {
+                    // Pickup
+                    obj.Activate(SourceObject);
+                }
+
+                // Removed?
+                if (obj.Parent != Game.Layer_Objects && i <= numChildren - 1)
+                {
                     i--;
+                    numChildren--;
+                }
 
                 hitSomething = true;
             }

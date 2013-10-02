@@ -85,6 +85,8 @@
     <Compile Include="src\Entities\Characters\Infantryman.cs" />
     <Compile Include="src\Entities\CollisionEntity.cs" />
     <Compile Include="src\Entities\Entity.cs" />
+    <Compile Include="src\Entities\Objects\Pickups\PowerupPickup.cs" />
+    <Compile Include="src\Entities\Objects\Pickups\Pickup.cs" />
     <Compile Include="src\Entities\PhysicalEntity.cs" />
     <Compile Include="src\Game.cs" />
     <Compile Include="src\Display\Graphics.cs" />

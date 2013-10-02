@@ -25,6 +25,7 @@ namespace SingleSwitchGame
         private bool _FlashOnDamage = false;
         private Timer FlashOnDamageTimer;
         private bool FlashOnDamageBright = false;
+        private Color FlashOnDamageColor;
         private Color FlashOnDamageOriginalColor;
         private Color FlashOnDamageOriginalColor2;
 
@@ -128,7 +129,7 @@ namespace SingleSwitchGame
                     Parent.RemoveChild(this);
             }
             else if (FlashOnDamage)
-                FlashOnDamageStart();
+                FlashOnDamageStart(damageType);
 
             return Health;
         }
@@ -159,8 +160,13 @@ namespace SingleSwitchGame
                 }
             }
         }
-        protected void FlashOnDamageStart()
+        protected void FlashOnDamageStart(uint damageType = 0)
         {
+            if (damageType == DamageType.FIRE)
+                FlashOnDamageColor = new Color(255, 0, 0, 200);
+            else
+                FlashOnDamageColor = new Color(255, 255, 255, 200);
+
             FlashOnDamageHandler();
             FlashOnDamageTimer.Start();
         }
@@ -176,7 +182,7 @@ namespace SingleSwitchGame
                 if (FlashOnDamageBright)
                 {
                     FlashOnDamageOriginalColor = Model.Color;
-                    Model.Color = new Color(255, 255, 255, 200);
+                    Model.Color = FlashOnDamageColor;
                 }
                 else
                     Model.Color = FlashOnDamageOriginalColor;
@@ -187,8 +193,8 @@ namespace SingleSwitchGame
                 {
                     FlashOnDamageOriginalColor = Model.FillColor;
                     FlashOnDamageOriginalColor2 = Model.OutlineColor;
-                    Model.FillColor = new Color(255, 255, 255, 200);
-                    Model.OutlineColor = new Color(255, 255, 255, 200);
+                    Model.FillColor = FlashOnDamageColor;
+                    Model.OutlineColor = FlashOnDamageColor;
                 }
                 else
                 {

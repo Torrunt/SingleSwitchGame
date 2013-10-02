@@ -27,6 +27,8 @@ namespace SingleSwitchGame.GUI
         private bool Aiming = false;
         private int AimDirection = 1;
 
+        public float RotationOffset = 0;
+
         public AimAssistance(Game Game, Cannon SourceObject)
             : base(Game)
         {
@@ -80,16 +82,9 @@ namespace SingleSwitchGame.GUI
             SetReticlePosition(RETICLE_START_Y);
         }
 
-        public override void OnAdded()
-        {
-            base.OnAdded();
-
-            SetPosition(SourceObject.Position);
-        }
-
         public override void Update(float dt)
         {
-            Rotation = SourceObject.Rotation - 90;
+            Rotation = SourceObject.Rotation - 90 + RotationOffset;
 
             if (Aiming)
             {
@@ -99,7 +94,7 @@ namespace SingleSwitchGame.GUI
                     SetReticlePosition(RETICLE_START_Y);
                     AimDirection = 1;
                 }
-                else if (AimDirection > 0 && !Utils.InBounds(Game.Bounds, Utils.GetPointInDirection(Position, SourceObject.Rotation, Reticle.Y + (SourceObject.AimSpeed * dt))))
+                else if (AimDirection > 0 && !Utils.InBounds(Game.Bounds, Utils.GetPointInDirection(Position, SourceObject.Rotation + RotationOffset, Reticle.Y + (SourceObject.AimSpeed * dt))))
                 {
                     AimDirection = -1;
                 }
@@ -142,8 +137,8 @@ namespace SingleSwitchGame.GUI
         {
             Reticle.Y = y;
 
-            Vector2f LineLeftP = Utils.GetPointInDirection(LineLeft.Position, (float)Utils.GetAngle(LineLeft.Position, new Vector2f(Circle.Radius, Reticle.Y)), Game.Size.X - 43);
-            Vector2f LineRightP = Utils.GetPointInDirection(LineRight.Position, (float)Utils.GetAngle(LineRight.Position, new Vector2f(-Circle.Radius, Reticle.Y)), Game.Size.X - 43);
+            Vector2f LineLeftP = Utils.GetPointInDirection(LineLeft.Position, (float)Utils.GetAngle(LineLeft.Position, new Vector2f(Circle.Radius, Reticle.Y)), Game.Size.X * 2);
+            Vector2f LineRightP = Utils.GetPointInDirection(LineRight.Position, (float)Utils.GetAngle(LineRight.Position, new Vector2f(-Circle.Radius, Reticle.Y)), Game.Size.X * 2);
 
             LineLeft.Size = new Vector2f(Utils.Distance(LineLeft.Position, LineLeftP), LineLeft.Size.Y);
             LineLeft.Rotation = (float)Utils.GetAngle(LineLeft.Position, LineLeftP);
@@ -178,5 +173,11 @@ namespace SingleSwitchGame.GUI
             CircleLine.Position = new Vector2f(-Circle.Radius, 0);
             Reticle.AddChild(CircleLine);
         }
+
+        public void UpdateReticlePosition() { SetReticlePosition(Reticle.Y); }
+        public float GetReticlePosition() { return Reticle.Y; }
+
+        public bool IsAiming() { return Aiming; }
+
     }
 }

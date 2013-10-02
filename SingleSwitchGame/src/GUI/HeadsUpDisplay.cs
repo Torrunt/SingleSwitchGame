@@ -15,6 +15,12 @@ namespace SingleSwitchGame
         private List<DisplayObject> HealthPoints = new List<DisplayObject>(); 
         private readonly Vector2f HEALTH_START = new Vector2f(2, 2);
 
+        private Layer Powerup;
+        private Text PowerupName;
+        private Text PowerupTime;
+        private double PowerupTimeLeft;
+        private Timer PowerupTimeUpdateTimer;
+
         public bool DisplayFPS = true;
         private Text FPS;
         private Timer FPSUpdateTimer;
@@ -23,6 +29,7 @@ namespace SingleSwitchGame
         public HeadsUpDisplay(Game Game)
             : base(Game, null)
         {
+            // Score
             Score = new Text("00000000", Game.TidyHand, 50);
             Score.Color = new Color(255, 255, 255, 180);
             Score.Position = new Vector2f(Game.Size.X - 270, 2);
@@ -33,6 +40,27 @@ namespace SingleSwitchGame
             ScoreMultiplier.Position = new Vector2f(Game.Size.X - 100, 50);
             AddChild(ScoreMultiplier);
 
+            // Powerup
+            Powerup = new Layer();
+            Powerup.Visible = false;
+            AddChild(Powerup);
+
+            PowerupName = new Text("", Game.TidyHand, 40);
+            PowerupName.Color = Score.Color;
+            PowerupName.Position = new Vector2f(Game.Size.X / 2, Game.Size.Y - 80);
+            Powerup.AddChild(PowerupName);
+
+            PowerupTime = new Text("0.0 secs", Game.TidyHand, 30);
+            PowerupTime.Color = ScoreMultiplier.Color;
+            PowerupTime.Position = new Vector2f(Game.Size.X / 2, Game.Size.Y - 30);
+            FloatRect textRect = PowerupTime.GetLocalBounds();
+            PowerupTime.Origin = new Vector2f(textRect.Left + textRect.Width / 2.0f, textRect.Top + textRect.Height / 2.0f);
+            Powerup.AddChild(PowerupTime);
+
+            PowerupTimeUpdateTimer = new Timer(100);
+            PowerupTimeUpdateTimer.Elapsed += PowerupTimeUpdate;
+
+            // FPS
             if (DisplayFPS)
             {
                 FPS = new Text("00.0", Game.TidyHand, 30);
@@ -44,17 +72,41 @@ namespace SingleSwitchGame
                 FPSUpdateTimer.Start();
             }
         }
+        public override void Deinit()
+        {
+            base.Deinit();
+
+            if (PowerupTimeUpdateTimer != null)
+            {
+                PowerupTimeUpdateTimer.Stop();
+                PowerupTimeUpdateTimer.Dispose();
+                PowerupTimeUpdateTimer = null;
+            }
+
+            if (FPSUpdateTimer != null)
+            {
+                FPSUpdateTimer.Stop();
+                FPSUpdateTimer.Dispose();
+                FPSUpdateTimer = null;
+            }
+        }
 
         public override void Update(float dt)
         {
+            //if (Powerup.Visible)
+                //UpdatePowerupTime(PowerupTimeLeft - (int)(dt * 1000));
+
             if (DisplayFPS)
                 DT = dt;
         }
+
+        // FPS
         protected virtual void FPSUpdate(Object source = null, ElapsedEventArgs e = null)
         {
             FPS.DisplayedString = (1 / DT).ToString("00.0");
         }
 
+        // Score
         public void SetScore(int score)
         {
             Score.DisplayedString = score.ToString("00000000");
@@ -64,6 +116,7 @@ namespace SingleSwitchGame
             ScoreMultiplier.DisplayedString = "x" + multiplier.ToString("000");
         }
 
+        // Health
         public void SetHealth(uint health)
         {
             if (health > HealthPoints.Count)
@@ -102,6 +155,42 @@ namespace SingleSwitchGame
                     HealthPoints.RemoveAt(i);
                 }
             }
+        }
+
+        // Powerup
+        public void SetPowerup(string name, double time = 0)
+        {
+            if (name != "")
+            {
+                PowerupName.DisplayedString = name;
+                FloatRect textRect = PowerupName.GetLocalBounds();
+                PowerupName.Origin = new Vector2f(textRect.Left + textRect.Width / 2.0f, textRect.Top + textRect.Height / 2.0f);
+
+                UpdatePowerupTime(time);
+                PowerupTimeUpdateTimer.Start();
+                Powerup.Visible = true;
+            }
+            else
+                Powerup.Visible = false;
+        }
+        private void UpdatePowerupTime(double time)
+        {
+            if (time < 0)
+            {
+                Powerup.Visible = false;
+            }
+            else
+            {
+                PowerupTime.DisplayedString = (time / 1000).ToString("0.0") + " secs";
+            }
+
+            PowerupTimeLeft = time;
+        }
+
+        private void PowerupTimeUpdate(Object source, ElapsedEventArgs e)
+        {
+            // need to minus an additional 10ms each update to make sure it stays in sync with a powerup timer
+            UpdatePowerupTime(PowerupTimeLeft - 110);
         }
     }
 }

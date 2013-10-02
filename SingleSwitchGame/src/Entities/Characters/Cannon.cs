@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using SFML.Window;
 using SingleSwitchGame.GUI;
 using System.Timers;
+using SFML.Graphics;
+using SFML.Window;
 
 namespace SingleSwitchGame
 {
@@ -23,20 +24,29 @@ namespace SingleSwitchGame
         
         public CannonWeapon Weapon;
         public AimAssistance AimAssistance;
+        /// <summary>Extra AimAssistances for use with powerups.</summary>
+        private List<AimAssistance> AimAssistanceExtras = new List<AimAssistance>();
 
         public List<uint> UpgradeLevels = new List<uint>() { 1, 0, 0, 0 };
         public uint LandmineExplosionChance = 0;
+
+        public Timer PowerupTimer;
+        public int CurrentPowerup = 0;
+        private DisplayObject PowerupEffect;
 
         public Cannon(Game Game)
             : base(Game, Game.GraphicsMode == Game.GRAPHICSMODE_NORMAL ? Graphics.GetSprite("assets/sprites/cannon.png") : Graphics.GetSprite("assets/sprites/blueprint/cannon.png"))
         {
             SetScale(0.5f, 0.5f);
-            Origin = new Vector2f(26, 30);
+            Model.Origin = new Vector2f(26, 30);
             CanMove = false;
             RemoveOnDeath = false;
 
             HealthMax = 1000;
             Health = UpgradeLevels[0];
+
+            PowerupEffect = new DisplayObject();
+            AddChildAt(PowerupEffect, 0);
         }
 
         public override void Init()
@@ -45,6 +55,10 @@ namespace SingleSwitchGame
 
             RotationDelayTimer = new Timer(140); // Delay in ms before the Cannon starts rotating after firing
             RotationDelayTimer.Elapsed += OnRotationDelayEnd;
+
+            PowerupTimer = new Timer();
+            PowerupTimer.AutoReset = false;
+            PowerupTimer.Elapsed += OnPowerUpEnd;
 
             Weapon = new CannonWeapon(Game, this);
         }
@@ -58,6 +72,12 @@ namespace SingleSwitchGame
                 RotationDelayTimer.Dispose();
                 RotationDelayTimer = null;
             }
+            if (PowerupTimer != null)
+            {
+                PowerupTimer.Stop();
+                PowerupTimer.Dispose();
+                PowerupTimer = null;
+            }
 
             Weapon.Deinit();
             Weapon = null;
@@ -67,10 +87,13 @@ namespace SingleSwitchGame
             base.OnAdded();
 
             AimAssistance = new AimAssistance(Game, this);
+            AimAssistance.SetPosition(Position);
             Game.Layer_OtherAbove.AddChildAt(AimAssistance, 0);
         }
         public override void OnRemoved()
         {
+            StopPowerup();
+
             base.OnRemoved();
 
             if (AimAssistance.Parent != null)
@@ -106,6 +129,8 @@ namespace SingleSwitchGame
             RotationDelayTimer.Stop();
 
             AimAssistance.AimStart();
+            foreach (AimAssistance t in AimAssistanceExtras)
+                t.AimStart();
         }
 
         protected override void OnKeyReleased(object sender, KeyEventArgs e)
@@ -119,7 +144,11 @@ namespace SingleSwitchGame
             {
                 // Interrupt aiming if the player releases the key while paused
                 if (!CanRotate)
+                {
                     AimAssistance.AimEnd();
+                    foreach (AimAssistance a in AimAssistanceExtras)
+                        a.AimEnd();
+                }
                 return;
             }
 
@@ -127,9 +156,14 @@ namespace SingleSwitchGame
                 return;
 
             Weapon.Fire(Utils.GetPointInDirection(Position, Rotation, 40), Rotation, Utils.GetPointInDirection(Position, Rotation, AimAssistance.Reticle.Y));
+            foreach (AimAssistance a in AimAssistanceExtras)
+                Weapon.Fire(Utils.GetPointInDirection(Position, Rotation + a.RotationOffset, 40), Rotation + a.RotationOffset, Utils.GetPointInDirection(Position, Rotation + a.RotationOffset, a.Reticle.Y));
+
             StartRotationDelay();
 
             AimAssistance.AimEnd();
+            foreach (AimAssistance a in AimAssistanceExtras)
+                a.AimEnd();
         }
 
         public void StartRotationDelay()
@@ -183,7 +217,9 @@ namespace SingleSwitchGame
                 Game.Player = null;
         }
 
+
         // Upgrades
+
         public void LevelUpUpgrade(int upgrade)
         {
             UpgradeLevels[upgrade]++;
@@ -240,6 +276,143 @@ namespace SingleSwitchGame
 
             return "";
         }
+
+
+        // Power-ups
+
+        public const int POWERUP_DOUBLE_EXPLOSION_RADIUS   = 1;
+        public const int POWERUP_AIM_SPEED_INCREASE        = 2;
+        public const int POWERUP_FREEZE_TIME               = 3;
+        public const int POWERUP_TRIPLE_CANNON             = 4;
+        public const int POWERUP_OCTUPLE_CANNON            = 5;
+        public const int POWERUP_RED_HOT_BEACH             = 6;
+        public const int POWERUP_MAX = 6;
+
+        public void StartPowerup(int powerup)
+        {
+            if (CurrentPowerup != 0)
+                StopPowerup();
+
+            CurrentPowerup = powerup;
+
+            PowerupTimer.Interval = 10000;
+            switch (CurrentPowerup)
+            {
+                case POWERUP_DOUBLE_EXPLOSION_RADIUS:
+                {
+                    Weapon.ExplosionRadius *= 2;
+                    AimAssistance.UpdateReticle();
+                    AimAssistance.UpdateReticlePosition();
+                }
+                break;
+                case POWERUP_AIM_SPEED_INCREASE:
+                {
+                    AimSpeed *= 1.5f;
+                    RotateSpeedMax *= 1.5f;
+                    RotateAcc *= 3f;
+                    RotationDelayTimer.Interval /= 2f;
+                }
+                break;
+                case POWERUP_TRIPLE_CANNON:
+                case POWERUP_OCTUPLE_CANNON:
+                {
+                    int amount = CurrentPowerup == POWERUP_TRIPLE_CANNON ? 3 : 8;
+                    for (int b = 1; b < amount; b++)
+                    {
+                        var barrel = new Sprite(((Sprite) Model).Texture);
+                        barrel.Origin = new Vector2f(26, 30);
+                        if (amount == 3)
+                            barrel.Rotation = b == 1 ? 45 : -45;
+                        else
+                            barrel.Rotation = 45 * b;
+                        PowerupEffect.AddChild(barrel);
+
+                        var aa = new AimAssistance(Game, this);
+                        aa.Position = Position;
+                        aa.RotationOffset = barrel.Rotation;
+                        Game.Layer_OtherAbove.AddChildAt(aa, 0);
+                        AimAssistanceExtras.Add(aa);
+
+                        if (AimAssistance.IsAiming())
+                        {
+                            aa.AimStart();
+                            aa.SetReticlePosition(AimAssistance.GetReticlePosition());
+                        }
+                    }
+                }
+                break;
+            }
+
+            Game.HUD.SetPowerup(GetPowerupName(CurrentPowerup), PowerupTimer.Interval);
+
+            PowerupTimer.Start();
+        }
+        public void StopPowerup()
+        {
+            if (PowerupTimer != null)
+                PowerupTimer.Stop();
+            
+            switch (CurrentPowerup)
+            {
+                case POWERUP_DOUBLE_EXPLOSION_RADIUS:
+                {
+                    Weapon.ExplosionRadius /= 2;
+                    AimAssistance.UpdateReticle();
+                    AimAssistance.UpdateReticlePosition();
+                }
+                break;
+                case POWERUP_AIM_SPEED_INCREASE:
+                {
+                    AimSpeed /= 1.5f;
+                    RotateSpeedMax /= 1.5f;
+                    RotateAcc /= 3f;
+                    RotationDelayTimer.Interval *= 2f;
+                }
+                break;
+                case POWERUP_TRIPLE_CANNON:
+                case POWERUP_OCTUPLE_CANNON:
+                {
+                    PowerupEffect.Clear();
+                    foreach (AimAssistance a in AimAssistanceExtras)
+                    {
+                        if (a.Parent != null)
+                            a.Parent.RemoveChild(a);
+                    }
+                    AimAssistanceExtras.Clear();
+                }
+                break;
+            }
+
+            Game.HUD.SetPowerup("");
+
+            CurrentPowerup = 0;
+        }
+
+        private void OnPowerUpEnd(Object source, ElapsedEventArgs e)
+        {
+            StopPowerup();
+        }
+
+        public static string GetPowerupName(int powerup)
+        {
+            switch (powerup)
+            {
+                case POWERUP_DOUBLE_EXPLOSION_RADIUS:
+                    return "Double Explosion Radius";
+                case POWERUP_AIM_SPEED_INCREASE:
+                    return "Aim Speed Increase";
+                case POWERUP_FREEZE_TIME:
+                    return "Freeze Time";
+                case POWERUP_TRIPLE_CANNON:
+                    return "Triple Cannon";
+                case POWERUP_OCTUPLE_CANNON:
+                    return "Octuple Cannon";
+                case POWERUP_RED_HOT_BEACH:
+                    return "Red Hot Beach";
+            }
+            return "";
+        }
+
 
         // Score
 

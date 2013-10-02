@@ -104,6 +104,7 @@ namespace SingleSwitchGame
             set { Scale = new Vector2f(Scale.X, value); }
         }
         public void SetScale(float scaleX, float scaleY) { Scale = new Vector2f(scaleX, scaleY); }
+        public void SetScale(float scale) { Scale = new Vector2f(scale, scale); }
         public void SetScale(Vector2f scale) { Scale = scale; }
 
         public void Rotate(float amount)
