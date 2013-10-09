@@ -45,7 +45,7 @@ namespace SingleSwitchGame
 			float l = Math.Abs(obj1.X - obj2.X);
 			float h = Math.Abs(obj1.Y - obj2.Y);
 
-            float answer = (float)Math.Sqrt(Math.Pow(l, 2) + Math.Pow(h, 2));
+            float answer = (float)Math.Sqrt((l * l) + (h * h));
 			
 			return answer;
 		}
@@ -131,22 +131,48 @@ namespace SingleSwitchGame
         }
         public static bool CircleCircleCollision(CircleShape circle1, CircleShape circle2) { return CircleCircleCollision(circle1.Position, circle1.Radius, circle2.Position, circle2.Radius); }
 
-        public static bool CircleRectangleCollision(Vector2f circleCenter, float circleRadius, RectangleShape rect, Vector2f rectOffset = default(Vector2f))
+
+        /// <summary>Checks collision between Circle and Rotated Rectangle.</summary>
+        /// <param name="rectAngle">In Degrees.</param>
+        public static bool CircleRectangleCollision(Vector2f circleCenter, float circleRadius, RectangleShape rect, float rectAngle = 0, Vector2f rectOffset = default(Vector2f))
         {
-            Vector2f distance = new Vector2f((float)Math.Abs(circleCenter.X - (rect.Position.X + rectOffset.X)), (float)Math.Abs(circleCenter.Y - (rect.Position.Y + rectOffset.Y)));
-            
-            if (distance.X > (rect.Size.X / 2 + circleRadius)) return false;
-            if (distance.Y > (rect.Size.Y / 2 + circleRadius)) return false;
+            Vector2f rectPos = new Vector2f(rect.Position.X + rectOffset.X, rect.Position.Y + rectOffset.Y);
+            Vector2f rectCenter = new Vector2f(rectPos.X + (rect.Size.X / 2), rectPos.Y + (rect.Size.Y / 2));
 
-            if (distance.X <= (rect.Size.X / 2)) return true;
-            if (distance.Y <= (rect.Size.Y / 2)) return true;
+            // Rotate circle's center point back
+           
+            Vector2f unrotatedCircle = new Vector2f();
+            unrotatedCircle.X = (float)Math.Cos(rectAngle) * (circleCenter.X - rectCenter.X) - (float)Math.Sin(rectAngle) * (circleCenter.Y - rectCenter.Y) + rectCenter.X;
+            unrotatedCircle.Y = (float)Math.Sin(rectAngle) * (circleCenter.X - rectCenter.X) + (float)Math.Cos(rectAngle) * (circleCenter.Y - rectCenter.Y) + rectCenter.Y;
 
-            double distance_sq = Math.Pow(distance.X - rect.Size.X / 2, 2) +
-                                 Math.Pow(distance.Y - rect.Size.Y / 2, 2);
+            // Closest point in the rectangle to the center of circle rotated backwards(unrotated)
+            Vector2f closest = new Vector2f();
 
-            return (distance_sq <= Math.Pow(circleRadius, 2));
+            // Find the unrotated closest x point from center of unrotated circle
+            if (unrotatedCircle.X < rectPos.X)
+                closest.X = rectPos.X;
+            else if (unrotatedCircle.X > rectPos.X + rect.Size.X)
+                closest.X = rectPos.X + rect.Size.X;
+            else
+                closest.X = unrotatedCircle.X;
+
+            // Find the unrotated closest y point from center of unrotated circle
+            if (unrotatedCircle.Y < rectPos.Y)
+                closest.Y = rectPos.Y;
+            else if (unrotatedCircle.Y > rectPos.Y + rect.Size.Y)
+                closest.Y = rectPos.Y + rect.Size.Y;
+            else
+                closest.Y = unrotatedCircle.Y;
+
+            // Determine collision
+            return Distance(unrotatedCircle, closest) < circleRadius;
         }
-        public static bool CircleRectangleCollision(CircleShape circle, RectangleShape rect, Vector2f rectOffset = default(Vector2f)) { return CircleRectangleCollision(circle.Position, circle.Radius, rect, rectOffset); }
+        /// <summary>Checks collision between Circle and Rotated Rectangle.</summary>
+        /// <param name="rectAngle">In Degrees.</param>
+        public static bool CircleRectangleCollision(CircleShape circle, RectangleShape rect, float rectAngle = 0, Vector2f rectOffset = default(Vector2f))
+        {
+            return CircleRectangleCollision(circle.Position, circle.Radius, rect, rectAngle, rectOffset);
+        }
 
     }
 }

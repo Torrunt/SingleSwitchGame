@@ -52,13 +52,5 @@ namespace SingleSwitchGame
             }
             base.Update(dt);
         }
-
-        protected override void OnDeath(dynamic sourceObject = null)
-        {
-            base.OnDeath((object)sourceObject);
-
-            if (sourceObject is Cannon)
-                sourceObject.IncreaseScore(AIManager.POINTS_INFANTRY);
-        }
     }
 }

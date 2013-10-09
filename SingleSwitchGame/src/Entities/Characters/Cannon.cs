@@ -37,7 +37,7 @@ namespace SingleSwitchGame
         public Cannon(Game Game)
             : base(Game, Game.GraphicsMode == Game.GRAPHICSMODE_NORMAL ? Graphics.GetSprite("assets/sprites/cannon.png") : Graphics.GetSprite("assets/sprites/blueprint/cannon.png"))
         {
-            SetScale(0.5f, 0.5f);
+            Model.Scale = new Vector2f(0.5f, 0.5f);
             Model.Origin = new Vector2f(26, 30);
             CanMove = false;
             RemoveOnDeath = false;
@@ -107,6 +107,14 @@ namespace SingleSwitchGame
 
             base.Update(dt);
 
+            if (Game.DEBUG_MOUSE_CONTROLS)
+            {
+                Rotation = (float)Utils.GetAngle(Position, 
+                    new Vector2f((Mouse.GetPosition(Game.Window).X * Game.ResScale) + ((VideoMode.DesktopMode.Width - Game.Window.GetView().Size.X)/2), 
+                        Mouse.GetPosition(Game.Window).Y * Game.ResScale));
+                return;
+            }
+
             if (CanRotate)
             {
                 if (RotateVelocity < RotateSpeedMax)
@@ -117,7 +125,7 @@ namespace SingleSwitchGame
 
         protected override void OnKeyPressed(object sender, KeyEventArgs e)
         {
-            if (KeyDown || IsDead() || Game.KeyIsNotAllowed(e.Code))
+            if (KeyDown || IsDead() || (e != null && Game.KeyIsNotAllowed(e.Code)))
                 return;
 
             KeyDown = true;
@@ -135,7 +143,7 @@ namespace SingleSwitchGame
 
         protected override void OnKeyReleased(object sender, KeyEventArgs e)
         {
-            if (IsDead() || Game.KeyIsNotAllowed(e.Code))
+            if (IsDead() || (e != null && Game.KeyIsNotAllowed(e.Code)))
                 return;
 
             KeyDown = false;

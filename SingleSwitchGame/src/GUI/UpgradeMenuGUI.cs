@@ -118,6 +118,8 @@ namespace SingleSwitchGame
 
             Game.Window.KeyPressed += OnKeyPressed;
             Game.Window.KeyReleased += OnKeyReleased;
+            Game.Window.MouseButtonPressed += OnMouseButtonPressed;
+            Game.Window.MouseButtonReleased += OnMouseButtonReleased;
             Game.NewWindow += OnNewWindow;
 
             Game.Pause();
@@ -136,6 +138,8 @@ namespace SingleSwitchGame
             Game.NewWindow -= OnNewWindow;
             Game.Window.KeyPressed -= OnKeyPressed;
             Game.Window.KeyReleased -= OnKeyReleased;
+            Game.Window.MouseButtonPressed -= OnMouseButtonPressed;
+            Game.Window.MouseButtonReleased -= OnMouseButtonReleased;
 
             Game.Resume();
 
@@ -145,23 +149,33 @@ namespace SingleSwitchGame
         {
             Game.Window.KeyPressed += OnKeyPressed;
             Game.Window.KeyReleased += OnKeyReleased;
+            Game.Window.MouseButtonPressed += OnMouseButtonPressed;
+            Game.Window.MouseButtonReleased += OnMouseButtonReleased;
         }
 
-        private void OnKeyReleased(Object sender, KeyEventArgs e)
+        private void OnKeyReleased(Object sender, KeyEventArgs e = null)
         {
-            if (Game.KeyIsNotAllowed(e.Code))
+            if (e != null && Game.KeyIsNotAllowed(e.Code))
                 return;
 
             HoldButtonTimer.Stop();
 
             SelectUpgrade(CurrentSelection == UpgradeNames.Count - 1 ? 0 : CurrentSelection + 1);
         }
-        private void OnKeyPressed(Object sender, KeyEventArgs e)
+        private void OnKeyPressed(Object sender, KeyEventArgs e = null)
         {
-            if (Game.KeyIsNotAllowed(e.Code))
+            if (e != null && Game.KeyIsNotAllowed(e.Code))
                 return;
 
             HoldButtonTimer.Start();
+        }
+        protected virtual void OnMouseButtonPressed(Object sender, MouseButtonEventArgs e = null)
+        {
+            OnKeyPressed(sender);
+        }
+        protected virtual void OnMouseButtonReleased(Object sender, MouseButtonEventArgs e = null)
+        {
+            OnKeyReleased(sender);
         }
 
         private void HoldButtonTimerReleased(Object source, ElapsedEventArgs e)

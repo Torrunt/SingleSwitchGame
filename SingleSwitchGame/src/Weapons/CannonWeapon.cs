@@ -37,7 +37,7 @@ namespace SingleSwitchGame
                     continue;
                 if (obj.Collision is CircleShape && !Utils.CircleCircleCollision(pos, ExplosionRadius, obj.Position, obj.Collision.Radius))
                     continue;
-                if (obj.Collision is RectangleShape && !Utils.CircleRectangleCollision(pos, ExplosionRadius, obj.Collision, obj.Position))
+                if (obj.Collision is RectangleShape && !Utils.CircleRectangleCollision(pos, ExplosionRadius, obj.Collision, obj.Rotation, obj.Position))
                     continue;
 
                 if (obj is PhysicalEntity)
@@ -64,8 +64,8 @@ namespace SingleSwitchGame
             if (Game.Player == null)
                 return;
             if (hitSomething)
-                Game.Player.IncreaseScoreMultiplier(1);
-            else
+                Game.Player.IncreaseScoreMultiplier();
+            else if (Game.Player.CurrentPowerup != Cannon.POWERUP_TRIPLE_CANNON && Game.Player.CurrentPowerup != Cannon.POWERUP_OCTUPLE_CANNON)
                 Game.Player.ResetScoreMultiplier();
         }
 

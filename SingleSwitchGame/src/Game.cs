@@ -35,6 +35,8 @@ namespace SingleSwitchGame
         public const uint GRAPHICSMODE_BLUEPRINT = 1;
         public uint GraphicsMode = GRAPHICSMODE_BLUEPRINT;
 
+        public bool DEBUG_MOUSE_CONTROLS = false;
+
         // Layers
         public Layer Layer_Background;
         public Layer Layer_Other;
@@ -267,7 +269,8 @@ namespace SingleSwitchGame
                 return;
             Running = false;
 
-            AIManager.Pause();
+            if (AIManager != null)
+                AIManager.Pause();
         }
         public void Resume()
         {
@@ -275,7 +278,8 @@ namespace SingleSwitchGame
                 return;
             Running = true;
 
-            AIManager.Resume();
+            if (AIManager != null)
+                AIManager.Resume();
         }
 
         public void Update(float dt)
@@ -308,6 +312,8 @@ namespace SingleSwitchGame
         public bool IsRunning() { return Running; }
 
         public Vector2u Size { get { return ResolutionDefault; } set {} }
+        /// <summary>The scale difference between the set Resolution (window size) and Game Resolution.</summary>
+        public float ResScale { get { return Window.GetView().Size.X == 0 ? 1 : Window.GetView().Size.X / Window.Size.X; } set { } }
 
         // Debugging / Testing
         public void Debug_ShowCollision(bool value = true)
@@ -327,22 +333,29 @@ namespace SingleSwitchGame
             Window.Closed += OnClose;
             Window.KeyReleased += OnKeyReleased;
             Window.MouseButtonPressed += OnMouseButtonPressed;
-            
-            if (WindowStyle == Styles.None)
+
+            if (WindowStyle == Styles.Fullscreen)
+            {
+                float difference = (float)ResolutionDefault.Y / (float)VideoMode.DesktopMode.Height;
+                View view = new View(new FloatRect((VideoMode.DesktopMode.Width - (ResolutionDefault.X * difference)) / 2, 0, ResolutionDefault.X * difference, ResolutionDefault.Y));
+                Window.SetView(view);
+            }
+            else if (WindowStyle == Styles.None)
             {
                 Window.Size = new Vector2u(VideoMode.DesktopMode.Width, VideoMode.DesktopMode.Height);
                 Window.Position = new Vector2i(0, 0);
                 float difference = (float)ResolutionDefault.Y / (float)VideoMode.DesktopMode.Height;
-                View view = new View(new FloatRect((VideoMode.DesktopMode.Width - (ResolutionDefault.X * difference))/2, 0, ResolutionDefault.X * difference, ResolutionDefault.Y));
+                View view = new View(new FloatRect((VideoMode.DesktopMode.Width - (ResolutionDefault.X * difference)) / 2, 0, ResolutionDefault.X * difference, ResolutionDefault.Y));
                 Window.SetView(view);
             }
             else
             {
                 Window.Size = WindowSizeDefault;
                 Window.Position = new Vector2i((int)((VideoMode.DesktopMode.Width - WindowSizeDefault.X) / 2), (int)((VideoMode.DesktopMode.Height - WindowSizeDefault.Y) / 2));
-                Window.SetView(Window.DefaultView);
+                View view = new View(new FloatRect((VideoMode.DesktopMode.Width - ResolutionDefault.X) / 2, 0, ResolutionDefault.X, ResolutionDefault.Y));
+                Window.SetView(view);
             }
-
+            
             if (NewWindow != null)
                 NewWindow(this, EventArgs.Empty);
         }
@@ -354,12 +367,12 @@ namespace SingleSwitchGame
         public void ToggleFullscreen()
         {
             Fullscreen = !Fullscreen;
-            WindowStyle = Fullscreen ? Styles.None : Styles.Close;
+            WindowStyle = Fullscreen ? Styles.Fullscreen : Styles.Close;
 
             Window.Close();
             CreateWindow();
         }
-
+        
         private void OnKeyReleased(Object sender, KeyEventArgs e)
         {
             switch (e.Code)
@@ -381,6 +394,8 @@ namespace SingleSwitchGame
                     Reset();
                 }
                 break;
+
+                case Keyboard.Key.F3: DEBUG_MOUSE_CONTROLS = !DEBUG_MOUSE_CONTROLS; break;
             }
         }
 

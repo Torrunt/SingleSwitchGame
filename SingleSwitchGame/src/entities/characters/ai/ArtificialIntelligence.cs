@@ -22,6 +22,7 @@ namespace SingleSwitchGame
         public Vector2f Range;
         /// <summary>Set to true by Character if next move was going to go past the Target.</summary>
         public bool ForcedStop = false;
+        public bool StopAtWaypoints = false;
 
         private Timer TickTimer;
 
@@ -63,7 +64,7 @@ namespace SingleSwitchGame
             // Get T (Waypoint or Target)
             if (Target != null)
                 T = Target.Position;
-            else if (!Waypoint.Equals(new Vector2f(-1, -1)))
+            else if (Waypoint.X != -1 && Waypoint.Y != 1)
                 T = Waypoint;
             else
                 return;

@@ -18,6 +18,7 @@ namespace SingleSwitchGame
             base.Init(obj);
 
             Range = new Vector2f(0, 0);
+            StopAtWaypoints = true;
         }
 
         protected override void Tick(object source, System.Timers.ElapsedEventArgs e)

@@ -66,9 +66,8 @@ namespace SingleSwitchGame
                 else if (IsMoving())
                 {
                     // AI Movement - Stop if next move is going to go past Target
-                    if (AI != null && (AI.Target != null || AI.HasWaypoint))
+                    if (AI != null && (AI.Target != null || (AI.StopAtWaypoints && AI.HasWaypoint)))
                     {
-                        AI.ForcedStop = true;
                         Vector2f nextPos = new Vector2f(X + ((float)Math.Cos(MoveAngle) * (MoveAngleVelocity * dt)), Y + ((float)Math.Sin(MoveAngle) * (MoveAngleVelocity * dt)));
                         if (MoveLeft && nextPos.X < AI.GetTarget().X - AI.Range.X)
                             MoveLeft = false;
@@ -135,12 +134,16 @@ namespace SingleSwitchGame
             {
                 Game.Window.KeyReleased += OnKeyReleased;
                 Game.Window.KeyPressed += OnKeyPressed;
+                Game.Window.MouseButtonPressed += OnMouseButtonPressed;
+                Game.Window.MouseButtonReleased += OnMouseButtonReleased;
                 Game.NewWindow += OnNewWindow;
             }
             else
             {
                 Game.Window.KeyReleased -= OnKeyReleased;
                 Game.Window.KeyPressed -= OnKeyPressed;
+                Game.Window.MouseButtonPressed -= OnMouseButtonPressed;
+                Game.Window.MouseButtonReleased -= OnMouseButtonReleased;
                 Game.NewWindow -= OnNewWindow;
             }
         }
@@ -151,9 +154,11 @@ namespace SingleSwitchGame
 
             Game.Window.KeyReleased += OnKeyReleased;
             Game.Window.KeyPressed += OnKeyPressed;
+            Game.Window.MouseButtonPressed += OnMouseButtonPressed;
+            Game.Window.MouseButtonReleased += OnMouseButtonReleased;
         }
 
-        protected virtual void OnKeyPressed(Object sender, KeyEventArgs e)
+        protected virtual void OnKeyPressed(Object sender, KeyEventArgs e = null)
         {
             MoveLeft = e.Code == Keyboard.Key.Left;
             MoveRight = e.Code == Keyboard.Key.Right;
@@ -163,10 +168,17 @@ namespace SingleSwitchGame
                 MoveDown = e.Code == Keyboard.Key.Down;
             }
         }
-
-        protected virtual void OnKeyReleased(Object sender, KeyEventArgs e)
+        protected virtual void OnKeyReleased(Object sender, KeyEventArgs e = null)
         {
             
+        }
+        protected virtual void OnMouseButtonPressed(Object sender, MouseButtonEventArgs e = null)
+        {
+            OnKeyPressed(sender);
+        }
+        protected virtual void OnMouseButtonReleased(Object sender, MouseButtonEventArgs e = null)
+        {
+            OnKeyReleased(sender);
         }
 
     }

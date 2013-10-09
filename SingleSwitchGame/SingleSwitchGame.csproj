@@ -78,11 +78,14 @@
     <Compile Include="src\Effects\WaterRipples.cs" />
     <Compile Include="src\Entities\Characters\AI\AIManager.cs" />
     <Compile Include="src\Entities\Characters\AI\ArtificialIntelligence.cs" />
+    <Compile Include="src\Entities\Characters\AI\ShipAI.cs" />
     <Compile Include="src\Entities\Characters\AI\InfantrymanAI.cs" />
     <Compile Include="src\Entities\Characters\Bat.cs" />
     <Compile Include="src\Entities\Characters\Cannon.cs" />
     <Compile Include="src\Entities\Characters\Character.cs" />
+    <Compile Include="src\Entities\Characters\Rowboat.cs" />
     <Compile Include="src\Entities\Characters\Infantryman.cs" />
+    <Compile Include="src\Entities\Characters\Ship.cs" />
     <Compile Include="src\Entities\CollisionEntity.cs" />
     <Compile Include="src\Entities\Entity.cs" />
     <Compile Include="src\Entities\Objects\Pickups\PowerupPickup.cs" />

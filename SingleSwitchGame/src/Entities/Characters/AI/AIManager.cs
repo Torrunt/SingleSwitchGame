@@ -24,7 +24,7 @@ namespace SingleSwitchGame
         public const uint TYPE_SHIP = 1;
         public const uint TYPE_ROWBOAT = 2;
 
-        public const int POINTS_INFANTRY = 1;
+        public const int POINTS_INFANTRYMAN = 1;
         public const int POINTS_SHIP = 10;
         public const int POINTS_ROWBOAT = 4;
 
@@ -54,12 +54,12 @@ namespace SingleSwitchGame
 
         public void StartWave(uint no = 1)
         {
-            uint amount = 2 + (2 * (no-1));
+            uint amount = 1 + (2 * (no-1));
             double interval = 2500;
 
             // TODO: Insert dynamically adjusting difficulty here
 
-            SpawnEnemiesOverTime(TYPE_INFANTRYMAN, amount, interval);
+            SpawnEnemiesOverTime(TYPE_SHIP, amount, interval);
 
             // Message
             MessageFade msg = new MessageFade(Game, "Wave " + no, 200, new Vector2f(Game.Size.X/2, Game.Size.Y/2));
@@ -75,6 +75,16 @@ namespace SingleSwitchGame
         {
             if (EnemyCount > 0)
                 EnemyCount--;
+            if (Game.Player == null)
+                return;
+
+            // Increase Score
+            if (sender is Ship)
+                Game.Player.IncreaseScore(POINTS_SHIP);
+            else if (sender is Infantryman)
+                Game.Player.IncreaseScore(POINTS_INFANTRYMAN);
+            else if (sender is Rowboat)
+                Game.Player.IncreaseScore(POINTS_ROWBOAT);
 
             // Powerup drops
             if (Utils.RandomInt(0, 3) == 0)
@@ -85,7 +95,7 @@ namespace SingleSwitchGame
             }
 
             // Wave Finished
-            if (EnemyCount == 0 && !SpawningOverTime && Game.Player != null)
+            if (EnemyCount == 0 && !SpawningOverTime)
             {
                 Game.Player.StopPowerup();
 
@@ -145,8 +155,9 @@ namespace SingleSwitchGame
             {
                 case TYPE_SHIP:
                 {
-                    enemy = new Character(Game);
-                    //enemy.SetPosition(Utils.GetPointInDirection(Game.Island.Position, Utils.RandomInt(0, 359), Game.Size.X + 100));
+                    enemy = new Ship(Game);
+                    enemy.SetPosition(Utils.GetPointInDirection(Game.Island.Position, Utils.RandomInt(0, 359), (Game.Size.X/2) + 250));
+                    //enemy.SetPosition(Utils.GetPointInDirection(Game.Island.Position, Utils.RandomInt(0, 359), 800));
                     break;
                 }
                 default:

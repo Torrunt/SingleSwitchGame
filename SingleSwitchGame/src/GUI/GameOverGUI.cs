@@ -51,6 +51,7 @@ namespace SingleSwitchGame
         {
             Game.Window.KeyReleased += OnKeyReleased;
             Game.NewWindow += OnNewWindow;
+            Game.Window.MouseButtonReleased += OnMouseButtonReleased;
 
             base.Init();
         }
@@ -58,21 +59,26 @@ namespace SingleSwitchGame
         {
             Game.NewWindow -= OnNewWindow;
             Game.Window.KeyReleased -= OnKeyReleased;
+            Game.Window.MouseButtonReleased -= OnMouseButtonReleased;
 
             base.Deinit();
         }
-        private void OnNewWindow(Object sender, EventArgs e)
+        private void OnNewWindow(Object sender, EventArgs e = null)
         {
             Game.Window.KeyReleased += OnKeyReleased;
+            Game.Window.MouseButtonReleased += OnMouseButtonReleased;
         }
-
-        private void OnKeyReleased(Object sender, KeyEventArgs e)
+        private void OnKeyReleased(Object sender, KeyEventArgs e = null)
         {
-            if (Game.KeyIsNotAllowed(e.Code))
+            if (e != null && Game.KeyIsNotAllowed(e.Code))
                 return;
 
             Parent.RemoveChild(this);
             Game.Reset();
+        }
+        protected virtual void OnMouseButtonReleased(Object sender, MouseButtonEventArgs e = null)
+        {
+            OnKeyReleased(sender);
         }
 
         
