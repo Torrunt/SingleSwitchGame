@@ -54,8 +54,8 @@ namespace SingleSwitchGame
 
         public void StartWave(uint no = 1)
         {
-            uint amount = 1 + (2 * (no-1));
-            double interval = 2500;
+            uint amount = 10 + (2 * (no-1));
+            double interval = 8000;
 
             // TODO: Insert dynamically adjusting difficulty here
 
@@ -73,25 +73,43 @@ namespace SingleSwitchGame
 
         public void OnEnemyDeath(object sender, EventArgs e)
         {
+            EnemyRemoved(sender, true);
+        }
+        public void EnemyRemoved(object enemy, bool death)
+        {
             if (EnemyCount > 0)
                 EnemyCount--;
             if (Game.Player == null)
                 return;
 
-            // Increase Score
-            if (sender is Ship)
-                Game.Player.IncreaseScore(POINTS_SHIP);
-            else if (sender is Infantryman)
-                Game.Player.IncreaseScore(POINTS_INFANTRYMAN);
-            else if (sender is Rowboat)
-                Game.Player.IncreaseScore(POINTS_ROWBOAT);
-
-            // Powerup drops
-            if (Utils.RandomInt(0, 3) == 0)
+            if (death)
             {
-                PowerupPickup powerup = new PowerupPickup(Game, Utils.RandomInt(1, Cannon.POWERUP_MAX));
-                powerup.Position = ((DisplayObject)sender).Position;
-                Game.Layer_Objects.AddChild(powerup);
+                int powerupDropChance = 3;
+
+                // Increase Score
+                if (enemy is Ship)
+                {
+                    Game.Player.IncreaseScore(POINTS_SHIP);
+                    powerupDropChance = 2;
+                }
+                else if (enemy is Infantryman)
+                {
+                    Game.Player.IncreaseScore(POINTS_INFANTRYMAN);
+                    powerupDropChance = 6;
+                }
+                else if (enemy is Rowboat)
+                {
+                    Game.Player.IncreaseScore(POINTS_ROWBOAT);
+                    powerupDropChance = 3;
+                }
+
+                // Powerup drops
+                if (Utils.RandomInt(1, powerupDropChance) == 0)
+                {
+                    PowerupPickup powerup = new PowerupPickup(Game, Utils.RandomInt(1, Cannon.POWERUP_MAX));
+                    powerup.Position = ((DisplayObject)enemy).Position;
+                    Game.Layer_Objects.AddChild(powerup);
+                }
             }
 
             // Wave Finished
@@ -104,6 +122,7 @@ namespace SingleSwitchGame
                 Game.UpgradeMenu.Removed += OnUpgradeMenuClosed;
             }
         }
+
         private void OnUpgradeMenuClosed(object source, EventArgs e)
         {
             Game.UpgradeMenu.Removed -= OnUpgradeMenuClosed;
@@ -128,6 +147,9 @@ namespace SingleSwitchGame
             SpawnOverTimeTimer = new Timer(interval);
             SpawnOverTimeTimer.Elapsed += SpawnOverTimeTimerHandler;
             SpawnOverTimeTimer.Start();
+
+            // spawn one straight away
+            SpawnOverTimeTimerHandler();
         }
         public void StopSpawnEnemiesOverTime()
         {
@@ -139,7 +161,7 @@ namespace SingleSwitchGame
             SpawnOverTimeTimer = null;
         }
 
-        private void SpawnOverTimeTimerHandler(Object source, ElapsedEventArgs e)
+        private void SpawnOverTimeTimerHandler(Object source = null, ElapsedEventArgs e = null)
         {
             if (Game.Player == null)
             {
@@ -156,7 +178,7 @@ namespace SingleSwitchGame
                 case TYPE_SHIP:
                 {
                     enemy = new Ship(Game);
-                    enemy.SetPosition(Utils.GetPointInDirection(Game.Island.Position, Utils.RandomInt(0, 359), (Game.Size.X/2) + 250));
+                    enemy.SetPosition(Utils.GetPointInDirection(Game.Island.Position, Utils.RandomInt(0, 359), (Game.Size.X/2) + 300));
                     //enemy.SetPosition(Utils.GetPointInDirection(Game.Island.Position, Utils.RandomInt(0, 359), 800));
                     break;
                 }
@@ -178,6 +200,25 @@ namespace SingleSwitchGame
             {
                 // Finish spawning enemies over time
                 StopSpawnEnemiesOverTime();
+            }
+        }
+
+        public void OnShipReachedBeach(Ship ship)
+        {
+            const float gapX = 4;
+
+            for (int i = 0; i < ship.AmountOfInfantry; i++)
+            {
+                Infantryman enemy = new Infantryman(Game, Utils.RandomInt(0, 5000), ship);
+                enemy.SetPosition(Utils.GetPointInDirection(
+                    Game.Island.Position, 
+                    (float)Utils.GetAngle(Game.Island.Position, ship.Position) - ((ship.AmountOfInfantry / 2) * gapX) + (i * gapX), 
+                    Game.Island.Radius - 5)
+                    );
+
+                enemy.Death += OnEnemyDeath;
+                EnemyCount++;
+                Game.Layer_Objects.AddChild(enemy);
             }
         }
 

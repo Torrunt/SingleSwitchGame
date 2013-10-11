@@ -10,8 +10,8 @@ namespace SingleSwitchGame
     class Cannon : Character
     {
         public float AimSpeed = 300;
-        public float RotateSpeedMax = 40;
-        public float RotateAcc = 10;
+        public float RotateSpeedMax = 60;
+        public float RotateAcc = 20;
         private float RotateVelocity;
         private bool CanRotate = true;
         private Timer RotationDelayTimer;
@@ -34,8 +34,8 @@ namespace SingleSwitchGame
         public int CurrentPowerup = 0;
         private DisplayObject PowerupEffect;
 
-        public Cannon(Game Game)
-            : base(Game, Game.GraphicsMode == Game.GRAPHICSMODE_NORMAL ? Graphics.GetSprite("assets/sprites/cannon.png") : Graphics.GetSprite("assets/sprites/blueprint/cannon.png"))
+        public Cannon(Game game)
+            : base(game, game.GraphicsMode == Game.GRAPHICSMODE_NORMAL ? Graphics.GetSprite("assets/sprites/cannon.png") : Graphics.GetSprite("assets/sprites/blueprint/cannon.png"))
         {
             Model.Scale = new Vector2f(0.5f, 0.5f);
             Model.Origin = new Vector2f(26, 30);

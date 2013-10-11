@@ -68,6 +68,7 @@ namespace SingleSwitchGame
                     // AI Movement - Stop if next move is going to go past Target
                     if (AI != null && (AI.Target != null || (AI.StopAtWaypoints && AI.HasWaypoint)))
                     {
+                        AI.ForcedStop = true;
                         Vector2f nextPos = new Vector2f(X + ((float)Math.Cos(MoveAngle) * (MoveAngleVelocity * dt)), Y + ((float)Math.Sin(MoveAngle) * (MoveAngleVelocity * dt)));
                         if (MoveLeft && nextPos.X < AI.GetTarget().X - AI.Range.X)
                             MoveLeft = false;

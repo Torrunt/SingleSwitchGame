@@ -6,8 +6,10 @@ namespace SingleSwitchGame
 {
     class Ship : Character
     {
+        public int AmountOfInfantry;
+
         public Ship(Game game)
-            : base(game, Graphics.GetSprite("assets/sprites/ship.png"))
+            : base(game, game.GraphicsMode == Game.GRAPHICSMODE_NORMAL ? Graphics.GetSprite("assets/sprites/ship.png") : Graphics.GetSprite("assets/sprites/blueprint/ship.png"))
         {
             Model.Scale = new Vector2f(0.5f, 0.5f);
             Model.Origin = new Vector2f(265, 244);
@@ -17,6 +19,8 @@ namespace SingleSwitchGame
 
             SpeedMax = 50.0f;
             Acc = 200.0f;
+
+            AmountOfInfantry = Utils.RandomInt(12, 18);
 
             SetAI(new ShipAI(Game));
         }
@@ -28,6 +32,24 @@ namespace SingleSwitchGame
                 return;
 
             base.Update(dt);
+        }
+
+        protected override void OnDeath(dynamic sourceObject = null)
+        {
+            base.OnDeath((object)sourceObject);
+
+            // Explosions
+            Explosion explosion = new Explosion(Game, 100);
+            explosion.Position = Position;
+            Game.Layer_OtherAbove.AddChild(explosion);
+
+            explosion = new Explosion(Game, 60);
+            explosion.Position = Utils.GetPointInDirection(Position, Rotation, 40);
+            Game.Layer_OtherAbove.AddChild(explosion);
+
+            explosion = new Explosion(Game, 60);
+            explosion.Position = Utils.GetPointInDirection(Position, Rotation, -40);
+            Game.Layer_OtherAbove.AddChild(explosion);
         }
     }
 }

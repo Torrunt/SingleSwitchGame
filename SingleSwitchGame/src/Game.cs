@@ -18,7 +18,7 @@ namespace SingleSwitchGame
         private readonly Vector2u WindowSizeDefault = new Vector2u(960, 720/*540*/);
         private bool Fullscreen = false;
         /// <summary> Desired FPS </summary>
-        private const float FPS = 60.0f;
+        public const float FPS = 60.0f;
 
         public FloatRect Bounds;
 
@@ -54,6 +54,8 @@ namespace SingleSwitchGame
         public CircleShape Island;
         public CircleWaves IslandWaves;
         public CircleShape Hill;
+
+        public Bat TestBat;
 
         public Music Music;
 
@@ -121,10 +123,6 @@ namespace SingleSwitchGame
             Layer_Objects = new Layer();
             Layer_OtherAbove = new Layer();
             Layer_GUI = new Layer();
-
-            // Managers
-            AIManager = new AIManager(this);
-            AIManager.StartWave();
 
             // Background
             if (GraphicsMode == GRAPHICSMODE_NORMAL)
@@ -211,7 +209,11 @@ namespace SingleSwitchGame
             Player.SetPosition(Size.X / 2, Size.Y / 2);
             Layer_OtherAbove.AddChild(Player);
             Player.SetPlayer(true);
-            
+
+            // AI Manager
+            AIManager = new AIManager(this);
+            AIManager.StartWave();
+
             // HUD
             HUD = new HeadsUpDisplay(this);
             HUD.SetHealth(Player.Health);
@@ -219,7 +221,13 @@ namespace SingleSwitchGame
 
             //Music = new Music("assets/sound/OrchestralTheme1.ogg");
             //Music.Play();
+
+            // Testing
+            //TestBat = new Bat(this);
+            //TestBat.SetPosition(500, 800);
+            //Layer_Objects.AddChild(TestBat);
         }
+
         public void Stop()
         {
             if (!Started)
@@ -396,6 +404,9 @@ namespace SingleSwitchGame
                 break;
 
                 case Keyboard.Key.F3: DEBUG_MOUSE_CONTROLS = !DEBUG_MOUSE_CONTROLS; break;
+
+                case Keyboard.Key.Period: if (TestBat != null) TestBat.Model.NextFrame(); break;
+                case Keyboard.Key.Comma: if (TestBat != null) TestBat.Model.PrevFrame(); break;
             }
         }
 

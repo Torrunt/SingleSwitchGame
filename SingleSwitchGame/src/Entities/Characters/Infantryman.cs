@@ -1,12 +1,20 @@
 ﻿using SFML.Window;
 using SFML.Graphics;
 using System;
+using System.Timers;
 
 namespace SingleSwitchGame
 {
     class Infantryman : Character
     {
-        public Infantryman(Game game)
+
+        /// <summary>The ship this infantry is/will be spawned from (used only if spawnDelay is not 0).</summary>
+        private Ship Ship;
+        private Timer SpawnDelayTimer;
+
+        /// <param name="spawnDelay">In ms. Used to easily allow infantry to gradually move out of a ship.</param>
+        /// <param name="ship">The ship this infantry is/will be spawned from (used only if spawnDelay is not 0).</param>
+        public Infantryman(Game game, int spawnDelay = 0, Ship ship = null)
             : base(game, null)
         {
             Model = new CircleShape(4, 12);
@@ -36,11 +44,64 @@ namespace SingleSwitchGame
             Acc = 80.0f;
             Friction = 1000.0f;
 
-            SetAI(new InfantrymanAI(Game));
+            if (spawnDelay == 0)
+            {
+                SetAI(new InfantrymanAI(Game));
+            }
+            else
+            {
+                CanTakeDamage = false;
+                Visible = false;
+                Ship = ship;
+                SpawnDelayTimer = new Timer(spawnDelay);
+                SpawnDelayTimer.AutoReset = false;
+                SpawnDelayTimer.Elapsed += OnSpawn;
+                SpawnDelayTimer.Start();
+            }
+        }
+        public override void Deinit()
+        {
+            base.Deinit();
+
+            if (SpawnDelayTimer != null)
+            {
+                SpawnDelayTimer.Stop();
+                SpawnDelayTimer = null;
+            }
+        }
+        private void OnSpawn(Object source, ElapsedEventArgs e)
+        {
+            SpawnDelayTimer.Stop();
+            SpawnDelayTimer = null;
+
+            if (Ship != null && !Ship.IsDead())
+            {
+                // Spawn
+                Ship.AmountOfInfantry--;
+                CanTakeDamage = true;
+                Visible = true;
+                SetAI(new InfantrymanAI(Game));
+            }
+            else
+            {
+                if (Parent != null)
+                    Parent.RemoveChild(this);
+                Game.AIManager.EnemyRemoved(this, false);
+            }
+
+            Ship = null;
         }
 
         public override void Update(float dt)
         {
+            // Ship blew-up before infantryman got off?
+            if (SpawnDelayTimer != null && (Ship == null || Ship.IsDead()))
+            {
+                if (Parent != null)
+                    Parent.RemoveChild(this);
+                Game.AIManager.EnemyRemoved(this, false);
+            }
+
             if (Game.Player != null)
             {
                 // Freeze Time?

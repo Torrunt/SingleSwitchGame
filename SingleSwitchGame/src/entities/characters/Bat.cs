@@ -5,11 +5,13 @@ namespace SingleSwitchGame
 {
     class Bat : Character
     {
-        public Bat(Game Game)
-            : base(Game, Graphics.GetSprite("assets/sprites/testing/bat.png"))
+        public Bat(Game game)
+            : base(game, Graphics.GetAnimatedSprite(game, "assets/sprites/characters/rupert/rupert.xml"))
         {
             Origin = new Vector2f(75, 90);
-            Collision = new RectangleShape(new Vector2f(Model.TextureRect.Width, Model.TextureRect.Height));
+            //Collision = new RectangleShape(new Vector2f(Model.TextureRect.Width, Model.TextureRect.Height));
+
+            Model.GotoAndStop(0);
 
             TurnAroundOnMove = true;
         }
