@@ -12,6 +12,7 @@ namespace SingleSwitchGame
         public int TotalFrames = 0;
         private AnimatedSpriteFrame CurrentFrameInfo = null;
 
+        public Sprite Sprite;
         private AnimatedSprite CurrentNestedAnimatedSprite;
 
         public bool Playing = true;
@@ -33,9 +34,9 @@ namespace SingleSwitchGame
             Model = new DisplayObject();
             if (Data.Texture != null)
             {
-                Sprite sprite = new Sprite(Data.Texture);
-                sprite.Texture.Smooth = true;
-                Model.AddChild(sprite);
+                Sprite = new Sprite(Data.Texture);
+                Sprite.Texture.Smooth = true;
+                Model.AddChild(Sprite);
             }
             AddChild(Model);
 
@@ -98,9 +99,9 @@ namespace SingleSwitchGame
                 CurrentFrameInfo = Data.Frames[Data.Frames[(int)CurrentFrame]];
             else
                 CurrentFrameInfo = Data.Frames[(int)CurrentFrame];
-            
-            Model.GetChildAt(0).TextureRect = GetIntRect();
-            Model.GetChildAt(0).Origin = CurrentFrameInfo.Origin;
+
+            Sprite.TextureRect = GetIntRect();
+            Sprite.Origin = CurrentFrameInfo.Origin;
 
 	        return true;
         }
