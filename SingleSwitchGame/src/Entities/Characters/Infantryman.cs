@@ -52,6 +52,8 @@ namespace SingleSwitchGame
             {
                 CanTakeDamage = false;
                 Visible = false;
+                if (ship == null)
+                    return;
                 Ship = ship;
                 SpawnDelayTimer = new Timer(spawnDelay);
                 SpawnDelayTimer.AutoReset = false;
@@ -77,7 +79,7 @@ namespace SingleSwitchGame
             if (Ship != null && !Ship.IsDead())
             {
                 // Spawn
-                Ship.AmountOfInfantry--;
+                Ship.RemoveInfantryman();
                 CanTakeDamage = true;
                 Visible = true;
                 SetAI(new InfantrymanAI(Game));

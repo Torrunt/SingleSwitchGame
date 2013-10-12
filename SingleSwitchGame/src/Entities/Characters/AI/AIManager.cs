@@ -25,8 +25,10 @@ namespace SingleSwitchGame
         public const uint TYPE_ROWBOAT = 2;
 
         public const int POINTS_INFANTRYMAN = 1;
-        public const int POINTS_SHIP = 10;
-        public const int POINTS_ROWBOAT = 4;
+        public const int POINTS_SHIP = 15;
+        public const int POINTS_SHIP_EMPTY = 5;
+        public const int POINTS_ROWBOAT = 8;
+        public const int POINTS_ROWBOAT_EMPTY = 0;
 
         public AIManager(Game Game)
         {
@@ -89,7 +91,7 @@ namespace SingleSwitchGame
                 // Increase Score
                 if (enemy is Ship)
                 {
-                    Game.Player.IncreaseScore(POINTS_SHIP);
+                    Game.Player.IncreaseScore(((Ship)enemy).AmountOfInfantry == 0 ? POINTS_SHIP_EMPTY : POINTS_SHIP);
                     powerupDropChance = 2;
                 }
                 else if (enemy is Infantryman)
@@ -99,7 +101,7 @@ namespace SingleSwitchGame
                 }
                 else if (enemy is Rowboat)
                 {
-                    Game.Player.IncreaseScore(POINTS_ROWBOAT);
+                    Game.Player.IncreaseScore(((Rowboat)enemy).AmountOfInfantry == 0 ? POINTS_ROWBOAT_EMPTY : POINTS_ROWBOAT);
                     powerupDropChance = 3;
                 }
 
@@ -179,7 +181,6 @@ namespace SingleSwitchGame
                 {
                     enemy = new Ship(Game);
                     enemy.SetPosition(Utils.GetPointInDirection(Game.Island.Position, Utils.RandomInt(0, 359), (Game.Size.X/2) + 300));
-                    //enemy.SetPosition(Utils.GetPointInDirection(Game.Island.Position, Utils.RandomInt(0, 359), 800));
                     break;
                 }
                 default:
@@ -203,6 +204,27 @@ namespace SingleSwitchGame
             }
         }
 
+        // Enemy Spawning
+
+        public object SpawnEnemy(uint type, Vector2f position)
+        {
+            Character enemy;
+            switch (type)
+            {
+                case TYPE_SHIP: enemy = new Ship(Game); break;
+                case TYPE_ROWBOAT: enemy = new Rowboat(Game); break;
+                default: enemy = new Infantryman(Game); break;
+            }
+
+            enemy.Position = position;
+
+            enemy.Death += OnEnemyDeath;
+            EnemyCount++;
+            Game.Layer_Objects.AddChild(enemy);
+
+            return enemy;
+        }
+
         public void OnShipReachedBeach(Ship ship)
         {
             const float gapX = 4;
@@ -213,6 +235,24 @@ namespace SingleSwitchGame
                 enemy.SetPosition(Utils.GetPointInDirection(
                     Game.Island.Position, 
                     (float)Utils.GetAngle(Game.Island.Position, ship.Position) - ((ship.AmountOfInfantry / 2) * gapX) + (i * gapX), 
+                    Game.Island.Radius - 5)
+                    );
+
+                enemy.Death += OnEnemyDeath;
+                EnemyCount++;
+                Game.Layer_Objects.AddChild(enemy);
+            }
+        }
+        public void OnRowboatReachedBeach(Rowboat rowboat)
+        {
+            const float gapX = 4;
+
+            for (int i = 0; i < rowboat.AmountOfInfantry; i++)
+            {
+                Infantryman enemy = new Infantryman(Game);
+                enemy.SetPosition(Utils.GetPointInDirection(
+                    Game.Island.Position,
+                    (float)Utils.GetAngle(Game.Island.Position, rowboat.Position) - ((rowboat.AmountOfInfantry / 2) * gapX) + (i * gapX),
                     Game.Island.Radius - 5)
                     );
 

@@ -8,8 +8,8 @@ namespace SingleSwitchGame
 {
     class ShipAI : ArtificialIntelligence
     {
-        private bool ReachedBeach;
-        private bool LeavingArea;
+        public bool ReachedBeach;
+        public bool LeavingArea;
 
         public ShipAI(Game Game) : base(Game) { }
 
@@ -20,7 +20,7 @@ namespace SingleSwitchGame
             Range = new Vector2f(10, 10);
         }
 
-        protected override void Tick(object source, System.Timers.ElapsedEventArgs e)
+        protected override void Tick(object source = null, System.Timers.ElapsedEventArgs e = null)
         {
             if (!Waypoint.Equals(new Vector2f(-1, -1)))
             {

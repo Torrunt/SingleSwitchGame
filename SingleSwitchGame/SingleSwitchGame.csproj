@@ -78,6 +78,7 @@
     <Compile Include="src\Effects\WaterRipples.cs" />
     <Compile Include="src\Entities\Characters\AI\AIManager.cs" />
     <Compile Include="src\Entities\Characters\AI\ArtificialIntelligence.cs" />
+    <Compile Include="src\Entities\Characters\AI\RowboatAI.cs" />
     <Compile Include="src\Entities\Characters\AI\ShipAI.cs" />
     <Compile Include="src\Entities\Characters\AI\InfantrymanAI.cs" />
     <Compile Include="src\Entities\Characters\Bat.cs" />

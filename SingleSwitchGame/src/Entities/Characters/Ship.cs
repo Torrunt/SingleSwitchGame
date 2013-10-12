@@ -19,7 +19,7 @@ namespace SingleSwitchGame
 
             SpeedMax = 50.0f;
             Acc = 200.0f;
-
+            
             AmountOfInfantry = Utils.RandomInt(12, 18);
 
             SetAI(new ShipAI(Game));
@@ -50,6 +50,22 @@ namespace SingleSwitchGame
             explosion = new Explosion(Game, 60);
             explosion.Position = Utils.GetPointInDirection(Position, Rotation, -40);
             Game.Layer_OtherAbove.AddChild(explosion);
+
+            // Deploy Rowboats
+            if (AmountOfInfantry <= 6 || (AI != null && ((ShipAI)AI).ReachedBeach))
+                return;
+
+            int amountOfRowboats = Utils.RandomInt(0, 2);
+            for (int i = 0; i < amountOfRowboats; i++)
+            {
+                Rowboat rowboat = (Rowboat)Game.AIManager.SpawnEnemy(AIManager.TYPE_ROWBOAT, Utils.GetPointInDirection(Position, i == 0 ? 90 : -90, 100));
+                rowboat.Rotation = Rotation;
+            }
+        }
+
+        public void RemoveInfantryman()
+        {
+            AmountOfInfantry--;
         }
     }
 }

@@ -21,7 +21,7 @@ namespace SingleSwitchGame
             StopAtWaypoints = true;
         }
 
-        protected override void Tick(object source, System.Timers.ElapsedEventArgs e)
+        protected override void Tick(object source = null, System.Timers.ElapsedEventArgs e = null)
         {
             // Calculate random path to Hill
             if (Waypoint.Equals(new Vector2f(-1, -1)))

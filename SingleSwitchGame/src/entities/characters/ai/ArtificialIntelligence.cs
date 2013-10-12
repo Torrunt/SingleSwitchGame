@@ -89,7 +89,7 @@ namespace SingleSwitchGame
                 Obj.StopMoving();
             }
         }
-        protected virtual void Tick(Object source, ElapsedEventArgs e)
+        protected virtual void Tick(Object source = null, ElapsedEventArgs e = null)
         {
             // Put stuff that doesn't need to happen very often in here
             // Such as looking for targets, checking if the current target went behind a wall, etc.
