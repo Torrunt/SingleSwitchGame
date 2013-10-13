@@ -120,9 +120,6 @@ namespace SingleSwitchGame
             if (Health == 0)
             {
                 // Dead
-                if (Death != null)
-                    Death(this, EventArgs.Empty);
-
                 OnDeath(sourceObject);
 
                 if (RemoveOnDeath)
@@ -139,7 +136,11 @@ namespace SingleSwitchGame
             return Health;
         }
         public bool IsDead() { return Health == 0; }
-        protected virtual void OnDeath(dynamic sourceObject = null) { }
+        protected virtual void OnDeath(dynamic sourceObject = null)
+        {
+            if (Death != null)
+                Death(this, EventArgs.Empty);
+        }
 
         public bool FlashOnDamage
         {
@@ -186,6 +187,16 @@ namespace SingleSwitchGame
                 }
                 else
                     Model.Color = FlashOnDamageOriginalColor;
+            }
+            else if (Model is AnimatedSprite)
+            {
+                if (FlashOnDamageBright)
+                {
+                    FlashOnDamageOriginalColor = Model.Sprite.Color;
+                    Model.Sprite.Color = FlashOnDamageColor;
+                }
+                else
+                    Model.Sprite.Color = FlashOnDamageOriginalColor;
             }
             else if (Model is Shape)
             {

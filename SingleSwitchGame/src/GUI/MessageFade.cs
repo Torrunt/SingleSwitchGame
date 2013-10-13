@@ -64,7 +64,8 @@ namespace SingleSwitchGame
                 }
             }
 
-            Text.Color = new Color(255, 255, 255, (byte)Alpha);
+            if (Text != null)
+                Text.Color = new Color(255, 255, 255, (byte)Alpha);
         }
 
         private void ShowTimerHandler(Object source, ElapsedEventArgs e)

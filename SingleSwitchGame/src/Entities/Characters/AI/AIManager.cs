@@ -11,7 +11,7 @@ namespace SingleSwitchGame
         protected Game Game;
 
         public uint Wave = 1;
-        public uint EnemyCount;
+        public uint EnemyCount = 0;
 
         public bool SpawningOverTime;
         private Timer SpawnOverTimeTimer;
@@ -56,7 +56,7 @@ namespace SingleSwitchGame
 
         public void StartWave(uint no = 1)
         {
-            uint amount = 10 + (2 * (no-1));
+            uint amount = 1 + (2 * (no-1));
             double interval = 8000;
 
             // TODO: Insert dynamically adjusting difficulty here
@@ -97,7 +97,7 @@ namespace SingleSwitchGame
                 else if (enemy is Infantryman)
                 {
                     Game.Player.IncreaseScore(POINTS_INFANTRYMAN);
-                    powerupDropChance = 6;
+                    powerupDropChance = 10;
                 }
                 else if (enemy is Rowboat)
                 {
@@ -106,7 +106,7 @@ namespace SingleSwitchGame
                 }
 
                 // Powerup drops
-                if (Utils.RandomInt(1, powerupDropChance) == 0)
+                if (Utils.RandomInt(1, powerupDropChance) == 1)
                 {
                     PowerupPickup powerup = new PowerupPickup(Game, Utils.RandomInt(1, Cannon.POWERUP_MAX));
                     powerup.Position = ((DisplayObject)enemy).Position;
@@ -119,7 +119,7 @@ namespace SingleSwitchGame
             {
                 Game.Player.StopPowerup();
 
-                Game.UpgradeMenu = new UpgradeMenuGUI(Game);
+                Game.UpgradeMenu = new UpgradeMenu(Game);
                 Game.Layer_GUI.AddChild(Game.UpgradeMenu);
                 Game.UpgradeMenu.Removed += OnUpgradeMenuClosed;
             }

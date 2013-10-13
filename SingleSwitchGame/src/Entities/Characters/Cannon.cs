@@ -10,7 +10,7 @@ namespace SingleSwitchGame
     class Cannon : Character
     {
         public float AimSpeed = 300;
-        public float RotateSpeedMax = 60;
+        public float RotateSpeedMax = 40;
         public float RotateAcc = 20;
         private float RotateVelocity;
         private bool CanRotate = true;
@@ -219,6 +219,8 @@ namespace SingleSwitchGame
 
         protected override void OnDeath(dynamic sourceObject = null)
         {
+            base.OnDeath((object)sourceObject);
+
             Game.Pause();
             Game.Layer_GUI.AddChild(new GameOverGUI(Game));
             if (Player)
@@ -328,6 +330,7 @@ namespace SingleSwitchGame
                     for (int b = 1; b < amount; b++)
                     {
                         var barrel = new Sprite(((Sprite) Model).Texture);
+                        barrel.Scale = new Vector2f(0.5f, 0.5f);
                         barrel.Origin = new Vector2f(26, 30);
                         if (amount == 3)
                             barrel.Rotation = b == 1 ? 45 : -45;

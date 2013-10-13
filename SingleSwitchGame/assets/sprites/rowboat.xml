@@ -1,24 +1,24 @@
 <SpriteSheet name="rowboat" image="rowboat.png">
-  <frame no="0" x="0" y="0" ref_x="88.75999999999999" ref_y="74.11999999999999" width="184" height="155"/>
-  <frame no="1" x="184" y="0" ref_x="88.75999999999999" ref_y="75.08" width="184" height="160"/>
-  <frame no="2" x="368" y="0" ref_x="88.75999999999999" ref_y="75.8" width="184" height="160"/>
-  <frame no="3" x="552" y="0" ref_x="88.75999999999999" ref_y="76.04" width="184" height="160"/>
-  <frame no="4" x="736" y="0" ref_x="88.75999999999999" ref_y="77.24" width="184" height="165"/>
-  <frame no="5" x="920" y="0" ref_x="88.75999999999999" ref_y="77.24" width="184" height="160"/>
-  <frame no="6" x="1104" y="0" ref_x="88.75999999999999" ref_y="77.48" width="184" height="165"/>
-  <frame no="7" x="1288" y="0" ref_x="88.75999999999999" ref_y="77.96" width="184" height="165"/>
-  <frame no="8" x="1472" y="0" ref_x="88.75999999999999" ref_y="82.75999999999999" width="184" height="170"/>
-  <frame no="9" x="1656" y="0" ref_x="88.75999999999999" ref_y="77.96" width="184" height="165"/>
-  <frame no="10" x="1840" y="0" ref_x="88.75999999999999" ref_y="82.75999999999999" width="184" height="170"/>
-  <frame no="11" x="2024" y="0" ref_x="88.75999999999999" ref_y="77.96" width="184" height="165"/>
-  <frame no="12" x="2208" y="0" ref_x="88.75999999999999" ref_y="78.2" width="184" height="170"/>
-  <frame no="13" x="2392" y="0" ref_x="88.75999999999999" ref_y="78.2" width="184" height="165"/>
-  <frame no="14" x="2576" y="0" ref_x="88.75999999999999" ref_y="77.96" width="184" height="160"/>
-  <frame no="15" x="2760" y="0" ref_x="88.75999999999999" ref_y="77.48" width="184" height="165"/>
-  <frame no="16" x="2944" y="0" ref_x="88.75999999999999" ref_y="77" width="184" height="160"/>
-  <frame no="17" x="3128" y="0" ref_x="88.75999999999999" ref_y="76.28" width="184" height="160"/>
-  <frame no="18" x="3312" y="0" ref_x="88.75999999999999" ref_y="76.04" width="184" height="160"/>
-  <frame no="19" x="3496" y="0" ref_x="88.75999999999999" ref_y="75.55999999999999" width="184" height="155"/>
+  <frame no="0" x="0" y="0" ref_x="37.4" ref_y="40.1" width="80" height="84"/>
+  <frame no="1" x="80" y="0" ref_x="37.4" ref_y="40.5" width="80" height="86"/>
+  <frame no="2" x="160" y="0" ref_x="37.4" ref_y="40.7" width="80" height="86"/>
+  <frame no="3" x="240" y="0" ref_x="37.4" ref_y="40.8" width="80" height="86"/>
+  <frame no="4" x="320" y="0" ref_x="37.4" ref_y="41.2" width="80" height="88"/>
+  <frame no="5" x="400" y="0" ref_x="37.4" ref_y="41.1" width="80" height="88"/>
+  <frame no="6" x="480" y="0" ref_x="37.4" ref_y="41.2" width="80" height="88"/>
+  <frame no="7" x="560" y="0" ref_x="37.4" ref_y="41.3" width="80" height="88"/>
+  <frame no="8" x="640" y="0" ref_x="37.4" ref_y="41.1" width="80" height="88"/>
+  <frame no="9" x="720" y="0" ref_x="37.4" ref_y="41" width="80" height="90"/>
+  <frame no="10" x="800" y="0" ref_x="37.4" ref_y="42.9" width="80" height="90"/>
+  <frame no="11" x="880" y="0" ref_x="37.4" ref_y="42.9" width="80" height="90"/>
+  <frame no="12" x="960" y="0" ref_x="37.4" ref_y="41.1" width="80" height="88"/>
+  <frame no="13" x="1040" y="0" ref_x="37.4" ref_y="41.2" width="80" height="88"/>
+  <frame no="14" x="1120" y="0" ref_x="37.4" ref_y="41.3" width="80" height="88"/>
+  <frame no="15" x="1200" y="0" ref_x="37.4" ref_y="41.2" width="82" height="88"/>
+  <frame no="16" x="1282" y="0" ref_x="37.4" ref_y="41.1" width="82" height="88"/>
+  <frame no="17" x="1364" y="0" ref_x="37.4" ref_y="40.9" width="84" height="86"/>
+  <frame no="18" x="1448" y="0" ref_x="37.4" ref_y="40.8" width="86" height="86"/>
+  <frame no="19" x="1534" y="0" ref_x="37.4" ref_y="40.7" width="88" height="86"/>
   <frame no="20" ref="18"/>
   <frame no="21" ref="17"/>
   <frame no="22" ref="16"/>

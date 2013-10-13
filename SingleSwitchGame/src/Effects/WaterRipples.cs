@@ -160,7 +160,7 @@ namespace SingleSwitchGame
                         Lines.Add(l);
                     }
 
-                    CircleShape corner = new CircleShape((Points[py][px].PointLeft == null || Points[py][px].PointAbove == null) ? LineThickness / 2 : LineThickness);
+                    CircleShape corner = new CircleShape(LineThickness / 2);
                     corner.FillColor = Colour;
                     corner.Origin = new Vector2f(corner.Radius, corner.Radius);
                     corner.Position = Points[py][px].Position;

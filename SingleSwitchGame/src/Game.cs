@@ -17,6 +17,7 @@ namespace SingleSwitchGame
         private readonly Vector2u ResolutionDefault = new Vector2u(1920, 1440/*1080*/);
         private readonly Vector2u WindowSizeDefault = new Vector2u(960, 720/*540*/);
         private bool Fullscreen = false;
+        private bool CloseNextUpdate = false;
         /// <summary> Desired FPS </summary>
         public const float FPS = 60.0f;
 
@@ -33,7 +34,7 @@ namespace SingleSwitchGame
 
         public const uint GRAPHICSMODE_NORMAL = 0;
         public const uint GRAPHICSMODE_BLUEPRINT = 1;
-        public uint GraphicsMode = GRAPHICSMODE_BLUEPRINT;
+        public uint GraphicsMode = GRAPHICSMODE_NORMAL;
 
         public bool DEBUG_MOUSE_CONTROLS = false;
 
@@ -48,7 +49,9 @@ namespace SingleSwitchGame
         // Objects
         public AIManager AIManager;
         public HeadsUpDisplay HUD;
-        public UpgradeMenuGUI UpgradeMenu;
+        public PauseMenu PauseMenu;
+        public StartMenu StartMenu;
+        public UpgradeMenu UpgradeMenu;
 
         public Cannon Player;
         public CircleShape Island;
@@ -82,8 +85,16 @@ namespace SingleSwitchGame
             BlackBarRight.FillColor = new Color(0, 0, 0);
             Layer_BlackBars.AddChild(BlackBarRight);
 
-            // Start Game
-            Start();
+            // Setup
+            Layer_Background = new Layer();
+            Layer_Other = new Layer();
+            Layer_Objects = new Layer();
+            Layer_OtherAbove = new Layer();
+            Layer_GUI = new Layer();
+
+            // Start Menu
+            StartMenu = new StartMenu(this);
+            Layer_GUI.AddChild(StartMenu);
 
             // Game Loop
             Stopwatch clock = new Stopwatch();
@@ -95,6 +106,12 @@ namespace SingleSwitchGame
 
                 if (clock.Elapsed.TotalSeconds >= (1.0f / FPS))
                 {
+                    if (CloseNextUpdate)
+                    {
+                        Window.Close();
+                        return;
+                    }
+
                     // Clear screen
                     Window.Clear();
 
@@ -117,12 +134,6 @@ namespace SingleSwitchGame
                 return;
             Started = true;
             Running = true;
-
-            Layer_Background = new Layer();
-            Layer_Other = new Layer();
-            Layer_Objects = new Layer();
-            Layer_OtherAbove = new Layer();
-            Layer_GUI = new Layer();
 
             // Background
             if (GraphicsMode == GRAPHICSMODE_NORMAL)
@@ -367,7 +378,8 @@ namespace SingleSwitchGame
             if (NewWindow != null)
                 NewWindow(this, EventArgs.Empty);
         }
-        void OnClose(Object sender, EventArgs e)
+        public void CloseWindow() { CloseNextUpdate = true; }
+        private void OnClose(Object sender, EventArgs e)
         {
             Window.Close();
         }
@@ -387,10 +399,17 @@ namespace SingleSwitchGame
             {
                 case Keyboard.Key.Escape:
                 {
+                    if (StartMenu != null)
+                        return;
+
                     if (Running)
-                        Pause();
-                    else
-                        Resume();
+                    {
+                        PauseMenu = new PauseMenu(this);
+                        Layer_GUI.AddChild(PauseMenu);
+                    }
+                    else if (PauseMenu != null)
+                        Layer_GUI.RemoveChild(PauseMenu);
+
                     break;
                 }
                 case Keyboard.Key.F11: ToggleFullscreen(); break;
@@ -399,7 +418,15 @@ namespace SingleSwitchGame
                 case Keyboard.Key.F2:
                 {
                     GraphicsMode = GraphicsMode == GRAPHICSMODE_NORMAL ? GRAPHICSMODE_BLUEPRINT : GRAPHICSMODE_NORMAL;
-                    Reset();
+                    if (!Started)
+                    {
+                        if (StartMenu != null)
+                            Layer_GUI.RemoveChild(StartMenu);
+                        StartMenu = new StartMenu(this);
+                        Layer_GUI.AddChild(StartMenu);
+                    }
+                    else
+                        Reset();
                 }
                 break;
 
@@ -407,6 +434,8 @@ namespace SingleSwitchGame
 
                 case Keyboard.Key.Period: if (TestBat != null) TestBat.Model.NextFrame(); break;
                 case Keyboard.Key.Comma: if (TestBat != null) TestBat.Model.PrevFrame(); break;
+
+                case Keyboard.Key.F5: Layer_GUI.AddChild(new UpgradeMenu(this));break;
             }
         }
 

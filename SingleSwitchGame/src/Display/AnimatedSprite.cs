@@ -75,7 +75,7 @@ namespace SingleSwitchGame
 		        return false;
 
             CurrentFrame = number;
-            Finished = false;
+            Finished = CurrentFrame == TotalFrames-1;
 
             if (CurrentNestedAnimatedSprite != null)
             {

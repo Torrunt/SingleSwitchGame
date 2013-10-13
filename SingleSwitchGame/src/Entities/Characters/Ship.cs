@@ -36,8 +36,6 @@ namespace SingleSwitchGame
 
         protected override void OnDeath(dynamic sourceObject = null)
         {
-            base.OnDeath((object)sourceObject);
-
             // Explosions
             Explosion explosion = new Explosion(Game, 100);
             explosion.Position = Position;
@@ -53,7 +51,10 @@ namespace SingleSwitchGame
 
             // Deploy Rowboats
             if (AmountOfInfantry <= 6 || (AI != null && ((ShipAI)AI).ReachedBeach))
+            {
+                base.OnDeath((object)sourceObject);
                 return;
+            }
 
             int amountOfRowboats = Utils.RandomInt(0, 2);
             for (int i = 0; i < amountOfRowboats; i++)
@@ -61,6 +62,8 @@ namespace SingleSwitchGame
                 Rowboat rowboat = (Rowboat)Game.AIManager.SpawnEnemy(AIManager.TYPE_ROWBOAT, Utils.GetPointInDirection(Position, i == 0 ? 90 : -90, 100));
                 rowboat.Rotation = Rotation;
             }
+
+            base.OnDeath((object)sourceObject);
         }
 
         public void RemoveInfantryman()

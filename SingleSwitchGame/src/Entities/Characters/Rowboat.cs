@@ -12,8 +12,6 @@ namespace SingleSwitchGame
         public Rowboat(Game game)
             : base(game, game.GraphicsMode == Game.GRAPHICSMODE_NORMAL ? Graphics.GetAnimatedSprite(game, "assets/sprites/rowboat.xml") : Graphics.GetAnimatedSprite(game, "assets/sprites/blueprint/rowboat.xml"))
         {
-            Model.Scale = new Vector2f(0.5f, 0.5f);
-
             Collision = new RectangleShape(new Vector2f(82f, 38f));
             Collision.Position = new Vector2f(-41f, -19f);
 

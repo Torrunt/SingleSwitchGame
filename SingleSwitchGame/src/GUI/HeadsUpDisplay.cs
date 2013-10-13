@@ -21,7 +21,7 @@ namespace SingleSwitchGame
         private double PowerupTimeLeft;
         private Timer PowerupTimeUpdateTimer;
 
-        public bool DisplayFPS = true;
+        public bool DisplayFPS = false;
         private Text FPS;
         private Timer FPSUpdateTimer;
         private float DT;

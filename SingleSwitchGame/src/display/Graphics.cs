@@ -4,11 +4,6 @@ using System;
 
 namespace SingleSwitchGame
 {
-    public class TDrawable : Transformable, Drawable
-    {
-        public void Draw(RenderTarget Target, RenderStates states) { }
-    }
-
     class Graphics
     {
         public static string ASSETS_SPRITES = "assets/sprites/";
