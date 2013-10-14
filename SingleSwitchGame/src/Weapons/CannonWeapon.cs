@@ -22,7 +22,7 @@ namespace SingleSwitchGame
         {
             Explosion explosion = new Explosion(Game, ExplosionRadius);
             explosion.Position = pos;
-            Game.Layer_Other.AddChild(explosion);
+            Game.Layer_OtherAbove.AddChild(explosion);
             
             // Collision
             bool hitSomething = false;

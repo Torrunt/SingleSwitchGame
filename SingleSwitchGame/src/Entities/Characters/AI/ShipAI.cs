@@ -48,12 +48,18 @@ namespace SingleSwitchGame
 
                 //Debug_ShowWaypoints();
             }
-            else if (ReachedBeach && ((Ship)Obj).AmountOfInfantry <= 0)
+            else if (((Ship)Obj).AmountOfInfantry <= 0)
             {
                 // Generate path off screen
                 LeavingArea = true;
-                Obj.Model.Color = new Color(255, 255, 255, 100);
                 Obj.CanMove = false; // Can't move until Ship rotates to first waypoint in path
+                if (Obj.Model is AnimatedSprite)
+                {
+                    Obj.Model.Sprite.Color = new Color(255, 255, 255, 100);
+                    Obj.Model.Play();
+                }
+                else
+                    Obj.Model.Color = new Color(255, 255, 255, 100);
 
                 int pointCount = Utils.RandomInt(4, 15);
                 float originalAngle = (float)Utils.GetAngle(Game.Island.Position, Obj.Position) + (Utils.RandomInt(50, 80) * (Utils.RandomInt() == 1 ? 1 : -1));
@@ -85,6 +91,9 @@ namespace SingleSwitchGame
                 // Reached Beach
                 ReachedBeach = true;
                 Game.AIManager.OnShipReachedBeach((Ship)Obj);
+
+                if (Obj.Model is AnimatedSprite)
+                    Obj.Model.GotoAndStop(1);
             }
             else if (LeavingArea)
             {

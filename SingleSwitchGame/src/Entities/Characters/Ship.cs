@@ -9,10 +9,19 @@ namespace SingleSwitchGame
         public int AmountOfInfantry;
 
         public Ship(Game game)
-            : base(game, game.GraphicsMode == Game.GRAPHICSMODE_NORMAL ? Graphics.GetSprite("assets/sprites/ship.png") : Graphics.GetSprite("assets/sprites/blueprint/ship.png"))
+            : base(game)
         {
-            Model.Scale = new Vector2f(0.5f, 0.5f);
-            Model.Origin = new Vector2f(265, 244);
+            if (Game.GraphicsMode == Game.GRAPHICSMODE_NORMAL)
+            {
+                Model = Graphics.GetAnimatedSprite(game, "assets/sprites/ship.xml");
+            }
+            else
+            {
+                Model = Graphics.GetSprite("assets/sprites/blueprint/ship.png");
+                Model.Scale = new Vector2f(0.5f, 0.5f);
+                Model.Origin = new Vector2f(265, 244);
+            }
+            AddChild(Model);
 
             Collision = new RectangleShape(new Vector2f(265, 105));
             Collision.Position = new Vector2f(-132.5f, -52.5f);

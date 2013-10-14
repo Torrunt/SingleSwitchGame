@@ -1,0 +1,14 @@
+<SpriteSheet name="ship" image="ship.png">
+  <frame no="0" x="0" y="0" ref_x="132.5" ref_y="102" width="268" height="208"/>
+  <frame no="1" ref="0"/>
+  <frame no="2" ref="0"/>
+  <frame no="3" ref="0"/>
+  <frame no="4" x="268" y="0" ref_x="132.5" ref_y="102" width="268" height="208"/>
+  <frame no="5" ref="4"/>
+  <frame no="6" ref="4"/>
+  <frame no="7" ref="4"/>
+  <frame no="8" x="536" y="0" ref_x="132.5" ref_y="102" width="268" height="208"/>
+  <frame no="9" ref="8"/>
+  <frame no="10" ref="8"/>
+  <frame no="11" ref="8"/>
+</SpriteSheet>

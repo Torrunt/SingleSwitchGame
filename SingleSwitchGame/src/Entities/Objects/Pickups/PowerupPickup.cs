@@ -19,10 +19,19 @@ namespace SingleSwitchGame
             //if (Game.GraphicsMode == Game.GRAPHICSMODE_NORMAL)
             byte alpha = 180;
 
-            Model = new CircleShape(((CircleShape) Collision).Radius);
+            Model = new CircleShape(((CircleShape)Collision).Radius);
             Model.Origin = new Vector2f(Model.Radius, Model.Radius);
-            Model.OutlineColor = new Color(255, 255, 255);
-            Model.OutlineThickness = 3;
+            if (Game.GraphicsMode == Game.GRAPHICSMODE_NORMAL)
+            {
+                
+                Model.OutlineColor = new Color(0, 0, 0, 200);
+                Model.OutlineThickness = 6;
+            }
+            else
+            {
+                Model.OutlineColor = new Color(255, 255, 255);
+                Model.OutlineThickness = 3;
+            }
 
             switch (Type)
             {
