@@ -69,7 +69,7 @@ namespace SingleSwitchGame
 
         public override void Update(float dt)
         {
-            if (Game.Player != null && Game.Player.CurrentPowerup == Cannon.POWERUP_FREEZE_TIME)
+            if (Game.Player != null && Game.Player.HasPowerup(Powerup.FREEZE_TIME))
                 return;
 
             if (Utils.CircleCircleCollision(Obj.Position, Obj.Model.Radius, Game.Hill.Position, Game.Hill.Radius))

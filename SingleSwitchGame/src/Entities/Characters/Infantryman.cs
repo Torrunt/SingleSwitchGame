@@ -107,10 +107,10 @@ namespace SingleSwitchGame
             if (Game.Player != null)
             {
                 // Freeze Time?
-                if (Game.Player.CurrentPowerup == Cannon.POWERUP_FREEZE_TIME)
+                if (Game.Player.HasPowerup(Powerup.FREEZE_TIME))
                     return;
                 // Red Hot Beach?
-                if (Game.Player.CurrentPowerup == Cannon.POWERUP_RED_HOT_BEACH)
+                if (Game.Player.HasPowerup(Powerup.RED_HOT_BEACH))
                     Damage(10, DamageType.FIRE);
             }
             base.Update(dt);

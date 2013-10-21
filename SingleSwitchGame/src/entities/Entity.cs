@@ -9,8 +9,6 @@ namespace SingleSwitchGame
         protected Game Game;
         public dynamic Model;
 
-        public event EventHandler Removed;
-
         public Entity(Game Game, dynamic model = null)
         {
             this.Game = Game;
@@ -34,8 +32,7 @@ namespace SingleSwitchGame
 
         public override void OnRemoved()
         {
-            if (Removed != null)
-                Removed(this, EventArgs.Empty);
+            base.OnRemoved();
             Deinit();
         }
 

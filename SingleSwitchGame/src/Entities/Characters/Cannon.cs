@@ -14,7 +14,7 @@ namespace SingleSwitchGame
         public float RotateAcc = 20;
         private float RotateVelocity;
         private bool CanRotate = true;
-        private Timer RotationDelayTimer;
+        public Timer RotationDelayTimer;
 
         private int Score;
         private int ScoreMultiplier = 1;
@@ -25,14 +25,13 @@ namespace SingleSwitchGame
         public CannonWeapon Weapon;
         public AimAssistance AimAssistance;
         /// <summary>Extra AimAssistances for use with powerups.</summary>
-        private List<AimAssistance> AimAssistanceExtras = new List<AimAssistance>();
+        public List<AimAssistance> AimAssistanceExtras = new List<AimAssistance>();
 
         public List<uint> UpgradeLevels = new List<uint>() { 1, 0, 0, 0 };
         public uint LandmineExplosionChance = 0;
 
-        public Timer PowerupTimer;
-        public int CurrentPowerup = 0;
-        private DisplayObject PowerupEffect;
+        public List<Powerup> Powerups = new List<Powerup>();
+        public DisplayObject PowerupEffect;
 
         public Cannon(Game game)
             : base(game, game.GraphicsMode == Game.GRAPHICSMODE_NORMAL ? Graphics.GetSprite("assets/sprites/cannon.png") : Graphics.GetSprite("assets/sprites/blueprint/cannon.png"))
@@ -56,10 +55,6 @@ namespace SingleSwitchGame
             RotationDelayTimer = new Timer(140); // Delay in ms before the Cannon starts rotating after firing
             RotationDelayTimer.Elapsed += OnRotationDelayEnd;
 
-            PowerupTimer = new Timer();
-            PowerupTimer.AutoReset = false;
-            PowerupTimer.Elapsed += OnPowerUpEnd;
-
             Weapon = new CannonWeapon(Game, this);
         }
         public override void Deinit()
@@ -72,11 +67,11 @@ namespace SingleSwitchGame
                 RotationDelayTimer.Dispose();
                 RotationDelayTimer = null;
             }
-            if (PowerupTimer != null)
+            for (int i = 0; i < Powerups.Count; i++)
             {
-                PowerupTimer.Stop();
-                PowerupTimer.Dispose();
-                PowerupTimer = null;
+                if (Powerups[i] == null)
+                    continue;
+                Powerups[i].Deinit();
             }
 
             Weapon.Deinit();
@@ -92,7 +87,7 @@ namespace SingleSwitchGame
         }
         public override void OnRemoved()
         {
-            StopPowerup();
+            StopPowerups();
 
             base.OnRemoved();
 
@@ -143,7 +138,7 @@ namespace SingleSwitchGame
 
         protected override void OnKeyReleased(object sender, KeyEventArgs e)
         {
-            if (IsDead() || (e != null && Game.KeyIsNotAllowed(e.Code)))
+            if (IsDead() || !KeyDown || (e != null && Game.KeyIsNotAllowed(e.Code)))
                 return;
 
             KeyDown = false;
@@ -289,141 +284,48 @@ namespace SingleSwitchGame
 
 
         // Power-ups
-
-        public const int POWERUP_DOUBLE_EXPLOSION_RADIUS   = 1;
-        public const int POWERUP_AIM_SPEED_INCREASE        = 2;
-        public const int POWERUP_FREEZE_TIME               = 3;
-        public const int POWERUP_TRIPLE_CANNON             = 4;
-        public const int POWERUP_OCTUPLE_CANNON            = 5;
-        public const int POWERUP_RED_HOT_BEACH             = 6;
-        public const int POWERUP_MAX = 6;
-
-        public void StartPowerup(int powerup)
+        public void StartPowerup(int type)
         {
-            if (CurrentPowerup != 0)
-                StopPowerup();
-
-            CurrentPowerup = powerup;
-
-            PowerupTimer.Interval = 10000;
-            switch (CurrentPowerup)
+            for (int i = 0; i < Powerups.Count; i++)
             {
-                case POWERUP_DOUBLE_EXPLOSION_RADIUS:
+                if (Powerups[i].Type == type || (type == Powerup.TRIPLE_CANNON && Powerups[i].Type == Powerup.OCTUPLE_CANNON))
                 {
-                    Weapon.ExplosionRadius *= 2;
-                    AimAssistance.UpdateReticle();
-                    AimAssistance.UpdateReticlePosition();
+                    // Restart Timer if Cannon already has powerup (triple cannon refreshes octuple cannon)
+                    Powerups[i].Restart();
+                    return;
                 }
-                break;
-                case POWERUP_AIM_SPEED_INCREASE:
+                else if (type == Powerup.OCTUPLE_CANNON && Powerups[i].Type == Powerup.TRIPLE_CANNON)
                 {
-                    AimSpeed *= 1.5f;
-                    RotateSpeedMax *= 1.5f;
-                    RotateAcc *= 3f;
-                    RotationDelayTimer.Interval /= 2f;
+                    // Octuple Cannon replaces Triple Cannon
+                    Powerups[i].Stop();
+                    break;
                 }
-                break;
-                case POWERUP_TRIPLE_CANNON:
-                case POWERUP_OCTUPLE_CANNON:
-                {
-                    int amount = CurrentPowerup == POWERUP_TRIPLE_CANNON ? 3 : 8;
-                    for (int b = 1; b < amount; b++)
-                    {
-                        var barrel = new Sprite(((Sprite) Model).Texture);
-                        barrel.Scale = new Vector2f(0.5f, 0.5f);
-                        barrel.Origin = new Vector2f(26, 30);
-                        if (amount == 3)
-                            barrel.Rotation = b == 1 ? 45 : -45;
-                        else
-                            barrel.Rotation = 45 * b;
-                        PowerupEffect.AddChild(barrel);
-
-                        var aa = new AimAssistance(Game, this);
-                        aa.Position = Position;
-                        aa.RotationOffset = barrel.Rotation;
-                        Game.Layer_OtherAbove.AddChildAt(aa, 0);
-                        AimAssistanceExtras.Add(aa);
-
-                        if (AimAssistance.IsAiming())
-                        {
-                            aa.AimStart();
-                            aa.SetReticlePosition(AimAssistance.GetReticlePosition());
-                        }
-                    }
-                }
-                break;
             }
 
-            Game.HUD.SetPowerup(GetPowerupName(CurrentPowerup), PowerupTimer.Interval);
-
-            PowerupTimer.Start();
+            Powerup powerup = new Powerup(Game, this, type);
+            Powerups.Add(powerup);
+            powerup.Start();
         }
-        public void StopPowerup()
+        public void StopPowerups()
         {
-            if (PowerupTimer != null)
-                PowerupTimer.Stop();
-            
-            switch (CurrentPowerup)
+            for (int i = 0; i < Powerups.Count; i++)
             {
-                case POWERUP_DOUBLE_EXPLOSION_RADIUS:
-                {
-                    Weapon.ExplosionRadius /= 2;
-                    AimAssistance.UpdateReticle();
-                    AimAssistance.UpdateReticlePosition();
-                }
-                break;
-                case POWERUP_AIM_SPEED_INCREASE:
-                {
-                    AimSpeed /= 1.5f;
-                    RotateSpeedMax /= 1.5f;
-                    RotateAcc /= 3f;
-                    RotationDelayTimer.Interval *= 2f;
-                }
-                break;
-                case POWERUP_TRIPLE_CANNON:
-                case POWERUP_OCTUPLE_CANNON:
-                {
-                    PowerupEffect.Clear();
-                    foreach (AimAssistance a in AimAssistanceExtras)
-                    {
-                        if (a.Parent != null)
-                            a.Parent.RemoveChild(a);
-                    }
-                    AimAssistanceExtras.Clear();
-                }
-                break;
+                Powerups[i].Stop();
             }
+            Powerups = new List<Powerup>();
 
-            Game.HUD.SetPowerup("");
-
-            CurrentPowerup = 0;
+            Game.HUD.RemovePowerups();
         }
 
-        private void OnPowerUpEnd(Object source, ElapsedEventArgs e)
+        public bool HasPowerup(int type)
         {
-            StopPowerup();
-        }
-
-        public static string GetPowerupName(int powerup)
-        {
-            switch (powerup)
+            for (int i = 0; i < Powerups.Count; i++)
             {
-                case POWERUP_DOUBLE_EXPLOSION_RADIUS:
-                    return "Double Explosion Radius";
-                case POWERUP_AIM_SPEED_INCREASE:
-                    return "Aim Speed Increase";
-                case POWERUP_FREEZE_TIME:
-                    return "Freeze Time";
-                case POWERUP_TRIPLE_CANNON:
-                    return "Triple Cannon";
-                case POWERUP_OCTUPLE_CANNON:
-                    return "Octuple Cannon";
-                case POWERUP_RED_HOT_BEACH:
-                    return "Red Hot Beach";
+                if (Powerups[i].Type == type)
+                    return true;
             }
-            return "";
+            return false;
         }
-
 
         // Score
 
@@ -447,5 +349,184 @@ namespace SingleSwitchGame
             Game.HUD.SetScoreMultiplier(ScoreMultiplier);
         }
 
+    }
+
+    class Powerup
+    {
+        private Game Game;
+        private Cannon Cannon;
+
+        public int Type;
+        private Timer Timer;
+
+        public const int DOUBLE_EXPLOSION_RADIUS = 1;
+        public const int AIM_SPEED_INCREASE = 2;
+        public const int FREEZE_TIME = 3;
+        public const int TRIPLE_CANNON = 4;
+        public const int OCTUPLE_CANNON = 5;
+        public const int RED_HOT_BEACH = 6;
+        public const int MAX = 6;
+
+        public Powerup(Game game, Cannon cannon, int type)
+        {
+            Game = game;
+            Cannon = cannon;
+            Type = type;
+
+            Init();
+        }
+
+        public void Init()
+        {
+            Timer = new Timer();
+            Timer.AutoReset = false;
+            Timer.Elapsed += OnEnd;
+        }
+        public void Deinit()
+        {
+            Timer.Stop();
+            Timer.Dispose();
+            Timer = null;
+        }
+
+        public void Start()
+        {
+            Timer.Interval = 10000;
+            switch (Type)
+            {
+                case DOUBLE_EXPLOSION_RADIUS:
+                {
+                    Cannon.Weapon.ExplosionRadius *= 2;
+                    Cannon.AimAssistance.UpdateReticle();
+                    Cannon.AimAssistance.UpdateReticlePosition();
+                    foreach (AimAssistance a in Cannon.AimAssistanceExtras)
+                    {
+                        a.UpdateReticle();
+                        a.UpdateReticlePosition();
+                    }
+                    break;
+                }
+                case AIM_SPEED_INCREASE:
+                {
+                    Cannon.AimSpeed *= 1.5f;
+                    Cannon.RotateSpeedMax *= 1.5f;
+                    Cannon.RotateAcc *= 3f;
+                    Cannon.RotationDelayTimer.Interval /= 2f;
+
+                    Timer.Interval = 20000;
+                    break;
+                }
+                case TRIPLE_CANNON:
+                case OCTUPLE_CANNON:
+                {
+                    int amount = Type == TRIPLE_CANNON ? 3 : 8;
+                    for (int b = 1; b < amount; b++)
+                    {
+                        var barrel = new Sprite(((Sprite)Cannon.Model).Texture);
+                        barrel.Scale = new Vector2f(0.5f, 0.5f);
+                        barrel.Origin = new Vector2f(26, 30);
+                        if (amount == 3)
+                            barrel.Rotation = b == 1 ? 45 : -45;
+                        else
+                            barrel.Rotation = 45 * b;
+                        Cannon.PowerupEffect.AddChild(barrel);
+
+                        var aa = new AimAssistance(Game, Cannon);
+                        aa.Position = Cannon.Position;
+                        aa.RotationOffset = barrel.Rotation;
+                        Game.Layer_OtherAbove.AddChildAt(aa, 0);
+                        Cannon.AimAssistanceExtras.Add(aa);
+
+                        if (Cannon.AimAssistance.IsAiming())
+                        {
+                            aa.AimStart();
+                            aa.SetReticlePosition(Cannon.AimAssistance.GetReticlePosition());
+                        }
+                    }
+                    break;
+                }
+            }
+
+            Game.HUD.AddPowerup(Type, Timer.Interval);
+
+            Timer.Start();
+        }
+        public void Stop()
+        {
+            Timer.Stop();
+
+            switch (Type)
+            {
+                case DOUBLE_EXPLOSION_RADIUS:
+                {
+                    Cannon.Weapon.ExplosionRadius /= 2;
+                    Cannon.AimAssistance.UpdateReticle();
+                    Cannon.AimAssistance.UpdateReticlePosition();
+                    foreach (AimAssistance a in Cannon.AimAssistanceExtras)
+                    {
+                        a.UpdateReticle();
+                        a.UpdateReticlePosition();
+                    }
+                }
+                break;
+                case AIM_SPEED_INCREASE:
+                {
+                    Cannon.AimSpeed /= 1.5f;
+                    Cannon.RotateSpeedMax /= 1.5f;
+                    Cannon.RotateAcc /= 3f;
+                    Cannon.RotationDelayTimer.Interval *= 2f;
+                }
+                break;
+                case TRIPLE_CANNON:
+                case OCTUPLE_CANNON:
+                {
+                    Cannon.PowerupEffect.Clear();
+                    foreach (AimAssistance a in Cannon.AimAssistanceExtras)
+                    {
+                        if (a.Parent != null)
+                            a.Parent.RemoveChild(a);
+                    }
+                    Cannon.AimAssistanceExtras.Clear();
+                }
+                break;
+            }
+
+            Game.HUD.RemovePowerup(Type);
+
+            Cannon.Powerups.Remove(this);
+            Deinit();
+        }
+        public void Restart()
+        {
+            Timer.Stop();
+            Timer.Start();
+
+            Game.HUD.RestartPowerup(Type, Timer.Interval);
+        }
+
+        private void OnEnd(Object source, ElapsedEventArgs e)
+        {
+            Stop();
+        }
+
+        public static string GetPowerupName(int powerup)
+        {
+            switch (powerup)
+            {
+                case DOUBLE_EXPLOSION_RADIUS:
+                    return "Double Explosion Radius";
+                case AIM_SPEED_INCREASE:
+                    return "Aim Speed Increase";
+                case FREEZE_TIME:
+                    return "Freeze Time";
+                case TRIPLE_CANNON:
+                    return "Triple Cannon";
+                case OCTUPLE_CANNON:
+                    return "Octuple Cannon";
+                case RED_HOT_BEACH:
+                    return "Red Hot Beach";
+            }
+            return "";
+        }
     }
 }

@@ -6,8 +6,6 @@ namespace SingleSwitchGame
     {
         protected Game Game;
 
-        public event EventHandler Removed;
-
         public GraphicalUserInterface(Game Game)
         {
             this.Game = Game;
@@ -21,8 +19,7 @@ namespace SingleSwitchGame
         }
         public override void OnRemoved()
         {
-            if (Removed != null)
-                Removed(this, EventArgs.Empty);
+            base.OnRemoved();
             Deinit();
         }
     }

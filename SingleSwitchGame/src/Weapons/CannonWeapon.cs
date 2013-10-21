@@ -65,7 +65,7 @@ namespace SingleSwitchGame
                 return;
             if (hitSomething)
                 Game.Player.IncreaseScoreMultiplier();
-            else if (Game.Player.CurrentPowerup != Cannon.POWERUP_TRIPLE_CANNON && Game.Player.CurrentPowerup != Cannon.POWERUP_OCTUPLE_CANNON)
+            else if (!Game.Player.HasPowerup(Powerup.TRIPLE_CANNON) && !Game.Player.HasPowerup(Powerup.OCTUPLE_CANNON))
                 Game.Player.ResetScoreMultiplier();
         }
 

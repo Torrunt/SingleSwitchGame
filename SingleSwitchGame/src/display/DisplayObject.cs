@@ -14,6 +14,8 @@ namespace SingleSwitchGame
 
         public bool Visible = true;
 
+        public event EventHandler Removed;
+
         public int NumChildren { get { return Children.Count; } }
         public void AddChild(dynamic child)
         {
@@ -65,7 +67,11 @@ namespace SingleSwitchGame
         public dynamic GetChildAt(int i) { return Children[i]; }
 
         public virtual void OnAdded() { }
-        public virtual void OnRemoved() { }
+        public virtual void OnRemoved()
+        {
+            if (Removed != null)
+                Removed(this, EventArgs.Empty);
+        }
 
         public void Draw(RenderTarget Target, RenderStates states)
         {

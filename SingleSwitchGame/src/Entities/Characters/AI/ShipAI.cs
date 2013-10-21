@@ -106,7 +106,7 @@ namespace SingleSwitchGame
 
         public override void Update(float dt)
         {
-            if (Game.Player != null && Game.Player.CurrentPowerup == Cannon.POWERUP_FREEZE_TIME)
+            if (Game.Player != null && Game.Player.HasPowerup(Powerup.FREEZE_TIME))
                 return;
 
             base.Update(dt);

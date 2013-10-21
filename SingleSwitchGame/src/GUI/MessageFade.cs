@@ -10,12 +10,14 @@ namespace SingleSwitchGame
         private Text Text;
         private int Alpha;
 
+        private Action CallBack;
+
         private int FadeSpeed = 10;
         private bool FadingOut;
         private bool Showing;
         private Timer ShowTimer;
 
-        public MessageFade(Game game, string msg, uint fontSize, Vector2f position, double showTime = 1500, bool center = true) : base(game)
+        public MessageFade(Game game, string msg, uint fontSize, Vector2f position, Action callBack = null, double showTime = 1500, bool center = true) : base(game)
         {
             Text = new Text(msg, Game.TidyHand, fontSize);
             Text.Color = new Color(255, 255, 255, 0);
@@ -29,6 +31,8 @@ namespace SingleSwitchGame
             ShowTimer = new Timer(showTime);
             ShowTimer.AutoReset = false;
             ShowTimer.Elapsed += ShowTimerHandler;
+
+            CallBack = callBack;
         }
         public override void Deinit()
         {
@@ -52,7 +56,11 @@ namespace SingleSwitchGame
             {
                 Alpha = Alpha - FadeSpeed < 0 ? 0 : Alpha - FadeSpeed;
                 if (Alpha == 0)
+                {
                     Parent.RemoveChild(this);
+                    if (CallBack != null)
+                        CallBack();
+                }
             }
             else
             {

@@ -15,40 +15,41 @@ namespace SingleSwitchGame
         public PowerupPickup(Game game, int type) : base(game, null)
         {
             Type = type;
-
-            //if (Game.GraphicsMode == Game.GRAPHICSMODE_NORMAL)
-            byte alpha = 180;
-
-            Model = new CircleShape(((CircleShape)Collision).Radius);
-            Model.Origin = new Vector2f(Model.Radius, Model.Radius);
-            if (Game.GraphicsMode == Game.GRAPHICSMODE_NORMAL)
+            Model = PowerupPickup.GetModel(type, Game.GraphicsMode);
+            AddChild(Model);
+        }
+        public static CircleShape GetModel(int type, uint graphicsMode, byte alpha = 180, byte alpha_outline = 200)
+        {
+            CircleShape model = new CircleShape(15);
+            model.Origin = new Vector2f(model.Radius, model.Radius);
+            if (graphicsMode == Game.GRAPHICSMODE_NORMAL)
             {
-                
-                Model.OutlineColor = new Color(0, 0, 0, 200);
-                Model.OutlineThickness = 6;
+
+                model.OutlineColor = new Color(0, 0, 0, alpha_outline);
+                model.OutlineThickness = 6;
             }
             else
             {
-                Model.OutlineColor = new Color(255, 255, 255);
-                Model.OutlineThickness = 3;
+                model.OutlineColor = new Color(255, 255, alpha_outline);
+                model.OutlineThickness = 3;
             }
 
-            switch (Type)
+            switch (type)
             {
-                case Cannon.POWERUP_DOUBLE_EXPLOSION_RADIUS: Model.FillColor = new Color(255, 48, 48, alpha); break;
-                case Cannon.POWERUP_AIM_SPEED_INCREASE: Model.FillColor = new Color(96, 255, 99, alpha); break;
-                case Cannon.POWERUP_FREEZE_TIME: Model.FillColor = new Color(86, 198, 255, alpha); break;
-                case Cannon.POWERUP_TRIPLE_CANNON: Model.FillColor = new Color(255, 135, 205, alpha); break;
-                case Cannon.POWERUP_OCTUPLE_CANNON: Model.FillColor = new Color(172, 56, 255, alpha); break;
-                case Cannon.POWERUP_RED_HOT_BEACH: Model.FillColor = new Color(255, 87, 10, alpha); break;
+                case Powerup.DOUBLE_EXPLOSION_RADIUS: model.FillColor = new Color(255, 48, 48, alpha); break;
+                case Powerup.AIM_SPEED_INCREASE: model.FillColor = new Color(96, 255, 99, alpha); break;
+                case Powerup.FREEZE_TIME: model.FillColor = new Color(86, 198, 255, alpha); break;
+                case Powerup.TRIPLE_CANNON: model.FillColor = new Color(255, 135, 205, alpha); break;
+                case Powerup.OCTUPLE_CANNON: model.FillColor = new Color(172, 56, 255, alpha); break;
+                case Powerup.RED_HOT_BEACH: model.FillColor = new Color(255, 87, 10, alpha); break;
             }
 
-            AddChild(Model);
+            return model;
         }
 
         public override void Activate(dynamic obj)
         {
-            MessagePopup(Cannon.GetPowerupName(Type));
+            MessagePopup(Powerup.GetPowerupName(Type));
 
             if (obj is Cannon)
                 obj.StartPowerup(Type);

@@ -11,6 +11,7 @@ namespace SingleSwitchGame
         protected Game Game;
 
         public uint Wave = 1;
+        public uint Difficulty = 1;
         public uint EnemyCount = 0;
 
         public bool SpawningOverTime;
@@ -56,20 +57,38 @@ namespace SingleSwitchGame
 
         public void StartWave(uint no = 1)
         {
-            uint amount = 1 + (2 * (no-1));
-            double interval = 8000;
-
-            // TODO: Insert dynamically adjusting difficulty here
-
-            SpawnEnemiesOverTime(TYPE_SHIP, amount, interval);
-
-            // Message
-            MessageFade msg = new MessageFade(Game, "Wave " + no, 200, new Vector2f(Game.Size.X/2, Game.Size.Y/2));
+            // Countdown
+            WaveStartCountDownNo = 4;
+            MessageFade msg = new MessageFade(Game, "Wave " + no, 200, new Vector2f(Game.Size.X / 2, Game.Size.Y / 2), WaveStartCountDown, 800);
             Game.Layer_GUI.AddChild(msg);
         }
         public void NextWave()
         {
             StartWave(++Wave);
+        }
+
+        private int WaveStartCountDownNo = 0;
+        private void WaveStartCountDown()
+        {
+            WaveStartCountDownNo--;
+
+            MessageFade msg;
+            if (WaveStartCountDownNo == 1)
+                msg = new MessageFade(Game, WaveStartCountDownNo.ToString(), 200, new Vector2f(Game.Size.X / 2, Game.Size.Y / 2), null, 100);
+            else
+                msg = new MessageFade(Game, WaveStartCountDownNo.ToString(), 200, new Vector2f(Game.Size.X / 2, Game.Size.Y / 2), WaveStartCountDown, 100);
+            Game.Layer_GUI.AddChild(msg);
+
+            if (WaveStartCountDownNo == 1)
+            {
+                // Start Wave
+                uint amount = 10 + (2 * (Wave - 1));
+                double interval = 8000;
+
+                // TODO: Insert dynamically adjusting difficulty here
+
+                SpawnEnemiesOverTime(TYPE_SHIP, amount, interval);
+            }
         }
 
 
@@ -97,7 +116,7 @@ namespace SingleSwitchGame
                 else if (enemy is Infantryman)
                 {
                     Game.Player.IncreaseScore(POINTS_INFANTRYMAN);
-                    powerupDropChance = 10;
+                    powerupDropChance = 20;
                 }
                 else if (enemy is Rowboat)
                 {
@@ -108,7 +127,7 @@ namespace SingleSwitchGame
                 // Powerup drops
                 if (Utils.RandomInt(1, powerupDropChance) == 1)
                 {
-                    PowerupPickup powerup = new PowerupPickup(Game, Utils.RandomInt(1, Cannon.POWERUP_MAX));
+                    PowerupPickup powerup = new PowerupPickup(Game, Utils.RandomInt(1, Powerup.MAX));
                     powerup.Position = ((DisplayObject)enemy).Position;
                     Game.Layer_Objects.AddChild(powerup);
                 }
@@ -117,7 +136,7 @@ namespace SingleSwitchGame
             // Wave Finished
             if (EnemyCount == 0 && !SpawningOverTime)
             {
-                Game.Player.StopPowerup();
+                Game.Player.StopPowerups();
 
                 Game.UpgradeMenu = new UpgradeMenu(Game);
                 Game.Layer_GUI.AddChild(Game.UpgradeMenu);
@@ -170,7 +189,7 @@ namespace SingleSwitchGame
                 StopSpawnEnemiesOverTime();
                 return;
             }
-            if (Game.Player.CurrentPowerup == Cannon.POWERUP_FREEZE_TIME)
+            if (Game.Player.HasPowerup(Powerup.FREEZE_TIME))
                 return;
 
             // Spawn enemy

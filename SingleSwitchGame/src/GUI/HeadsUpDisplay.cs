@@ -15,11 +15,8 @@ namespace SingleSwitchGame
         private List<DisplayObject> HealthPoints = new List<DisplayObject>(); 
         private readonly Vector2f HEALTH_START = new Vector2f(2, 2);
 
-        private Layer Powerup;
-        private Text PowerupName;
-        private Text PowerupTime;
-        private double PowerupTimeLeft;
-        private Timer PowerupTimeUpdateTimer;
+        private Layer Layer_Powerups;
+        public List<PowerupGUI> PowerupGUIItems = new List<PowerupGUI>();
 
         public bool DisplayFPS = false;
         private Text FPS;
@@ -40,25 +37,9 @@ namespace SingleSwitchGame
             ScoreMultiplier.Position = new Vector2f(Game.Size.X - 100, 50);
             AddChild(ScoreMultiplier);
 
-            // Powerup
-            Powerup = new Layer();
-            Powerup.Visible = false;
-            AddChild(Powerup);
-
-            PowerupName = new Text("", Game.TidyHand, 40);
-            PowerupName.Color = Score.Color;
-            PowerupName.Position = new Vector2f(Game.Size.X / 2, Game.Size.Y - 80);
-            Powerup.AddChild(PowerupName);
-
-            PowerupTime = new Text("0.0 secs", Game.TidyHand, 30);
-            PowerupTime.Color = ScoreMultiplier.Color;
-            PowerupTime.Position = new Vector2f(Game.Size.X / 2, Game.Size.Y - 30);
-            FloatRect textRect = PowerupTime.GetLocalBounds();
-            PowerupTime.Origin = new Vector2f(textRect.Left + textRect.Width / 2.0f, textRect.Top + textRect.Height / 2.0f);
-            Powerup.AddChild(PowerupTime);
-
-            PowerupTimeUpdateTimer = new Timer(100);
-            PowerupTimeUpdateTimer.Elapsed += PowerupTimeUpdate;
+            // Powerups
+            Layer_Powerups = new Layer();
+            AddChild(Layer_Powerups);
 
             // FPS
             if (DisplayFPS)
@@ -76,13 +57,6 @@ namespace SingleSwitchGame
         {
             base.Deinit();
 
-            if (PowerupTimeUpdateTimer != null)
-            {
-                PowerupTimeUpdateTimer.Stop();
-                PowerupTimeUpdateTimer.Dispose();
-                PowerupTimeUpdateTimer = null;
-            }
-
             if (FPSUpdateTimer != null)
             {
                 FPSUpdateTimer.Stop();
@@ -93,9 +67,6 @@ namespace SingleSwitchGame
 
         public override void Update(float dt)
         {
-            //if (Powerup.Visible)
-                //UpdatePowerupTime(PowerupTimeLeft - (int)(dt * 1000));
-
             if (DisplayFPS)
                 DT = dt;
         }
@@ -157,40 +128,177 @@ namespace SingleSwitchGame
             }
         }
 
-        // Powerup
-        public void SetPowerup(string name, double time = 0)
+        // Powerups
+        public void AddPowerup(int type, double time = 0)
         {
-            if (name != "")
+            for (int i = 0; i < PowerupGUIItems.Count; i++)
             {
-                PowerupName.DisplayedString = name;
-                FloatRect textRect = PowerupName.GetLocalBounds();
-                PowerupName.Origin = new Vector2f(textRect.Left + textRect.Width / 2.0f, textRect.Top + textRect.Height / 2.0f);
-
-                UpdatePowerupTime(time);
-                PowerupTimeUpdateTimer.Start();
-                Powerup.Visible = true;
+                if (PowerupGUIItems[i].Type == type)
+                {
+                    PowerupGUIItems[i].ResetTime(time);
+                    return;
+                }
             }
-            else
-                Powerup.Visible = false;
+
+            PowerupGUI item = new PowerupGUI(this, type, time, Game.GraphicsMode);
+            item.Y = Game.Size.Y - 40;
+            PowerupGUIItems.Add(item);
+            UpdatePowerupPositions();
+            Layer_Powerups.AddChild(item);
         }
-        private void UpdatePowerupTime(double time)
+        public void RestartPowerup(int type, double time = 0)
+        {
+            for (int i = 0; i < PowerupGUIItems.Count; i++)
+            {
+                if (PowerupGUIItems[i].Type != type)
+                    continue;
+
+                PowerupGUIItems[i].ResetTime(time);
+                return;
+            }
+        }
+        public void RemovePowerup(int type)
+        {
+            for (int i = 0; i < PowerupGUIItems.Count; i++)
+            {
+                if (PowerupGUIItems[i].Type != type)
+                    continue;
+
+                if (PowerupGUIItems[i] != null && PowerupGUIItems[i].Parent != null)
+                    PowerupGUIItems[i].Parent.RemoveChild(PowerupGUIItems[i]);
+                if (PowerupGUIItems.Count > i)
+                    PowerupGUIItems.RemoveAt(i);
+
+                UpdatePowerupPositions();
+                return;
+            }
+        }
+        public void RemovePowerups()
+        {
+            while (PowerupGUIItems.Count > 0)
+            {
+                PowerupGUIItems[0].Parent.RemoveChild(PowerupGUIItems[0]);
+                PowerupGUIItems.RemoveAt(0);
+            }
+        }
+
+        public void UpdatePowerupPositions()
+        {
+            const float GAPX = 35;
+            switch (PowerupGUIItems.Count)
+            {
+                case 5:
+                {
+                    PowerupGUIItems[0].X = (Game.Size.X / 2) - GAPX - GAPX - GAPX - GAPX;
+                    PowerupGUIItems[1].X = (Game.Size.X / 2) - GAPX - GAPX;
+                    PowerupGUIItems[2].X = (Game.Size.X / 2);
+                    PowerupGUIItems[3].X = (Game.Size.X / 2) + GAPX + GAPX;
+                    PowerupGUIItems[4].X = (Game.Size.X / 2) + GAPX + GAPX + GAPX + GAPX;
+                    break;
+                }
+                case 4:
+                {
+                    PowerupGUIItems[0].X = (Game.Size.X / 2) - GAPX - GAPX - GAPX;
+                    PowerupGUIItems[1].X = (Game.Size.X / 2) - GAPX;
+                    PowerupGUIItems[2].X = (Game.Size.X / 2) + GAPX;
+                    PowerupGUIItems[3].X = (Game.Size.X / 2) + GAPX + GAPX + GAPX;
+                    break;
+                }
+                case 3:
+                {
+                    PowerupGUIItems[0].X = (Game.Size.X / 2) - GAPX - GAPX;
+                    PowerupGUIItems[1].X = (Game.Size.X / 2);
+                    PowerupGUIItems[2].X = (Game.Size.X / 2) + GAPX + GAPX;
+                    break;
+                }
+                case 2:
+                {
+                    PowerupGUIItems[0].X = (Game.Size.X / 2) - GAPX;
+                    PowerupGUIItems[1].X = (Game.Size.X / 2) + GAPX;
+                    break;
+                }
+                case 1: PowerupGUIItems[0].X = Game.Size.X / 2; break;
+            }
+        }
+    }
+    
+
+    class PowerupGUI : DisplayObject
+    {
+        private HeadsUpDisplay HUD;
+        public int Type;
+        private CircleShape Shape;
+        private Text Time;
+        private Timer UpdateTimer;
+        private double TimeLeft;
+
+        public PowerupGUI(HeadsUpDisplay hud, int type, double time, uint graphicsMode)
+        {
+            HUD = hud;
+            Type = type;
+
+            Shape = PowerupPickup.GetModel(type, graphicsMode, 160, 180);
+            Shape.Scale = new Vector2f(1.5f, 1.5f);
+            AddChild(Shape);
+
+            Time = new Text("0.0", Game.TidyHand, 24);
+            Time.Color = new Color(15, 15, 15, 220);
+            FloatRect textRect = Time.GetLocalBounds();
+            Time.Origin = new Vector2f(textRect.Left + (textRect.Width / 2.0f), textRect.Top + (textRect.Height / 2.0f));
+            AddChild(Time);
+
+            UpdateTimer = new Timer(100);
+            UpdateTimer.Elapsed += OnUpdate;
+
+            Update(time);
+            UpdateTimer.Start();
+        }
+        public override void OnRemoved()
+        {
+            HUD.PowerupGUIItems.Remove(this);
+            HUD.UpdatePowerupPositions();
+
+            Deinit();
+            base.OnRemoved();
+        }
+        public void Deinit()
+        {
+            if (UpdateTimer != null)
+            {
+                UpdateTimer.Stop();
+                UpdateTimer.Dispose();
+                UpdateTimer = null;
+            }
+        }
+
+        public void ResetTime(double time)
+        {
+            TimeLeft = time;
+            Update(time);
+            UpdateTimer.Stop();
+            UpdateTimer.Start();
+        }
+
+        private void Update(double time)
         {
             if (time < 0)
             {
-                Powerup.Visible = false;
+                if (Parent != null)
+                    Parent.RemoveChild(this);
             }
             else
             {
-                PowerupTime.DisplayedString = (time / 1000).ToString("0.0") + " secs";
+                Time.DisplayedString = (time / 1000).ToString("0.0");
+                FloatRect textRect = Time.GetLocalBounds();
+                Time.Origin = new Vector2f(textRect.Left + (textRect.Width / 2.0f), Time.Origin.Y);
             }
 
-            PowerupTimeLeft = time;
+            TimeLeft = time;
         }
-
-        private void PowerupTimeUpdate(Object source, ElapsedEventArgs e)
+        private void OnUpdate(Object source, ElapsedEventArgs e)
         {
             // need to minus an additional 10ms each update to make sure it stays in sync with a powerup timer
-            UpdatePowerupTime(PowerupTimeLeft - 110);
+            Update(TimeLeft - 110);
         }
     }
 }

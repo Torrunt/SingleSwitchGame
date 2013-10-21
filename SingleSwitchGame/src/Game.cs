@@ -435,7 +435,13 @@ namespace SingleSwitchGame
                 case Keyboard.Key.Period: if (TestBat != null) TestBat.Model.NextFrame(); break;
                 case Keyboard.Key.Comma: if (TestBat != null) TestBat.Model.PrevFrame(); break;
 
-                case Keyboard.Key.F5: Layer_GUI.AddChild(new UpgradeMenu(this));break;
+                case Keyboard.Key.F5: Player.StartPowerup(Powerup.DOUBLE_EXPLOSION_RADIUS); break;
+                case Keyboard.Key.F6: Player.StartPowerup(Powerup.AIM_SPEED_INCREASE); break;
+                case Keyboard.Key.F7: Player.StartPowerup(Powerup.FREEZE_TIME); break;
+                case Keyboard.Key.F8: Player.StartPowerup(Powerup.RED_HOT_BEACH); break;
+                case Keyboard.Key.F9: Player.StartPowerup(Powerup.TRIPLE_CANNON); break;
+                case Keyboard.Key.F10: Player.StartPowerup(Powerup.OCTUPLE_CANNON); break;
+                
             }
         }
 
