@@ -18,7 +18,7 @@ namespace SingleSwitchGame
             HealthMax = 8000;
             Health = HealthMax;
 
-            SpeedMax = 50.0f;
+            SpeedMax = 50.0f + Math.Min(0.5f * Game.AIManager.Difficulty, 25.0f);
             Acc = 200.0f;
 
             // Add Infantry Passengers
@@ -38,7 +38,13 @@ namespace SingleSwitchGame
         {
             // Freeze Time?
             if (Game.Player != null && Game.Player.HasPowerup(Powerup.FREEZE_TIME))
+            {
+                Model.Stop();
                 return;
+            }
+
+            if ((AI == null || !((RowboatAI)AI).ReachedBeach) && !Model.Playing)
+                Model.Play();
 
             base.Update(dt);
         }

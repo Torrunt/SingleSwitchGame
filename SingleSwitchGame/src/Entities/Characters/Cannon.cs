@@ -67,12 +67,6 @@ namespace SingleSwitchGame
                 RotationDelayTimer.Dispose();
                 RotationDelayTimer = null;
             }
-            for (int i = 0; i < Powerups.Count; i++)
-            {
-                if (Powerups[i] == null)
-                    continue;
-                Powerups[i].Deinit();
-            }
 
             Weapon.Deinit();
             Weapon = null;
@@ -196,7 +190,10 @@ namespace SingleSwitchGame
 
             // Update HUD
             if (Player)
+            {
+                Game.AIManager.TimesHitThisWave++;
                 Game.HUD.SetHealth(Health);
+            }
 
             return Health;
         }
@@ -308,11 +305,9 @@ namespace SingleSwitchGame
         }
         public void StopPowerups()
         {
-            for (int i = 0; i < Powerups.Count; i++)
-            {
-                Powerups[i].Stop();
-            }
-            Powerups = new List<Powerup>();
+
+            while (Powerups.Count > 0)
+                Powerups[0].Stop();
 
             Game.HUD.RemovePowerups();
         }
@@ -372,25 +367,14 @@ namespace SingleSwitchGame
             Game = game;
             Cannon = cannon;
             Type = type;
-
-            Init();
-        }
-
-        public void Init()
-        {
-            Timer = new Timer();
-            Timer.AutoReset = false;
-            Timer.Elapsed += OnEnd;
-        }
-        public void Deinit()
-        {
-            Timer.Stop();
-            Timer.Dispose();
-            Timer = null;
         }
 
         public void Start()
         {
+            Timer = new Timer();
+            Timer.AutoReset = false;
+            Timer.Elapsed += OnEnd;
+
             Timer.Interval = 10000;
             switch (Type)
             {
@@ -454,6 +438,8 @@ namespace SingleSwitchGame
         public void Stop()
         {
             Timer.Stop();
+            Timer.Dispose();
+            Timer = null;
 
             switch (Type)
             {
@@ -494,7 +480,6 @@ namespace SingleSwitchGame
             Game.HUD.RemovePowerup(Type);
 
             Cannon.Powerups.Remove(this);
-            Deinit();
         }
         public void Restart()
         {

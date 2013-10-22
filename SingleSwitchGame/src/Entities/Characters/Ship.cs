@@ -26,7 +26,7 @@ namespace SingleSwitchGame
             Collision = new RectangleShape(new Vector2f(265, 105));
             Collision.Position = new Vector2f(-132.5f, -52.5f);
 
-            SpeedMax = 50.0f;
+            SpeedMax = 50.0f + Math.Min(0.5f * Game.AIManager.Difficulty, 25.0f);
             Acc = 200.0f;
             
             AmountOfInfantry = Utils.RandomInt(12, 18);
@@ -38,7 +38,13 @@ namespace SingleSwitchGame
         {
             // Freeze Time?
             if (Game.Player != null && Game.Player.HasPowerup(Powerup.FREEZE_TIME))
+            {
+                Model.Stop();
                 return;
+            }
+
+            if (!Model.Playing)
+                Model.Play();
 
             base.Update(dt);
         }

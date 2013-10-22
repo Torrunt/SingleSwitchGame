@@ -8,7 +8,7 @@ namespace SingleSwitchGame
 {
     class RowboatAI : ArtificialIntelligence
     {
-        private bool ReachedBeach;
+        public bool ReachedBeach;
 
         public RowboatAI(Game Game) : base(Game) { }
 

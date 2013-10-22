@@ -223,7 +223,7 @@ namespace SingleSwitchGame
 
             // AI Manager
             AIManager = new AIManager(this);
-            AIManager.StartWave();
+            AIManager.StartWaveCountdown();
 
             // HUD
             HUD = new HeadsUpDisplay(this);

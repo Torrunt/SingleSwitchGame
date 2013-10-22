@@ -40,7 +40,7 @@ namespace SingleSwitchGame
 
             //SpeedMax = 100.0f;
             //Acc = 400.0f;
-            SpeedMax = 20.0f;
+            SpeedMax = 10.0f + Math.Min(0.1f * Game.AIManager.Difficulty, 10.0f);
             Acc = 80.0f;
             Friction = 1000.0f;
 

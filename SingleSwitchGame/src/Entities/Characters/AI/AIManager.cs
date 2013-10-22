@@ -14,6 +14,9 @@ namespace SingleSwitchGame
         public uint Difficulty = 1;
         public uint EnemyCount = 0;
 
+        /// <summary>The amount of times the player has been hit this wave.</summary>
+        public int TimesHitThisWave = 0;
+
         public bool SpawningOverTime;
         private Timer SpawnOverTimeTimer;
         private uint SpawnOverTimeCount;
@@ -38,6 +41,9 @@ namespace SingleSwitchGame
 
         public void StopAll()
         {
+            Wave = 1;
+            Difficulty = 1;
+
             StopSpawnEnemiesOverTime();
         }
 
@@ -55,19 +61,41 @@ namespace SingleSwitchGame
 
         // Wave Spawning
 
-        public void StartWave(uint no = 1)
+        public void StartWave()
         {
-            // Countdown
-            WaveStartCountDownNo = 4;
-            MessageFade msg = new MessageFade(Game, "Wave " + no, 200, new Vector2f(Game.Size.X / 2, Game.Size.Y / 2), WaveStartCountDown, 800);
-            Game.Layer_GUI.AddChild(msg);
+            uint amount;
+            switch (Difficulty)
+            {
+                case  1: amount = 1; break;
+                case  2: amount = 3; break;
+                default: amount = 1 + Difficulty - (uint)Math.Floor((Difficulty-1) / 2f); break;
+            }
+            double interval = 8000 - Math.Max(40 * Difficulty, 4000);
+
+            SpawnEnemiesOverTime(TYPE_SHIP, amount, interval);
         }
         public void NextWave()
         {
-            StartWave(++Wave);
+            Wave++;
+            if (TimesHitThisWave == 0)
+                Difficulty++;
+            else
+                Difficulty -= (uint)((float)Difficulty * ((float)TimesHitThisWave / 10f));
+
+            TimesHitThisWave = 0;
+
+            StartWaveCountdown();
         }
 
+
         private int WaveStartCountDownNo = 0;
+        public void StartWaveCountdown()
+        {
+            // Countdown
+            WaveStartCountDownNo = 4;
+            MessageFade msg = new MessageFade(Game, "Wave " + Wave, 200, new Vector2f(Game.Size.X / 2, Game.Size.Y / 2), WaveStartCountDown, 800);
+            Game.Layer_GUI.AddChild(msg);
+        }
         private void WaveStartCountDown()
         {
             WaveStartCountDownNo--;
@@ -80,15 +108,7 @@ namespace SingleSwitchGame
             Game.Layer_GUI.AddChild(msg);
 
             if (WaveStartCountDownNo == 1)
-            {
-                // Start Wave
-                uint amount = 10 + (2 * (Wave - 1));
-                double interval = 8000;
-
-                // TODO: Insert dynamically adjusting difficulty here
-
-                SpawnEnemiesOverTime(TYPE_SHIP, amount, interval);
-            }
+                StartWave();
         }
 
 

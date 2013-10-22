@@ -164,22 +164,14 @@ namespace SingleSwitchGame
                 if (PowerupGUIItems[i].Type != type)
                     continue;
 
-                if (PowerupGUIItems[i] != null && PowerupGUIItems[i].Parent != null)
-                    PowerupGUIItems[i].Parent.RemoveChild(PowerupGUIItems[i]);
-                if (PowerupGUIItems.Count > i)
-                    PowerupGUIItems.RemoveAt(i);
-
-                UpdatePowerupPositions();
+                Layer_Powerups.RemoveChild(PowerupGUIItems[i]);
                 return;
             }
         }
         public void RemovePowerups()
         {
             while (PowerupGUIItems.Count > 0)
-            {
-                PowerupGUIItems[0].Parent.RemoveChild(PowerupGUIItems[0]);
-                PowerupGUIItems.RemoveAt(0);
-            }
+                Layer_Powerups.RemoveChild(PowerupGUIItems[0]);
         }
 
         public void UpdatePowerupPositions()
