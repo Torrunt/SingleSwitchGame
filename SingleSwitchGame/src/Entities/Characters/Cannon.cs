@@ -437,9 +437,12 @@ namespace SingleSwitchGame
         }
         public void Stop()
         {
-            Timer.Stop();
-            Timer.Dispose();
-            Timer = null;
+            if (Timer != null)
+            {
+                Timer.Stop();
+                Timer.Dispose();
+                Timer = null;
+            }
 
             switch (Type)
             {

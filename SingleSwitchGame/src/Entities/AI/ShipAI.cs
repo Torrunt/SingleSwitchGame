@@ -63,7 +63,9 @@ namespace SingleSwitchGame
 
                 int pointCount = Utils.RandomInt(4, 15);
                 float originalAngle = (float)Utils.GetAngle(Game.Island.Position, Obj.Position) + (Utils.RandomInt(50, 80) * (Utils.RandomInt() == 1 ? 1 : -1));
-                Vector2f destination = Utils.GetPointInDirection(Game.Island.Position, originalAngle,(Game.Size.X / 2) + 300);
+
+                Vector2f intersectPoint = Utils.RaycastAgainstBounds(Game.Bounds, Game.Center, Utils.GetPointInDirection(Game.Center, originalAngle, Game.Size.X));
+                Vector2f destination = Utils.GetPointInDirection(intersectPoint, originalAngle, 200);
                 float originalDistance = Utils.Distance(Obj.Position, destination);
 
                 Vector2f pos;

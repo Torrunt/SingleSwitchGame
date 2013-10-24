@@ -29,7 +29,6 @@ namespace SingleSwitchGame
         private List<Entity> UpdateList = new List<Entity>();
         private int UpdateListIndex = 0;
 
-        public static Font Arial = new Font("assets/arial.ttf");
         public static Font TidyHand = new Font("assets/TidyHand.ttf");
 
         public const uint GRAPHICSMODE_NORMAL = 0;
@@ -337,7 +336,7 @@ namespace SingleSwitchGame
         // Window Management
         public void CreateWindow()
         {
-            Window = new RenderWindow(new VideoMode(ResolutionDefault.X, ResolutionDefault.Y), "Single Switch Game", WindowStyle, WindowSettings);
+            Window = new RenderWindow(new VideoMode(ResolutionDefault.X, ResolutionDefault.Y), "Cannon Island Defence", WindowStyle, WindowSettings);
             Window.Closed += OnClose;
             Window.KeyReleased += OnKeyReleased;
             Window.MouseButtonPressed += OnMouseButtonPressed;
