@@ -198,6 +198,7 @@ namespace SingleSwitchGame
                                     Convert.ToInt16(reader.GetAttribute("tintMultiplier")),
                                     spriteSheet == null ? null : Graphics.GetAnimatedSpriteData(Graphics.ASSETS_SPRITES + spriteSheet + ".xml")
                                     ));
+                                // TODO - import AnimatedSprite node tintColour and tintMultiplier properly
 
 #if DEBUG
                                 Console.WriteLine("    node: " + nodes[nodes.Count - 1].Name);

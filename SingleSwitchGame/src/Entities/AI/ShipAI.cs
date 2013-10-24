@@ -118,7 +118,7 @@ namespace SingleSwitchGame
                     // Rotate to first waypoint in path
                     float targetAngle = (float)Utils.GetAngle(Obj.Position, WaypointPath[0]);
                     if (Obj.Rotation != targetAngle)
-                        Obj.Rotation = Utils.StepTo(Obj.Rotation, targetAngle, 1);
+                        Obj.Rotation = Utils.RotateTowards(Obj.Rotation, targetAngle, 1);
                     else
                         Obj.CanMove = true;
                 }

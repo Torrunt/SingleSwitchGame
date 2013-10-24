@@ -66,10 +66,27 @@ namespace SingleSwitchGame
             RemoveChild(Back);
             RemoveChild(Dim);
 
+            // Title
             Sprite title = Graphics.GetSprite(Graphics.ASSETS_SPRITES + "gui/Title_Cannon_Island_Defence.png");
             FloatRect titleRect = title.GetLocalBounds();
             title.Position = new Vector2f((Game.Size.X - titleRect.Width) / 2, 100);
             AddChild(title);
+
+            // Credits
+            RectangleShape credits_back = new RectangleShape(new Vector2f(Game.Size.X, 40));
+            credits_back.Position = new Vector2f(0, Game.Size.Y - 40);
+            credits_back.FillColor = new Color(0, 0, 0, 60);
+            AddChild(credits_back);
+
+            Text credit_corey = new Text("created by Corey Zeke Womack (torrunt.net)", Game.TidyHand, 24);
+            credit_corey.Position = new Vector2f(5, Game.Size.Y - 35);
+            AddChild(credit_corey);
+
+            Text credit_music = new Text("music by luigisounds.newgrounds.com", Game.TidyHand, 24);
+            FloatRect textRect = credit_music.GetLocalBounds();
+            credit_music.Origin = new Vector2f(textRect.Width, 0);
+            credit_music.Position = new Vector2f(Game.Size.X - 5, Game.Size.Y - 35);
+            AddChild(credit_music);
         }
         public override void OnRemoved()
         {

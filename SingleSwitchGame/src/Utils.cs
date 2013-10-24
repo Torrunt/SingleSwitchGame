@@ -10,19 +10,28 @@ namespace SingleSwitchGame
         private static readonly Random rnd = new Random();
         public static int RandomInt(int min = 0, int max = 1) { return rnd.Next(min, max+1); }
 
-        public static float StepTo(float no, float to, float by)
+        public static float StepTo(float no, float target, float amount)
         {
-            if (no != to)
-            {
-		        if (no > to)
-			        no -= by;
-		        else if (no < to)
-			        no += by;
-				
-		        if (no > to - by && no < to + by)
-			        no = to;
-	        }
+            if (no == target)
+                return no;
+
+            no += no < target ? amount : -amount;
+            if (no > target - amount && no < target + amount)
+                no = target;
+
 	        return no;
+        }
+        /// <summary>Similar to StepTo method but for Angles.</summary>
+        public static float RotateTowards(float angle, float target, float amount)
+        {
+            if (angle == target)
+                return angle;
+
+            angle += Utils.RotateClockwise(angle, target) ? amount : -amount;
+            if (angle > target - amount && angle < target + amount)
+                angle = target;
+
+            return angle;
         }
 
         public static double GetAngle(Vector2f p1, Vector2f p2, bool inDegrees = true)
@@ -31,6 +40,12 @@ namespace SingleSwitchGame
 		}
         public static double ToDegrees(double angle) { return angle * (180 / Math.PI); }
         public static double ToRadians(double angle) { return angle * (Math.PI / 180); }
+
+        /// <summary>Returns true if the fastest direction to rotate towards targetRotation is Clockwise.</summary>
+        public static bool RotateClockwise(double currentRotation, double targetRotation)
+		{
+			return (currentRotation - targetRotation + 360) % 360 > 180;
+		}
 
         /// <param name="angle">In Degrees</param>
         public static Vector2f GetPointInDirection(dynamic point, float angle, float distance)
@@ -83,10 +98,10 @@ namespace SingleSwitchGame
 			//---------------------------------------------------
             if (AsSegments)
 			{
-				if (   (int)(( ip.X - A.X ) * ( ip.X - B.X )) > 0
-					|| (int)(( ip.Y - A.Y ) * ( ip.Y - B.Y )) > 0
-					|| (int)(( ip.X - E.X ) * ( ip.X - F.X )) > 0
-                    || (int)((ip.Y - E.Y) * (ip.Y - F.Y)) > 0)
+				if ((int)((ip.X - A.X) * (ip.X - B.X)) > 0 ||
+                    (int)((ip.Y - A.Y) * (ip.Y - B.Y)) > 0 ||
+					(int)((ip.X - E.X) * (ip.X - F.X)) > 0 ||
+                    (int)((ip.Y - E.Y) * (ip.Y - F.Y)) > 0)
 					return null;
 			}
 			

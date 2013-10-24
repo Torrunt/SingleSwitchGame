@@ -1,6 +1,7 @@
 ﻿using System;
 using SFML.Graphics;
 using SFML.Window;
+using SFML.Audio;
 
 namespace SingleSwitchGame
 {
@@ -9,6 +10,22 @@ namespace SingleSwitchGame
 
         public float ExplosionRadius = 40;
 
+        // Sounds
+        private SoundBuffer ShootSoundBuffer1;
+        private SoundBuffer ShootSoundBuffer2;
+        private Sound ShootSound1;
+        private Sound ShootSound2;
+
+        private SoundBuffer ExplosionSoundBuffer1;
+        private SoundBuffer ExplosionSoundBuffer2;
+        private Sound ExplosionSound1;
+        private Sound ExplosionSound2;
+
+        private SoundBuffer SplashSoundBuffer1;
+        private SoundBuffer SplashSoundBuffer2;
+        private Sound SplashSound1;
+        private Sound SplashSound2;
+
         public CannonWeapon(Game game, Entity sourceObject)
             : base(game, sourceObject)
         {
@@ -16,14 +33,36 @@ namespace SingleSwitchGame
             Damage = 4000;
 
             ProjectileRotateSpeed = 10;
+
+            ShootSoundBuffer1 = new SoundBuffer("assets/audio/shotgun1.ogg");
+            ShootSoundBuffer2 = new SoundBuffer("assets/audio/shotgun2.ogg");
+            ShootSound1 = new Sound(ShootSoundBuffer1);
+            ShootSound2 = new Sound(ShootSoundBuffer2);
+
+            ExplosionSoundBuffer1 = new SoundBuffer("assets/audio/explode1.ogg");
+            ExplosionSoundBuffer2 = new SoundBuffer("assets/audio/explode2.ogg");
+            ExplosionSound1 = new Sound(ExplosionSoundBuffer1);
+            ExplosionSound2 = new Sound(ExplosionSoundBuffer2);
+
+            SplashSoundBuffer1 = new SoundBuffer("assets/audio/splash1.ogg");
+            SplashSoundBuffer2 = new SoundBuffer("assets/audio/splash2.ogg");
+            SplashSound1 = new Sound(SplashSoundBuffer1);
+            SplashSound2 = new Sound(SplashSoundBuffer2);
+        }
+
+        public override void Fire(Vector2f pos, float direction, Vector2f? targetPos = null)
+        {
+            base.Fire(pos, direction, targetPos);
+
+            // Sound
+            if (Utils.RandomInt() == 0)
+                ShootSound1.Play();
+            else
+                ShootSound2.Play();
         }
 
         public override void Explode(Vector2f pos)
         {
-            Explosion explosion = new Explosion(Game, ExplosionRadius);
-            explosion.Position = pos;
-            Game.Layer_OtherAbove.AddChild(explosion);
-            
             // Collision
             bool hitSomething = false;
             int numChildren = Game.Layer_Objects.NumChildren;
@@ -60,6 +99,34 @@ namespace SingleSwitchGame
 
                 hitSomething = true;
             }
+
+            if (hitSomething || Utils.InCircle(Game.Island, pos))
+            {
+                // Explosion
+                Explosion explosion = new Explosion(Game, ExplosionRadius);
+                explosion.Position = pos;
+                Game.Layer_OtherAbove.AddChild(explosion);
+
+                // Sound
+                if (Utils.RandomInt() == 0)
+                    ExplosionSound1.Play();
+                else
+                    ExplosionSound2.Play();
+            }
+            else
+            {
+                // Splash
+                Explosion explosion = new Explosion(Game, 15);
+                explosion.Position = pos;
+                Game.Layer_OtherAbove.AddChild(explosion);
+
+                // Sound
+                if (Utils.RandomInt() == 0)
+                    SplashSound1.Play();
+                else
+                    SplashSound2.Play();
+            }
+
 
             if (Game.Player == null)
                 return;

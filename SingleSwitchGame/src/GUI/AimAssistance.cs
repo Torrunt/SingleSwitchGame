@@ -78,7 +78,9 @@ namespace SingleSwitchGame.GUI
             Fill = new ConvexShape(4);
             Fill.FillColor = FillColour;
             AddChild(Fill);
-
+        }
+        public override void OnAdded()
+        {
             SetReticlePosition(RETICLE_START_Y);
         }
 
@@ -137,8 +139,8 @@ namespace SingleSwitchGame.GUI
         {
             Reticle.Y = y;
 
-            Vector2f LineLeftP = Utils.GetPointInDirection(LineLeft.Position, (float)Utils.GetAngle(LineLeft.Position, new Vector2f(Circle.Radius, Reticle.Y)), Game.Size.X * 2);
-            Vector2f LineRightP = Utils.GetPointInDirection(LineRight.Position, (float)Utils.GetAngle(LineRight.Position, new Vector2f(-Circle.Radius, Reticle.Y)), Game.Size.X * 2);
+            Vector2f LineLeftP = Utils.GetPointInDirection(LineLeft.Position, (float)Utils.GetAngle(LineLeft.Position, new Vector2f(Circle.Radius, Reticle.Y)), Game.Size.X * 3);
+            Vector2f LineRightP = Utils.GetPointInDirection(LineRight.Position, (float)Utils.GetAngle(LineRight.Position, new Vector2f(-Circle.Radius, Reticle.Y)), Game.Size.X * 3);
 
             LineLeft.Size = new Vector2f(Utils.Distance(LineLeft.Position, LineLeftP), LineLeft.Size.Y);
             LineLeft.Rotation = (float)Utils.GetAngle(LineLeft.Position, LineLeftP);

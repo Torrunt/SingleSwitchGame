@@ -70,7 +70,7 @@ namespace SingleSwitchGame
                 case  2: amount = 3; break;
                 default: amount = 1 + Difficulty - (uint)Math.Floor((Difficulty-1) / 2f); break;
             }
-            double interval = 8000 - Math.Max(40 * Difficulty, 4000);
+            double interval = 8000 - Math.Min(40 * Difficulty, 4000);
 
             SpawnEnemiesOverTime(TYPE_SHIP, amount, interval);
         }
@@ -177,7 +177,7 @@ namespace SingleSwitchGame
         public void SpawnEnemiesOverTime(uint type, uint amount, double interval)
         {
             if (SpawnOverTimeTimer != null)
-                StopSpawnEnemiesOverTime();
+                SpawnOverTimeTimer.Stop();
 
             SpawningOverTime = true;
 
@@ -185,8 +185,13 @@ namespace SingleSwitchGame
             SpawnOverTimeAmount = amount;
             SpawnOverTimeCount = 0;
 
-            SpawnOverTimeTimer = new Timer(interval);
-            SpawnOverTimeTimer.Elapsed += SpawnOverTimeTimerHandler;
+            if (SpawnOverTimeTimer == null)
+            {
+                SpawnOverTimeTimer = new Timer(interval);
+                SpawnOverTimeTimer.Elapsed += SpawnOverTimeTimerHandler;
+            }
+            else
+                SpawnOverTimeTimer.Interval = interval;
             SpawnOverTimeTimer.Start();
 
             // spawn one straight away
@@ -219,7 +224,9 @@ namespace SingleSwitchGame
                 case TYPE_SHIP:
                 {
                     enemy = new Ship(Game);
-                    enemy.SetPosition(Utils.GetPointInDirection(Game.Island.Position, Utils.RandomInt(0, 359), (Game.Size.X/2) + 300));
+                    int angle = Utils.RandomInt(0, 359);
+                    Vector2f intersectPoint = Utils.RaycastAgainstBounds(Game.Bounds, Game.Center, Utils.GetPointInDirection(Game.Center, angle, Game.Size.X));
+                    enemy.SetPosition(Utils.GetPointInDirection(intersectPoint, angle, 200));
                     break;
                 }
                 default:

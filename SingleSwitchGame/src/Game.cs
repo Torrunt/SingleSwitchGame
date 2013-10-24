@@ -58,8 +58,6 @@ namespace SingleSwitchGame
         public CircleWaves IslandWaves;
         public CircleShape Hill;
 
-        public Bat TestBat;
-
         public Music Music;
 
         public Game()
@@ -95,6 +93,10 @@ namespace SingleSwitchGame
             // Start Menu
             StartMenu = new StartMenu(this);
             Layer_GUI.AddChild(StartMenu);
+
+            Music = new Music("assets/audio/music/Speed Pirate - LuigiSounds.ogg");
+            Music.Loop = true;
+            Music.Play();
 
             // Game Loop
             Stopwatch clock = new Stopwatch();
@@ -229,14 +231,6 @@ namespace SingleSwitchGame
             HUD = new HeadsUpDisplay(this);
             HUD.SetHealth(Player.Health);
             Layer_GUI.AddChild(HUD);
-
-            //Music = new Music("assets/sound/OrchestralTheme1.ogg");
-            //Music.Play();
-
-            // Testing
-            //TestBat = new Bat(this);
-            //TestBat.SetPosition(500, 800);
-            //Layer_Objects.AddChild(TestBat);
         }
 
         public void Stop()
@@ -245,12 +239,6 @@ namespace SingleSwitchGame
                 return;
             Started = false;
             Running = false;
-
-            if (Music != null)
-            {
-                Music.Stop();
-                Music = null;
-            }
 
             // Managers
             AIManager.StopAll();
@@ -330,7 +318,8 @@ namespace SingleSwitchGame
         public bool HasStarted() { return Started; }
         public bool IsRunning() { return Running; }
 
-        public Vector2u Size { get { return ResolutionDefault; } set {} }
+        public Vector2u Size { get { return ResolutionDefault; } private set {} }
+        public Vector2f Center { get { return new Vector2f(Size.X / 2, Size.Y / 2); } private set { } }
         /// <summary>The scale difference between the set Resolution (window size) and Game Resolution.</summary>
         public float ResScale { get { return Window.GetView().Size.X == 0 ? 1 : Window.GetView().Size.X / Window.Size.X; } set { } }
 
@@ -431,9 +420,6 @@ namespace SingleSwitchGame
                 break;
 
                 case Keyboard.Key.F3: DEBUG_MOUSE_CONTROLS = !DEBUG_MOUSE_CONTROLS; break;
-
-                case Keyboard.Key.Period: if (TestBat != null) TestBat.Model.NextFrame(); break;
-                case Keyboard.Key.Comma: if (TestBat != null) TestBat.Model.PrevFrame(); break;
 
                 case Keyboard.Key.F5: Player.StartPowerup(Powerup.DOUBLE_EXPLOSION_RADIUS); break;
                 case Keyboard.Key.F6: Player.StartPowerup(Powerup.AIM_SPEED_INCREASE); break;

@@ -76,12 +76,11 @@
     <Compile Include="src\Effects\Explosion.cs" />
     <Compile Include="src\Effects\VoronoiDiagram.cs" />
     <Compile Include="src\Effects\WaterRipples.cs" />
-    <Compile Include="src\Entities\Characters\AI\AIManager.cs" />
-    <Compile Include="src\Entities\Characters\AI\ArtificialIntelligence.cs" />
-    <Compile Include="src\Entities\Characters\AI\RowboatAI.cs" />
-    <Compile Include="src\Entities\Characters\AI\ShipAI.cs" />
-    <Compile Include="src\Entities\Characters\AI\InfantrymanAI.cs" />
-    <Compile Include="src\Entities\Characters\Bat.cs" />
+    <Compile Include="src\Entities\AI\AIManager.cs" />
+    <Compile Include="src\Entities\AI\ArtificialIntelligence.cs" />
+    <Compile Include="src\Entities\AI\RowboatAI.cs" />
+    <Compile Include="src\Entities\AI\ShipAI.cs" />
+    <Compile Include="src\Entities\AI\InfantrymanAI.cs" />
     <Compile Include="src\Entities\Characters\Cannon.cs" />
     <Compile Include="src\Entities\Characters\Character.cs" />
     <Compile Include="src\Entities\Characters\Rowboat.cs" />

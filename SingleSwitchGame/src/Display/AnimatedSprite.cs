@@ -7,6 +7,8 @@ namespace SingleSwitchGame
 {
     class AnimatedSprite : Entity
     {
+        // TODO - Add Node Support
+
         public AnimatedSpriteData Data;
         public int CurrentFrame = 0;
         public int TotalFrames = 0;

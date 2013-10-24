@@ -39,11 +39,12 @@ namespace SingleSwitchGame
             // Freeze Time?
             if (Game.Player != null && Game.Player.HasPowerup(Powerup.FREEZE_TIME))
             {
-                Model.Stop();
+                if (Model is AnimatedSprite)
+                    Model.Stop();
                 return;
             }
 
-            if ((AI == null || !((RowboatAI)AI).ReachedBeach) && !Model.Playing)
+            if (Model != null && Model is AnimatedSprite && (AI == null || !((RowboatAI)AI).ReachedBeach) && !Model.Playing)
                 Model.Play();
 
             base.Update(dt);

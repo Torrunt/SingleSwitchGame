@@ -72,7 +72,7 @@ namespace SingleSwitchGame
             if (WaypointPath.Count > 1)
             {
                 float targetAngle = (float)Utils.GetAngle(Obj.Position, WaypointPath[1]);
-                Obj.Rotation = Utils.StepTo(Obj.Rotation, targetAngle, 1);
+                Obj.Rotation = Utils.RotateTowards(Obj.Rotation, targetAngle, 1);
             }
         }
 
