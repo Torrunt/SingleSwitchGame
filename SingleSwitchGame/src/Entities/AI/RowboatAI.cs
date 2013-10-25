@@ -58,7 +58,7 @@ namespace SingleSwitchGame
                 Game.AIManager.OnRowboatReachedBeach((Rowboat)Obj);
                 ((Rowboat)Obj).RemoveInfantry();
                 Obj.Model.Stop();
-                Obj.Model.Sprite.Color = new Color(255, 255, 255, 60);
+                Obj.Model.Sprite.Color = new Color(255, 255, 255, 80);
             }
         }
 

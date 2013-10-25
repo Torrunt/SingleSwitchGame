@@ -27,7 +27,19 @@ namespace SingleSwitchGame
             if (angle == target)
                 return angle;
 
-            angle += Utils.RotateClockwise(angle, target) ? amount : -amount;
+            // Counter-Clockwise?
+            if (!Utils.RotateClockwise(angle, target))
+                amount = -amount;
+
+            // Add (without going past 180 or -180)
+            if (angle + amount > 180)
+                angle = angle + amount - 360;
+            else if (angle + amount < -180)
+                angle = angle + amount + 360;
+            else
+                angle += amount;
+
+
             if (angle > target - amount && angle < target + amount)
                 angle = target;
 

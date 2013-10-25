@@ -7,6 +7,7 @@ namespace SingleSwitchGame
     class HowToPlay : GraphicalUserInterface
     {
         private AnimatedSprite Tutorial;
+        private bool BeenReleasedSinceOpen = false;
 
         public HowToPlay(Game game)
             : base(game)
@@ -34,26 +35,32 @@ namespace SingleSwitchGame
 
         public override void Init()
         {
-            Game.Window.KeyPressed += OnKeyPressed;
-            Game.Window.MouseButtonPressed += OnMouseButtonPressed;
+            Game.Window.KeyReleased += OnKeyReleased;
+            Game.Window.MouseButtonReleased += OnMouseButtonReleased;
             Game.NewWindow += OnNewWindow;
         }
         public override void Deinit()
         {
             Game.NewWindow -= OnNewWindow;
-            Game.Window.KeyPressed -= OnKeyPressed;
-            Game.Window.MouseButtonPressed -= OnMouseButtonPressed;
+            Game.Window.KeyPressed -= OnKeyReleased;
+            Game.Window.MouseButtonPressed -= OnMouseButtonReleased;
 
             base.Deinit();
         }
         private void OnNewWindow(Object sender, EventArgs e)
         {
-            Game.Window.KeyPressed += OnKeyPressed;
-            Game.Window.MouseButtonPressed += OnMouseButtonPressed;
+            Game.Window.KeyPressed += OnKeyReleased;
+            Game.Window.MouseButtonPressed += OnMouseButtonReleased;
         }
 
-        private void OnKeyPressed(Object sender, KeyEventArgs e = null)
+        private void OnKeyReleased(Object sender, KeyEventArgs e = null)
         {
+            if (!BeenReleasedSinceOpen)
+            {
+                BeenReleasedSinceOpen = true;
+                return;
+            }
+
             if (e != null && Game.KeyIsNotAllowed(e.Code))
                 return;
 
@@ -65,9 +72,9 @@ namespace SingleSwitchGame
             else
                 Tutorial.NextFrame();
         }
-        protected virtual void OnMouseButtonPressed(Object sender, MouseButtonEventArgs e = null)
+        protected virtual void OnMouseButtonReleased(Object sender, MouseButtonEventArgs e = null)
         {
-            OnKeyPressed(sender);
+            OnKeyReleased(sender);
         }
 
     }

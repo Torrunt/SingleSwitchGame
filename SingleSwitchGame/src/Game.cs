@@ -15,6 +15,7 @@ namespace SingleSwitchGame
         private ContextSettings WindowSettings;
         private Styles WindowStyle = Styles.Fullscreen;
         private bool Fullscreen = true;
+        private Vector2u Resolution = new Vector2u(VideoMode.DesktopMode.Width, VideoMode.DesktopMode.Height);
         private readonly Vector2u ResolutionDefault = new Vector2u(1920, 1440/*1080*/);
         private readonly Vector2u WindowSizeDefault = new Vector2u(960, 720/*540*/);
         private bool CloseNextUpdate = false;
@@ -342,24 +343,24 @@ namespace SingleSwitchGame
 
             if (WindowStyle == Styles.Fullscreen)
             {
-                float difference = (float)ResolutionDefault.Y / (float)VideoMode.DesktopMode.Height;
-                View view = new View(new FloatRect((VideoMode.DesktopMode.Width - (ResolutionDefault.X * difference)) / 2, 0, ResolutionDefault.X * difference, ResolutionDefault.Y));
+                float difference = (float)ResolutionDefault.Y / (float)Resolution.Y;
+                View view = new View(new FloatRect((ResolutionDefault.X - (Resolution.X * difference)) / 2, 0, Resolution.X * difference, ResolutionDefault.Y));
                 Window.SetView(view);
             }
             else if (WindowStyle == Styles.None)
             {
-                Window.Size = new Vector2u(VideoMode.DesktopMode.Width, VideoMode.DesktopMode.Height);
+                Window.Size = new Vector2u(Resolution.X, Resolution.Y);
                 Window.Position = new Vector2i(0, 0);
-                float difference = (float)ResolutionDefault.Y / (float)VideoMode.DesktopMode.Height;
-                View view = new View(new FloatRect((VideoMode.DesktopMode.Width - (ResolutionDefault.X * difference)) / 2, 0, ResolutionDefault.X * difference, ResolutionDefault.Y));
+                float difference = (float)ResolutionDefault.Y / (float)Resolution.Y;
+                View view = new View(new FloatRect((ResolutionDefault.X - (Resolution.X * difference)) / 2, 0, Resolution.X * difference, ResolutionDefault.Y));
                 Window.SetView(view);
             }
             else
             {
                 Window.Size = WindowSizeDefault;
-                Window.Position = new Vector2i((int)((VideoMode.DesktopMode.Width - WindowSizeDefault.X) / 2), (int)((VideoMode.DesktopMode.Height - WindowSizeDefault.Y) / 2));
-                View view = new View(new FloatRect((VideoMode.DesktopMode.Width - ResolutionDefault.X) / 2, 0, ResolutionDefault.X, ResolutionDefault.Y));
-                Window.SetView(view);
+                Window.Position = new Vector2i((int)((Resolution.X - WindowSizeDefault.X) / 2), (int)((Resolution.Y - WindowSizeDefault.Y) / 2));
+                //View view = new View(new FloatRect((Resolution.X - ResolutionDefault.X) / 2, 0, ResolutionDefault.X, ResolutionDefault.Y));
+                //Window.SetView(view);
             }
             
             if (NewWindow != null)
