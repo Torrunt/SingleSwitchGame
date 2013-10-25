@@ -28,7 +28,7 @@ namespace SingleSwitchGame
             Tutorial = Graphics.GetAnimatedSprite(Game, Graphics.ASSETS_SPRITES + "gui/HowToPlay.xml");
             Tutorial.Sprite.Texture.Smooth = false;
             Tutorial.Stop();
-            Tutorial.SetFrame(1);
+            Tutorial.SetFrame(0);
             AddChild(Tutorial);
         }
 

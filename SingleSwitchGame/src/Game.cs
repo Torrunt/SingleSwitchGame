@@ -13,10 +13,10 @@ namespace SingleSwitchGame
         public RenderWindow Window;
         public event EventHandler NewWindow;
         private ContextSettings WindowSettings;
-        private Styles WindowStyle;
+        private Styles WindowStyle = Styles.Fullscreen;
+        private bool Fullscreen = true;
         private readonly Vector2u ResolutionDefault = new Vector2u(1920, 1440/*1080*/);
         private readonly Vector2u WindowSizeDefault = new Vector2u(960, 720/*540*/);
-        private bool Fullscreen = false;
         private bool CloseNextUpdate = false;
         /// <summary> Desired FPS </summary>
         public const float FPS = 60.0f;
@@ -68,7 +68,6 @@ namespace SingleSwitchGame
             Bounds = new FloatRect(0, 0, ResolutionDefault.X, ResolutionDefault.Y);
             WindowSettings = new ContextSettings();
             WindowSettings.AntialiasingLevel = 6;
-            WindowStyle = Styles.Close;
             CreateWindow();
 
             // Black Bars (for fullscreen)
@@ -178,7 +177,7 @@ namespace SingleSwitchGame
             if (GraphicsMode == GRAPHICSMODE_NORMAL)
             {
                 Island.FillColor = new Color(0, 0, 10, 0);
-                Island.OutlineThickness = 15;
+                Island.OutlineThickness = 20;
                 Island.OutlineColor = new Color(138, 104, 0, 100);
             }
             else if (GraphicsMode == GRAPHICSMODE_BLUEPRINT)
@@ -418,6 +417,7 @@ namespace SingleSwitchGame
                 }
                 break;
 
+#if DEBUG
                 case Keyboard.Key.F3: DEBUG_MOUSE_CONTROLS = !DEBUG_MOUSE_CONTROLS; break;
 
                 case Keyboard.Key.F5: Player.StartPowerup(Powerup.DOUBLE_EXPLOSION_RADIUS); break;
@@ -426,7 +426,7 @@ namespace SingleSwitchGame
                 case Keyboard.Key.F8: Player.StartPowerup(Powerup.RED_HOT_BEACH); break;
                 case Keyboard.Key.F9: Player.StartPowerup(Powerup.TRIPLE_CANNON); break;
                 case Keyboard.Key.F10: Player.StartPowerup(Powerup.OCTUPLE_CANNON); break;
-                
+#endif
             }
         }
 
