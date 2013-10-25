@@ -62,7 +62,7 @@ namespace SingleSwitchGame
                 Explosion explosion = new Explosion(Game, 8);
                 explosion.Position = Obj.Position;
                 Game.Layer_Other.AddChild(explosion);
-                Obj.Parent.RemoveChild(Obj);
+                Obj.Damage(Obj.Health);
             }
             AlreadyAvoidedLandmine = true;
         }

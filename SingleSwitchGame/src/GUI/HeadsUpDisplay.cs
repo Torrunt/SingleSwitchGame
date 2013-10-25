@@ -273,7 +273,7 @@ namespace SingleSwitchGame
 
         private void Update(double time)
         {
-            if (time < 0)
+            if (time <= 0)
             {
                 if (Parent != null)
                     Parent.RemoveChild(this);

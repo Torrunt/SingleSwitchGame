@@ -85,7 +85,9 @@ namespace SingleSwitchGame
 
                 // back
                 RectangleShape button_back = new RectangleShape(new Vector2f(Back.Size.X, ButtonHeight));
-                button_back.FillColor = new Color(0, 0, 0, (byte)(pickable ? 100 : 50));
+                button_back.FillColor = new Color(0, 0, 0, (byte)(pickable ? 150 : 50));
+                button_back.OutlineThickness = 6;
+                button_back.OutlineColor = new Color(0, 0, 0, 0);
                 button.AddChild(button_back);
 
                 // name
@@ -204,7 +206,8 @@ namespace SingleSwitchGame
             // unselect current button
             DisplayObject button = Buttons[CurrentSelection];
             RectangleShape back = (RectangleShape)button.GetChildAt(0);
-            back.FillColor = new Color(0, 0, 0, 100);
+            back.FillColor = new Color(0, 0, 0, 150);
+            back.OutlineColor = new Color(0, 0, 0, 0);
 
             // select button
             while (Buttons[no] == null)
@@ -213,6 +216,7 @@ namespace SingleSwitchGame
             button = Buttons[no];
             back = (RectangleShape) button.GetChildAt(0);
             back.FillColor = new Color(255, 255, 255, 20);
+            back.OutlineColor = new Color(255, 255, 255, 180);
 
             CurrentSelection = no;
         }

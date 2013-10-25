@@ -59,6 +59,8 @@ namespace SingleSwitchGame
                 ((Rowboat)Obj).RemoveInfantry();
                 Obj.Model.Stop();
                 Obj.Model.Sprite.Color = new Color(255, 255, 255, 80);
+                if (Obj.FlashOnDamageBright)
+                    Obj.FlashOnDamageOriginalColor = Obj.Model.Color; // just in case the Rowboat's Colour has already been changed temporarily
             }
         }
 

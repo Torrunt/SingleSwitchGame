@@ -56,10 +56,16 @@ namespace SingleSwitchGame
                 if (Obj.Model is AnimatedSprite)
                 {
                     Obj.Model.Sprite.Color = new Color(255, 255, 255, 100);
+                    if (Obj.FlashOnDamageBright)
+                        Obj.FlashOnDamageOriginalColor = Obj.Model.Color; // just in case the Ship's Colour has already been changed temporarily
                     Obj.Model.Play();
                 }
                 else
+                {
                     Obj.Model.Color = new Color(255, 255, 255, 100);
+                    if (Obj.FlashOnDamageBright)
+                        Obj.FlashOnDamageOriginalColor = Obj.Model.Color; // just in case the Ship's Colour has already been changed temporarily
+                }
 
                 int pointCount = Utils.RandomInt(4, 15);
                 float originalAngle = (float)Utils.GetAngle(Game.Island.Position, Obj.Position) + (Utils.RandomInt(50, 80) * (Utils.RandomInt() == 1 ? 1 : -1));

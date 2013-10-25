@@ -80,7 +80,13 @@ namespace SingleSwitchGame
             if (TimesHitThisWave == 0)
                 Difficulty++;
             else
-                Difficulty -= (uint)((float)Difficulty * ((float)TimesHitThisWave / 10f));
+            {
+                int lowerDifficultyBy = (int)((float)Difficulty * ((float)TimesHitThisWave / 10f));
+                if (lowerDifficultyBy < 0)
+                    Difficulty = 1;
+                else
+                    Difficulty -= (uint)lowerDifficultyBy;
+            }
 
             TimesHitThisWave = 0;
 

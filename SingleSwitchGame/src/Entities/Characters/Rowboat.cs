@@ -15,6 +15,8 @@ namespace SingleSwitchGame
             Collision = new RectangleShape(new Vector2f(82f, 38f));
             Collision.Position = new Vector2f(-41f, -19f);
 
+            Model.Stop();
+
             HealthMax = 8000;
             Health = HealthMax;
 
@@ -33,6 +35,12 @@ namespace SingleSwitchGame
 
             SetAI(new RowboatAI(Game));
         }
+        public override void OnRemoved()
+        {
+            base.OnRemoved();
+
+            RemoveInfantry();
+        }
 
         public override void Update(float dt)
         {
@@ -44,7 +52,7 @@ namespace SingleSwitchGame
                 return;
             }
 
-            if (Model != null && Model is AnimatedSprite && (AI == null || !((RowboatAI)AI).ReachedBeach) && !Model.Playing)
+            if (Model != null && Model is AnimatedSprite && (AI == null || !((RowboatAI)AI).ReachedBeach) && !Model.Playing && IsMoving())
                 Model.Play();
 
             base.Update(dt);

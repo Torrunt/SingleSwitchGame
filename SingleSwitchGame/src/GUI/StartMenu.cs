@@ -114,6 +114,7 @@ namespace SingleSwitchGame
                     // How to Play
                     HowToPlay = new HowToPlay(Game);
                     AddChild(HowToPlay);
+                    SelectButton(2);
                 }
                 break;
                 case 2:

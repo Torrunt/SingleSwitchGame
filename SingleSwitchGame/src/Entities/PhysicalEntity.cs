@@ -22,11 +22,11 @@ namespace SingleSwitchGame
         protected bool RemoveOnDeath = true;
         public event EventHandler Death;
 
+        public bool FlashOnDamageBright = false;
         private bool _FlashOnDamage = false;
         private Timer FlashOnDamageTimer;
-        private bool FlashOnDamageBright = false;
         private Color FlashOnDamageColor;
-        private Color FlashOnDamageOriginalColor;
+        public Color FlashOnDamageOriginalColor;
         private Color FlashOnDamageOriginalColor2;
 
         public PhysicalEntity(Game Game, dynamic model = null)
