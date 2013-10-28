@@ -62,7 +62,7 @@ namespace SingleSwitchGame
                 Explosion explosion = new Explosion(Game, 8);
                 explosion.Position = Obj.Position;
                 Game.Layer_Other.AddChild(explosion);
-                Obj.Damage(Obj.Health);
+                Obj.Damage(Obj.Health, 0, Game.Player);
             }
             AlreadyAvoidedLandmine = true;
         }
@@ -77,7 +77,8 @@ namespace SingleSwitchGame
                 // Reached Hill
                 if (Game.Player != null)
                     Game.Player.Damage(1);
-                Obj.Damage(Obj.Health);
+                Game.Player.Weapon.Explode(Game.Player.Position, 100f, true);
+
                 return;
             }
 

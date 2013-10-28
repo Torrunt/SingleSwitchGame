@@ -66,7 +66,7 @@ namespace SingleSwitchGame
             Explode(proj.Position);
         }
         /// <summary>The Explosion caused by the projectiles if there is one.</summary>
-        public virtual void Explode(Vector2f pos)
+        public virtual void Explode(Vector2f pos, float radius = -1, bool directCall = false)
         {
         }
 

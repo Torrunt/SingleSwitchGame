@@ -61,8 +61,12 @@ namespace SingleSwitchGame
                 ShootSound2.Play();
         }
 
-        public override void Explode(Vector2f pos)
+        /// <param name="radius">If left at -1, will use ExplosionRadius.</param>
+        /// <param name="directCall">If true, will not credit kill or activate pick-ups.</param>
+        public override void Explode(Vector2f pos, float radius = -1, bool directCall = false)
         {
+            if (radius == -1)
+                radius = ExplosionRadius;
             // Collision
             bool hitSomething = false;
             int numChildren = Game.Layer_Objects.NumChildren;
@@ -72,19 +76,19 @@ namespace SingleSwitchGame
 
                 if (obj is PhysicalEntity && !obj.CanTakeDamage)
                     continue;
-                if ((!(obj is CollisionEntity) || obj.Collision == null) && !Utils.InCircle(pos, ExplosionRadius, obj.Position)) // Collide with Position if obj is not a CollisionEntity or has no Collision
+                if ((!(obj is CollisionEntity) || obj.Collision == null) && !Utils.InCircle(pos, radius, obj.Position)) // Collide with Position if obj is not a CollisionEntity or has no Collision
                     continue;
-                if (obj.Collision is CircleShape && !Utils.CircleCircleCollision(pos, ExplosionRadius, obj.Position, obj.Collision.Radius))
+                if (obj.Collision is CircleShape && !Utils.CircleCircleCollision(pos, radius, obj.Position, obj.Collision.Radius))
                     continue;
-                if (obj.Collision is RectangleShape && !Utils.CircleRectangleCollision(pos, ExplosionRadius, obj.Collision, obj.Rotation, obj.Position))
+                if (obj.Collision is RectangleShape && !Utils.CircleRectangleCollision(pos, radius, obj.Collision, obj.Rotation, obj.Position))
                     continue;
 
                 if (obj is PhysicalEntity)
                 {
                     // Damage
-                    obj.Damage(Damage, 0, SourceObject);
+                    obj.Damage(Damage, 0, !directCall ? SourceObject : null);
                 }
-                else if (obj is Pickup)
+                else if (!directCall && obj is Pickup)
                 {
                     // Pickup
                     obj.Activate(SourceObject);
@@ -103,7 +107,7 @@ namespace SingleSwitchGame
             if (hitSomething || Utils.InCircle(Game.Island, pos))
             {
                 // Explosion
-                Explosion explosion = new Explosion(Game, ExplosionRadius);
+                Explosion explosion = new Explosion(Game, radius);
                 explosion.Position = pos;
                 Game.Layer_OtherAbove.AddChild(explosion);
 
@@ -128,7 +132,7 @@ namespace SingleSwitchGame
             }
 
 
-            if (Game.Player == null)
+            if (directCall || Game.Player == null)
                 return;
             if (hitSomething)
                 Game.Player.IncreaseScoreMultiplier();

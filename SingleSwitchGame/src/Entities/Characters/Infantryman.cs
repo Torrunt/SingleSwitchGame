@@ -111,7 +111,7 @@ namespace SingleSwitchGame
                     return;
                 // Red Hot Beach?
                 if (Game.Player.HasPowerup(Powerup.RED_HOT_BEACH))
-                    Damage(10, DamageType.FIRE);
+                    Damage(10, DamageType.FIRE, Game.Player);
             }
             base.Update(dt);
         }
